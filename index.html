@@ -12,7 +12,7 @@
     --card: #161a22;
     --border: #1f2535;
     --accent: #00e5a0;
-    --accent2: #4f8aff;
+    --accent2: #4f8aff;h
     --accent3: #ff6b3d;
     --yellow: #f5c842;
     --text: #e8eaf0;
@@ -221,6 +221,15 @@
   .promo-book { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
   .promo-desc { font-size: 12px; color: var(--muted); }
   .promo-value { font-size: 20px; font-weight: 800; color: var(--accent); font-family: var(--font-mono); text-align: right; }
+
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #00e5a0, #00b4d8);
+    color: #0a0c0f; font-weight: 700; font-size: 13px;
+    padding: 8px 16px; border-radius: 8px; text-decoration: none;
+    transition: opacity 0.2s; white-space: nowrap;
+  }
+  .cta-btn:hover { opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -232,6 +241,7 @@
   </div>
   <div class="header-right">
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <a class="cta-btn" href="https://whop.com/prime-edge-picks/" target="_blank" rel="noopener">🚀 Get Access</a>
     <div id="api-status" style="font-size:11px;color:var(--muted);font-family:var(--font-mono)">connecting...</div>
   </div>
 </header>
