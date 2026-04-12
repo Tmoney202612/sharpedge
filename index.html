@@ -232,6 +232,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sport-count{display:inline-flex;align-items:center;justify-content:center;background:var(--border);color:var(--muted);font-size:10px;font-weight:700;font-family:var(--fm);padding:1px 6px;border-radius:10px;margin-left:auto;min-width:18px;}
+.sidebar-item.active .sport-count{background:rgba(0,229,160,0.15);color:var(--accent);}
+.live-dot-red{width:5px;height:5px;background:var(--red);border-radius:50%;animation:pulse 1s ease-in-out infinite;}
 
 @media(max-width:900px){
   .sidebar{display:none}
@@ -258,7 +261,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   <div class="header-right">
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
-    <button class="btn-primary" id="header-cta" onclick="window.open('https://whop.com/prime-edge-picks/','_blank')">Get Access</button>
+    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Get Access</button>
     <button class="btn-ghost" id="header-demo" onclick="enterApp()">Demo</button>
   </div>
 </header>
@@ -270,7 +273,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     <h1>Beat the books with <span>real math</span></h1>
     <p>Live odds comparison, arbitrage finder, +EV scanner, and daily expert picks — everything you need to bet like a professional.</p>
     <div class="hero-btns">
-      <button class="hero-btn-primary" onclick="window.open('https://whop.com/prime-edge-picks/','_blank')">Start Free Trial →</button>
+      <button class="hero-btn-primary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">See Pricing →</button>
       <button class="hero-btn-secondary" onclick="enterApp()">View Demo</button>
     </div>
     <div class="hero-features">
@@ -331,6 +334,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 <!-- APP -->
 <div id="app" style="display:none">
   <div class="nav-tabs">
+    <button class="tab-btn" onclick="showTab('live',this)">🔴 Live Now</button>
     <button class="tab-btn active" onclick="showTab('picks',this)">🎯 Daily Picks</button>
     <button class="tab-btn" onclick="showTab('ev',this)">📈 Positive EV</button>
     <button class="tab-btn" onclick="showTab('arb',this)">🔄 Arbitrage</button>
@@ -346,29 +350,29 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     <div class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-title">🇺🇸 US Sports</div>
-        <div class="sidebar-item active" onclick="selectSport(this,'basketball_nba')">🏀 NBA</div>
-        <div class="sidebar-item" onclick="selectSport(this,'baseball_mlb')">⚾ MLB</div>
-        <div class="sidebar-item" onclick="selectSport(this,'baseball_ncaa')">⚾ NCAA Baseball</div>
-        <div class="sidebar-item" onclick="selectSport(this,'americanfootball_nfl')">🏈 NFL</div>
-        <div class="sidebar-item" onclick="selectSport(this,'icehockey_nhl')">🏒 NHL</div>
-        <div class="sidebar-item" onclick="selectSport(this,'basketball_ncaab')">🏀 NCAAB</div>
-        <div class="sidebar-item" onclick="selectSport(this,'americanfootball_ncaaf')">🏈 NCAAF</div>
-        <div class="sidebar-item" onclick="selectSport(this,'soccer_usa_mls')">⚽ MLS</div>
+        <div class="sidebar-item active" id="sport-basketball_nba" onclick="selectSport(this,'basketball_nba')">🏀 NBA <span class="sport-count" id="count-basketball_nba"></span></div>
+        <div class="sidebar-item" id="sport-baseball_mlb" onclick="selectSport(this,'baseball_mlb')">⚾ MLB <span class="sport-count" id="count-baseball_mlb"></span></div>
+        <div class="sidebar-item" id="sport-baseball_ncaa" onclick="selectSport(this,'baseball_ncaa')">⚾ NCAA Baseball <span class="sport-count" id="count-baseball_ncaa"></span></div>
+        <div class="sidebar-item" id="sport-americanfootball_nfl" onclick="selectSport(this,'americanfootball_nfl')">🏈 NFL <span class="sport-count" id="count-americanfootball_nfl"></span></div>
+        <div class="sidebar-item" id="sport-icehockey_nhl" onclick="selectSport(this,'icehockey_nhl')">🏒 NHL <span class="sport-count" id="count-icehockey_nhl"></span></div>
+        <div class="sidebar-item" id="sport-basketball_ncaab" onclick="selectSport(this,'basketball_ncaab')">🏀 NCAAB <span class="sport-count" id="count-basketball_ncaab"></span></div>
+        <div class="sidebar-item" id="sport-americanfootball_ncaaf" onclick="selectSport(this,'americanfootball_ncaaf')">🏈 NCAAF <span class="sport-count" id="count-americanfootball_ncaaf"></span></div>
+        <div class="sidebar-item" id="sport-soccer_usa_mls" onclick="selectSport(this,'soccer_usa_mls')">⚽ MLS <span class="sport-count" id="count-soccer_usa_mls"></span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">🌍 International</div>
-        <div class="sidebar-item" onclick="selectSport(this,'soccer_epl')">⚽ EPL</div>
-        <div class="sidebar-item" onclick="selectSport(this,'soccer_uefa_champs_league')">⚽ Champions Lg</div>
-        <div class="sidebar-item" onclick="selectSport(this,'soccer_spain_la_liga')">⚽ La Liga</div>
-        <div class="sidebar-item" onclick="selectSport(this,'soccer_italy_serie_a')">⚽ Serie A</div>
-        <div class="sidebar-item" onclick="selectSport(this,'soccer_germany_bundesliga')">⚽ Bundesliga</div>
-        <div class="sidebar-item" onclick="selectSport(this,'tennis_atp_french_open')">🎾 Tennis ATP</div>
-        <div class="sidebar-item" onclick="selectSport(this,'tennis_wta_french_open')">🎾 Tennis WTA</div>
+        <div class="sidebar-item" id="sport-soccer_epl" onclick="selectSport(this,'soccer_epl')">⚽ EPL <span class="sport-count" id="count-soccer_epl"></span></div>
+        <div class="sidebar-item" id="sport-soccer_uefa_champs_league" onclick="selectSport(this,'soccer_uefa_champs_league')">⚽ Champions Lg <span class="sport-count" id="count-soccer_uefa_champs_league"></span></div>
+        <div class="sidebar-item" id="sport-soccer_spain_la_liga" onclick="selectSport(this,'soccer_spain_la_liga')">⚽ La Liga <span class="sport-count" id="count-soccer_spain_la_liga"></span></div>
+        <div class="sidebar-item" id="sport-soccer_italy_serie_a" onclick="selectSport(this,'soccer_italy_serie_a')">⚽ Serie A <span class="sport-count" id="count-soccer_italy_serie_a"></span></div>
+        <div class="sidebar-item" id="sport-soccer_germany_bundesliga" onclick="selectSport(this,'soccer_germany_bundesliga')">⚽ Bundesliga <span class="sport-count" id="count-soccer_germany_bundesliga"></span></div>
+        <div class="sidebar-item" id="sport-tennis_atp_french_open" onclick="selectSport(this,'tennis_atp_french_open')">🎾 Tennis ATP <span class="sport-count" id="count-tennis_atp_french_open"></span></div>
+        <div class="sidebar-item" id="sport-tennis_wta_french_open" onclick="selectSport(this,'tennis_wta_french_open')">🎾 Tennis WTA <span class="sport-count" id="count-tennis_wta_french_open"></span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">🥊 Combat</div>
-        <div class="sidebar-item" onclick="selectSport(this,'mma_mixed_martial_arts')">🥊 UFC / MMA</div>
-        <div class="sidebar-item" onclick="selectSport(this,'boxing_boxing')">🥊 Boxing</div>
+        <div class="sidebar-item" id="sport-mma_mixed_martial_arts" onclick="selectSport(this,'mma_mixed_martial_arts')">🥊 UFC / MMA <span class="sport-count" id="count-mma_mixed_martial_arts"></span></div>
+        <div class="sidebar-item" id="sport-boxing_boxing" onclick="selectSport(this,'boxing_boxing')">🥊 Boxing <span class="sport-count" id="count-boxing_boxing"></span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Market</div>
@@ -395,6 +399,19 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       </div>
     </div>
     <div class="content">
+
+      <!-- LIVE NOW -->
+      <div id="panel-live" class="panel">
+        <div class="section-title">🔴 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
+        <div class="section-sub">Games happening now and starting within 2 hours. Odds update every 90 seconds.</div>
+        <div class="stats-bar">
+          <div class="stat-card"><div class="stat-label">Live/Soon</div><div class="stat-value" id="live-count" style="color:var(--red)">—</div><div class="stat-sub">games today</div></div>
+          <div class="stat-card"><div class="stat-label">Starting Soon</div><div class="stat-value" id="live-soon" style="color:var(--yellow)">—</div><div class="stat-sub">within 2 hrs</div></div>
+          <div class="stat-card"><div class="stat-label">Best EV Live</div><div class="stat-value" id="live-ev" style="color:var(--accent)">—</div><div class="stat-sub">right now</div></div>
+          <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="live-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
+        </div>
+        <div id="live-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading live games...</div></div>
+      </div>
 
       <!-- PICKS -->
       <div id="panel-picks" class="panel active">
@@ -710,7 +727,7 @@ function openBook(book){window.open(BOOK_URLS[book]||'https://www.google.com/sea
 
 // NAV
 function showLanding(){document.getElementById('landing').style.display='block';document.getElementById('app').style.display='none';document.getElementById('header-cta').style.display='block';document.getElementById('header-demo').style.display='block';document.getElementById('live-pill').style.display='none';inApp=false;}
-function enterApp(){document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block';document.getElementById('header-cta').style.display='none';document.getElementById('header-demo').style.display='none';document.getElementById('live-pill').style.display='flex';inApp=true;renderPicks();renderPromos();renderTracker();loadData();}
+function enterApp(){document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block';document.getElementById('header-cta').style.display='none';document.getElementById('header-demo').style.display='none';document.getElementById('live-pill').style.display='flex';inApp=true;renderPicks();renderPromos();renderTracker();loadData();setTimeout(loadSportCounts,3000);}
 
 // FETCH
 async function fetchOdds(sport,market){
@@ -747,12 +764,12 @@ function generateDemoData(){
 async function loadData(){
   if(!inApp)return;
   const loader='<div class="loading-state"><div class="loading-spinner"></div>Fetching live odds...</div>';
-  ['ev-rows','arb-rows','odds-rows','lh-rows','mid-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=loader;});
+  ['ev-rows','arb-rows','odds-rows','lh-rows','mid-rows','live-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=loader;});
   const data=await fetchOdds(currentSport,currentMarket);
   if(!data||!data.length){['ev-rows','arb-rows','odds-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="info-box">ℹ️ No upcoming games. Try NBA or MLB.</div>';});return;}
   document.getElementById('ev-games').textContent=data.length;
   document.getElementById('ev-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  renderEV(data);renderArb(data);renderOdds(data);renderLowHold(data);renderMiddles(data);
+  renderEV(data);renderArb(data);renderOdds(data);renderLowHold(data);renderMiddles(data);renderLive(data);
 }
 
 // PICKS
@@ -1000,6 +1017,87 @@ function sendSuggestion(msg){
   addMessage(msg,true);
   showTyping();
   setTimeout(()=>{removeTyping();addMessage(getChatResponse(msg),false);},800+Math.random()*600);
+}
+
+// SPORT COUNTS - fetch counts for all sports in background
+const SPORT_LIST=['basketball_nba','baseball_mlb','baseball_ncaa','americanfootball_nfl','icehockey_nhl','basketball_ncaab','soccer_usa_mls','soccer_epl','mma_mixed_martial_arts'];
+async function loadSportCounts(){
+  for(const sport of SPORT_LIST){
+    try{
+      const r=await fetch(`${API_ENDPOINT}?sport=${sport}&market=h2h`);
+      if(!r.ok)continue;
+      const data=await r.json();
+      if(Array.isArray(data)){
+        const el=document.getElementById('count-'+sport);
+        if(el&&data.length>0){el.textContent=data.length;el.style.display='inline-flex';}
+      }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,1200)); // space out calls to save API quota
+  }
+}
+
+// LIVE GAMES
+function renderLive(data){
+  const now=Date.now();
+  const twoHours=now+7200000;
+  const liveAndSoon=data.filter(g=>{
+    const t=new Date(g.commence_time).getTime();
+    return t<=twoHours;
+  });
+  const soon=liveAndSoon.filter(g=>new Date(g.commence_time).getTime()>now);
+  document.getElementById('live-count').textContent=liveAndSoon.length;
+  document.getElementById('live-soon').textContent=soon.length;
+  document.getElementById('live-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  // Find best EV among live games
+  let bestEV=0;
+  liveAndSoon.forEach(g=>{
+    const books=g.bookmakers||[];
+    const om={};
+    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{
+      if(!validOdds(o.price))return;
+      if(!om[o.name])om[o.name]=[];
+      om[o.name].push({book:bm.title,odds:o.price});
+    })));
+    Object.values(om).forEach(offers=>{
+      if(offers.length<2)return;
+      const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);
+      const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;
+      const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);
+      if(isFinite(ev)&&ev>bestEV)bestEV=ev;
+    });
+  });
+  document.getElementById('live-ev').textContent=bestEV>0?'+'+( bestEV*100).toFixed(1)+'%':'—';
+
+  if(!liveAndSoon.length){
+    document.getElementById('live-rows').innerHTML='<div class="info-box">ℹ️ No games live or starting within 2 hours on this sport. Try MLB or NBA — they have the most daily games.</div>';
+    return;
+  }
+
+  document.getElementById('live-rows').innerHTML=liveAndSoon.map(g=>{
+    const t=new Date(g.commence_time).getTime();
+    const isLive=t<=now;
+    const minsUntil=Math.round((t-now)/60000);
+    const timeLabel=isLive?'<span style="color:var(--red);font-weight:700;font-family:var(--fm);">● LIVE</span>':`<span style="color:var(--yellow);font-family:var(--fm);">Starting in ${minsUntil}m</span>`;
+    const books=g.bookmakers||[];
+    const bestOdds={};
+    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{
+      if(!validOdds(o.price))return;
+      if(!bestOdds[o.name]||o.price>bestOdds[o.name].odds)bestOdds[o.name]={odds:o.price,book:bm.title};
+    })));
+    const outcomes=Object.entries(bestOdds);
+    return`<div class="bet-row">
+      <div class="bet-row-inner" style="grid-template-columns:2fr 1fr ${outcomes.map(()=>'1fr').join(' ')} 1fr">
+        <div>
+          <div class="game-teams">${g.home_team} vs ${g.away_team}</div>
+          <div class="game-meta" style="margin-top:4px">${timeLabel}</div>
+        </div>
+        <div class="col-c"><div class="col-l">Books</div><div style="font-family:var(--fm);font-size:13px;font-weight:700">${books.length}</div></div>
+        ${outcomes.map(([name,data])=>`<div class="col-c"><div class="col-l">${name.split(' ').slice(-1)[0]}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(data.odds)}</div><div class="book-tag" style="margin-top:4px;display:inline-block">${data.book.substring(0,4)}</div></div>`).join('')}
+        <div class="col-c"><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET →</button></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // LOW HOLD
