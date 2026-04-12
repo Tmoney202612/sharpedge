@@ -528,7 +528,7 @@ function atod(o){return o>0?1+o/100:1+100/Math.abs(o);}
 function ip(o){return 1/atod(o);}
 function dtoa(d){return d>=2?Math.round((d-1)*100):Math.round(-100/(d-1));}
 function fmt(n){return n>=0?`+${n}`:`${n}`;}
-function validOdds(o){return typeof o==='number'&&(o>=100||o<=-100);} // valid American odds only
+function validOdds(o){return typeof o==='number'&&!isNaN(o)&&isFinite(o)&&(o>=100||o<=-100);} // valid American odds only
 function fmtT(iso){const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
 function ss(msg){const el=document.getElementById('api-status');if(el)el.textContent=msg;}
 
@@ -651,7 +651,7 @@ function renderEV(data){
       const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;
       const fair=dtoa(1/avgIp);
       const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);
-      if(ev<=0.003)return;
+      if(!isFinite(ev)||isNaN(ev)||ev<=0.003)return;
       rows.push({game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,name,bestBook:best.book,bestOdds:best.odds,fair,ev:(ev*100).toFixed(1)});
     });
   });
