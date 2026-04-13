@@ -777,7 +777,7 @@ async function loadData(){
   if(isDemo){ss('demo mode — no live games for this sport');}
   document.getElementById('ev-games').textContent=realData?realData.length:0;
   document.getElementById('ev-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  renderEV(data);renderArb(data);renderOdds(data);renderLowHold(data);renderMiddles(data);renderLive(data);
+  renderEV(data,isDemo);renderArb(data,isDemo);renderOdds(data,isDemo);renderLowHold(data,isDemo);renderMiddles(data,isDemo);renderLive(data,isDemo);
 }
 
 // PICKS
@@ -830,7 +830,13 @@ function renderPicks(sport){
 }
 
 // EV
-function renderEV(data){
+function renderEV(data,isDemo){
+  if(isDemo){
+    document.getElementById('ev-count').textContent='0';
+    document.getElementById('ev-avg').textContent='—';
+    document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport right now. Switch to NBA or MLB for real-time +EV bets.</div>';
+    return;
+  }
   const rows=[];
   data.forEach(g=>{
     const books=g.bookmakers||[];if(books.length<2)return;
@@ -863,7 +869,8 @@ function renderEV(data){
 }
 
 // ARB
-function renderArb(data){
+function renderArb(data,isDemo){
+  if(isDemo){document.getElementById('arb-count').textContent='0';document.getElementById('arb-best').textContent='—';document.getElementById('arb-avg').textContent='—';document.getElementById('arb-books').textContent='—';document.getElementById('arb-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB for real arbitrage opportunities.</div>';return;}
   const arbs=[],bks=new Set();
   data.forEach(g=>{
     const books=g.bookmakers||[];books.forEach(b=>bks.add(b.key));if(books.length<2)return;
@@ -902,7 +909,8 @@ function renderArb(data){
 }
 
 // ODDS COMPARE
-function renderOdds(data){
+function renderOdds(data,isDemo){
+  if(isDemo){document.getElementById('odds-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB.</div>';return;}
   document.getElementById('odds-rows').innerHTML=data.map(g=>{
     const books=g.bookmakers||[];if(!books.length)return'';
     const h=g.home_team,a=g.away_team;
@@ -1076,7 +1084,8 @@ async function loadSportCounts(){
 }
 
 // LIVE GAMES
-function renderLive(data){
+function renderLive(data,isDemo){
+  if(isDemo){document.getElementById('live-count').textContent='0';document.getElementById('live-soon').textContent='0';document.getElementById('live-ev').textContent='—';document.getElementById('live-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport right now. Try MLB or NBA.</div>';return;}
   const now=Date.now();
   const twoHours=now+7200000;
   const liveAndSoon=data.filter(g=>{
@@ -1140,7 +1149,8 @@ function renderLive(data){
 }
 
 // LOW HOLD
-function renderLowHold(data){
+function renderLowHold(data,isDemo){
+  if(isDemo){document.getElementById('lh-count').textContent='0';document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';document.getElementById('lh-games').textContent='0';document.getElementById('lh-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB.</div>';return;}
   const rows=[];
   const allBooks=new Set();
   data.forEach(g=>{
@@ -1179,7 +1189,8 @@ function renderLowHold(data){
 }
 
 // MIDDLES
-function renderMiddles(data){
+function renderMiddles(data,isDemo){
+  if(isDemo){document.getElementById('mid-count').textContent='0';document.getElementById('mid-window').textContent='—';document.getElementById('mid-best').textContent='—';document.getElementById('mid-books').textContent='—';document.getElementById('mid-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or NFL spreads for middles.</div>';return;}
   const middles=[];
   const allBooks=new Set();
   data.forEach(g=>{
