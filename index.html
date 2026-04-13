@@ -403,7 +403,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <!-- LIVE NOW -->
       <div id="panel-live" class="panel">
         <div class="section-title">🔴 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
-        <div class="section-sub">Games happening now and starting within 2 hours. Odds update every 90 seconds.</div>
+        <div class="section-sub">Games in progress or starting within 4 hours. Numbers in sidebar = total games today across all times.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Live/Soon</div><div class="stat-value" id="live-count" style="color:var(--red)">—</div><div class="stat-sub">games today</div></div>
           <div class="stat-card"><div class="stat-label">Starting Soon</div><div class="stat-value" id="live-soon" style="color:var(--yellow)">—</div><div class="stat-sub">within 2 hrs</div></div>
@@ -1087,7 +1087,7 @@ async function loadSportCounts(){
 function renderLive(data,isDemo){
   if(isDemo){document.getElementById('live-count').textContent='0';document.getElementById('live-soon').textContent='0';document.getElementById('live-ev').textContent='—';document.getElementById('live-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport right now. Try MLB or NBA.</div>';return;}
   const now=Date.now();
-  const twoHours=now+7200000;
+  const twoHours=now+14400000; // 4 hours
   const liveAndSoon=data.filter(g=>{
     const t=new Date(g.commence_time).getTime();
     return t<=twoHours;
