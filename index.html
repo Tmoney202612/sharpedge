@@ -741,8 +741,12 @@ async function fetchOdds(sport,market){
     // Update sport count with real data
     const countEl=document.getElementById('count-'+sport);
     if(countEl){
-      if(data.length>0){countEl.textContent=data.length;}
-      else{countEl.textContent='';} // hide if no games
+      if(data.length>0){
+        // Count only games live or starting within 4 hours
+        const now=Date.now();
+        const soon=data.filter(g=>new Date(g.commence_time).getTime()<=now+14400000).length;
+        countEl.textContent=soon>0?soon:'';
+      }else{countEl.textContent='';}
     }
     return data.length>0?data:null; // return null if empty so we use demo
   }catch(e){
@@ -1076,8 +1080,12 @@ async function loadSportCounts(){
       const data=await r.json();
       if(Array.isArray(data)&&data.length>0){
         const el=document.getElementById('count-'+sport);
-        if(el){el.textContent=data.length;}
-      } // don't show 0 — just leave blank if no games
+        if(el){
+          const now=Date.now();
+          const soon=data.filter(g=>new Date(g.commence_time).getTime()<=now+14400000).length;
+          if(soon>0)el.textContent=soon;
+        }
+      }
     }catch(e){}
     await new Promise(r=>setTimeout(r,1500));
   }
