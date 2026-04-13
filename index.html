@@ -738,10 +738,16 @@ async function fetchOdds(sport,market){
     const data=await r.json();
     if(data.message)throw new Error(data.message);
     ss(`✓ ${data.length} games live`);
-    return data;
+    // Update sport count with real data
+    const countEl=document.getElementById('count-'+sport);
+    if(countEl){
+      if(data.length>0){countEl.textContent=data.length;}
+      else{countEl.textContent='';} // hide if no games
+    }
+    return data.length>0?data:null; // return null if empty so we use demo
   }catch(e){
     ss('demo mode');
-    return generateDemoData();
+    return null;
   }
 }
 
@@ -765,13 +771,12 @@ async function loadData(){
   if(!inApp)return;
   const loader='<div class="loading-state"><div class="loading-spinner"></div>Fetching live odds...</div>';
   ['ev-rows','arb-rows','odds-rows','lh-rows','mid-rows','live-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=loader;});
-  const data=await fetchOdds(currentSport,currentMarket);
-  if(!data||!data.length){['ev-rows','arb-rows','odds-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="info-box">ℹ️ No upcoming games. Try NBA or MLB.</div>';});return;}
-  document.getElementById('ev-games').textContent=data.length;
+  const realData=await fetchOdds(currentSport,currentMarket);
+  const data=realData||generateDemoData(); // use demo only for display
+  const isDemo=!realData;
+  if(isDemo){ss('demo mode — no live games for this sport');}
+  document.getElementById('ev-games').textContent=realData?realData.length:0;
   document.getElementById('ev-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  // Update count for current sport immediately
-  const countEl=document.getElementById('count-'+currentSport);
-  if(countEl){countEl.textContent=data.length;}
   renderEV(data);renderArb(data);renderOdds(data);renderLowHold(data);renderMiddles(data);renderLive(data);
 }
 
@@ -1061,12 +1066,12 @@ async function loadSportCounts(){
       const r=await fetch(`${API_ENDPOINT}?sport=${sport}&market=h2h`);
       if(!r.ok)continue;
       const data=await r.json();
-      if(Array.isArray(data)){
+      if(Array.isArray(data)&&data.length>0){
         const el=document.getElementById('count-'+sport);
-        if(el&&data.length>0){el.textContent=data.length;el.style.display='inline-flex';}
-      }
+        if(el){el.textContent=data.length;}
+      } // don't show 0 — just leave blank if no games
     }catch(e){}
-    await new Promise(r=>setTimeout(r,1200)); // space out calls to save API quota
+    await new Promise(r=>setTimeout(r,1500));
   }
 }
 
