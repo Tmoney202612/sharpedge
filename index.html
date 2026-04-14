@@ -454,18 +454,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   <span style="font-size:12px;color:var(--muted);font-family:var(--fm);">📈 Today: <span style="color:var(--green)">3-1</span> · 68% Hit Rate · <span style="color:var(--yellow)">+22% ROI</span></span>
   <button onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:8px 20px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--fh);">Start Free Trial →</button>
 </div>
-          <li>Live +EV scanner (real-time)</li>
-          <li>Arbitrage finder with alerts</li>
-          <li>Full picks with analysis</li>
-          <li>Player prop database</li>
-          <li>Kelly criterion sizing tool</li>
-          <li>Priority Discord support</li>
-        </ul>
-        <button class="price-btn price-btn-accent" onclick="window.open('https://whop.com/prime-edge-picks/the-sharp-0c','_blank')">Start Free Trial</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- APP -->
 <div id="app" style="display:none">
@@ -870,7 +858,6 @@ function showLanding(){
   document.getElementById('live-pill').style.display='none';
   document.getElementById('sticky-bar').style.transform='translateY(100%)';
   inApp=false;
-  // Show sticky bar on scroll
   window.onscroll=function(){
     const bar=document.getElementById('sticky-bar');
     if(bar&&window.scrollY>400){bar.style.transform='translateY(0)';}
@@ -897,17 +884,15 @@ async function fetchOdds(sport,market){
     const data=await r.json();
     if(data.message)throw new Error(data.message);
     ss(`✓ ${data.length} games live`);
-    // Update sport count with real data
     const countEl=document.getElementById('count-'+sport);
     if(countEl){
       if(data.length>0){
-        // Count only games live or starting within 4 hours
         const now=Date.now();
         const soon=data.filter(g=>new Date(g.commence_time).getTime()<=now+14400000).length;
         countEl.textContent=soon>0?soon:'';
       }else{countEl.textContent='';}
     }
-    return data.length>0?data:null; // return null if empty so we use demo
+    return data.length>0?data:null;
   }catch(e){
     ss('demo mode');
     return null;
@@ -935,7 +920,7 @@ async function loadData(){
   const loader='<div class="loading-state"><div class="loading-spinner"></div>Fetching live odds...</div>';
   ['ev-rows','arb-rows','odds-rows','lh-rows','mid-rows','live-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=loader;});
   const realData=await fetchOdds(currentSport,currentMarket);
-  const data=realData||generateDemoData(); // use demo only for display
+  const data=realData||generateDemoData();
   const isDemo=!realData;
   if(isDemo){ss('demo mode — no live games for this sport');}
   document.getElementById('ev-games').textContent=realData?realData.length:0;
@@ -1031,7 +1016,7 @@ function renderEV(data,isDemo){
     </div></div>`).join('');
 }
 
-// ARB
+// ARB — FIXED: full book names instead of .substring(0,4)
 function renderArb(data,isDemo){
   if(isDemo){document.getElementById('arb-count').textContent='0';document.getElementById('arb-best').textContent='—';document.getElementById('arb-avg').textContent='—';document.getElementById('arb-books').textContent='—';document.getElementById('arb-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB for real arbitrage opportunities.</div>';return;}
   const arbs=[],bks=new Set();
@@ -1057,8 +1042,8 @@ function renderArb(data,isDemo){
     return`<div class="bet-row">
       <div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr">
         <div><div class="game-teams">${a.game}</div><div class="game-meta">${fmtT(a.time)}</div></div>
-        <div class="col-c"><div class="col-l">${a.sA.name}</div><div class="odds-pill"><span class="book-tag">${a.sA.book.substring(0,4)}</span>${fmt(a.sA.odds)}</div></div>
-        <div class="col-c"><div class="col-l">${a.sB.name}</div><div class="odds-pill"><span class="book-tag">${a.sB.book.substring(0,4)}</span>${fmt(a.sB.odds)}</div></div>
+        <div class="col-c"><div class="col-l">${a.sA.name}</div><div class="odds-pill"><span class="book-tag">${a.sA.book}</span>${fmt(a.sA.odds)}</div></div>
+        <div class="col-c"><div class="col-l">${a.sB.name}</div><div class="odds-pill"><span class="book-tag">${a.sB.book}</span>${fmt(a.sB.odds)}</div></div>
         <div class="col-c"><div class="col-l">Profit %</div><div class="profit-badge">+${a.profit}%</div></div>
         <div class="col-c"><div class="col-l">On $200</div><div style="font-family:var(--fm);font-size:13px;color:var(--green);font-weight:700">+$${pd}</div></div>
         <div class="col-c"><button class="bet-btn" onclick="openBook('${a.sA.book}')">BET →</button></div>
@@ -1159,7 +1144,6 @@ function calcKelly(){const bk=parseFloat(document.getElementById('kelly-bank').v
 // TABS
 function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');}
 function selectSport(el,sport){
-  // Only remove active from sport sidebar items, not market items
   ['basketball_nba','baseball_mlb','baseball_ncaa','americanfootball_nfl','icehockey_nhl','basketball_ncaab','americanfootball_ncaaf','soccer_usa_mls','soccer_epl','soccer_uefa_champs_league','soccer_spain_la_liga','soccer_italy_serie_a','soccer_germany_bundesliga','tennis_atp_french_open','tennis_wta_french_open','mma_mixed_martial_arts','boxing_boxing'].forEach(s=>{
     const el2=document.getElementById('sport-'+s);
     if(el2)el2.classList.remove('active');
@@ -1167,7 +1151,6 @@ function selectSport(el,sport){
   el.classList.add('active');
   currentSport=sport;
   loadData();
-  // Update picks to show sport-relevant content
   renderPicks(sport);
 }
 function selectMarket(el,market){el.closest('.sidebar-section').querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');currentMarket=market;loadData();}
@@ -1229,7 +1212,7 @@ function sendSuggestion(msg){
   setTimeout(()=>{removeTyping();addMessage(getChatResponse(msg),false);},800+Math.random()*600);
 }
 
-// SPORT COUNTS - fetch counts for all sports in background
+// SPORT COUNTS
 const SPORT_LIST=['basketball_nba','baseball_mlb','baseball_ncaa','americanfootball_nfl','icehockey_nhl','basketball_ncaab','soccer_usa_mls','soccer_epl','mma_mixed_martial_arts'];
 async function loadSportCounts(){
   for(const sport of SPORT_LIST){
@@ -1254,7 +1237,7 @@ async function loadSportCounts(){
 function renderLive(data,isDemo){
   if(isDemo){document.getElementById('live-count').textContent='0';document.getElementById('live-soon').textContent='0';document.getElementById('live-ev').textContent='—';document.getElementById('live-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport right now. Try MLB or NBA.</div>';return;}
   const now=Date.now();
-  const twoHours=now+14400000; // 4 hours
+  const twoHours=now+14400000;
   const liveAndSoon=data.filter(g=>{
     const t=new Date(g.commence_time).getTime();
     return t<=twoHours;
@@ -1264,7 +1247,6 @@ function renderLive(data,isDemo){
   document.getElementById('live-soon').textContent=soon.length;
   document.getElementById('live-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
 
-  // Find best EV among live games
   let bestEV=0;
   liveAndSoon.forEach(g=>{
     const books=g.bookmakers||[];
@@ -1308,7 +1290,7 @@ function renderLive(data,isDemo){
           <div class="game-meta" style="margin-top:4px">${timeLabel}</div>
         </div>
         <div class="col-c"><div class="col-l">Books</div><div style="font-family:var(--fm);font-size:13px;font-weight:700">${books.length}</div></div>
-        ${outcomes.map(([name,data])=>`<div class="col-c"><div class="col-l">${name.split(' ').slice(-1)[0]}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(data.odds)}</div><div class="book-tag" style="margin-top:4px;display:inline-block">${data.book.substring(0,4)}</div></div>`).join('')}
+        ${outcomes.map(([name,data])=>`<div class="col-c"><div class="col-l">${name.split(' ').slice(-1)[0]}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(data.odds)}</div><div class="book-tag" style="margin-top:4px;display:inline-block">${data.book}</div></div>`).join('')}
         <div class="col-c"><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET →</button></div>
       </div>
     </div>`;
@@ -1363,7 +1345,6 @@ function renderMiddles(data,isDemo){
   data.forEach(g=>{
     const books=g.bookmakers||[];
     books.forEach(b=>allBooks.add(b.key));
-    // Look for spread markets with different lines across books
     const spreadsByOutcome={};
     books.forEach(bm=>{
       (bm.markets||[]).forEach(mk=>{
@@ -1380,7 +1361,6 @@ function renderMiddles(data,isDemo){
     const offersA=spreadsByOutcome[teamA];
     const offersB=spreadsByOutcome[teamB];
     if(!offersA||!offersB)return;
-    // Find best spread for each team
     offersA.forEach(oA=>{
       offersB.forEach(oB=>{
         if(oA.book===oB.book)return;
@@ -1458,7 +1438,6 @@ function calcFreeBet(){
   if(isNaN(backOdds)||isNaN(layOdds))return;
   const backDec=atod(backOdds);
   const layDec=atod(layOdds);
-  // Free bet doesn't return stake
   const backProfit=amt*(backDec-1);
   const hedge=backProfit/layDec;
   const winProfit=backProfit-hedge*(layDec-1);
