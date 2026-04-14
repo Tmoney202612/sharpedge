@@ -55,7 +55,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .price-features{list-style:none;margin-bottom:28px;}
 .price-features li{padding:9px 0;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;color:var(--text);}
 .price-features li:last-child{border-bottom:none;}
-.price-features li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0;font-size:12px;}
+.price-features li::before{content:'\u2713';color:var(--accent);font-weight:800;flex-shrink:0;font-size:12px;}
 .price-btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fh);transition:all 0.15s;}
 .price-btn-accent{background:var(--accent);color:#000;}
 .price-btn-accent:hover{background:#00c98a;}
@@ -80,6 +80,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
 .stat-label{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
 .stat-value{font-size:26px;font-weight:800;color:var(--accent);font-family:var(--fm);line-height:1;letter-spacing:-1px;}
+.stat-val{font-size:22px;font-weight:800;color:var(--accent);font-family:var(--fm);line-height:1;letter-spacing:-1px;}
 .stat-sub{font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--fm);}
 .section-title{font-size:18px;font-weight:800;margin-bottom:4px;color:#fff;letter-spacing:-0.5px;}
 .section-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
@@ -90,7 +91,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .game-teams{font-size:14px;font-weight:700;margin-bottom:3px;color:#fff;}
 .game-meta{font-size:11px;color:var(--muted);font-family:var(--fm);}
 .odds-pill{display:inline-flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:var(--fm);font-size:13px;font-weight:600;gap:5px;}
-.book-tag{font-size:9px;background:var(--border);padding:2px 6px;border-radius:4px;color:var(--muted);font-weight:700;font-family:var(--fm);}
+.book-tag{font-size:10px;background:rgba(0,229,160,0.12);padding:3px 8px;border-radius:4px;color:var(--accent);font-weight:700;font-family:var(--fm);border:1px solid rgba(0,229,160,0.25);}
 .ev-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-family:var(--fm);font-size:13px;font-weight:700;}
 .ev-pos{background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.25);}
 .profit-badge{padding:4px 10px;border-radius:6px;font-family:var(--fm);font-size:13px;font-weight:700;background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.25);}
@@ -249,7 +250,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   <div class="header-right">
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
-    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Start Free Trial →</button>
+    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Start Free Trial \u2192</button>
     <button class="btn-ghost" id="header-demo" onclick="enterApp()">View Live Demo</button>
   </div>
 </header>
@@ -257,20 +258,20 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 <!-- LANDING -->
 <div id="landing">
   <div class="hero">
-    <div class="hero-badge">📊 Trusted by Sharp Bettors · Updated Daily by 9AM ET</div>
+    <div class="hero-badge">\ud83d\udcca Trusted by Sharp Bettors \u00b7 Updated Daily by 9AM ET</div>
     <h1>Stop Guessing.<br><span>Start Winning.</span></h1>
     <p>Expert picks by 9AM. Live +EV bets, arbitrage, and real-time odds across 9+ books. We do the math — you collect.</p>
     <div class="hero-btns">
-      <button class="hero-btn-primary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🟢 Start Free Trial — 7 Days Free →</button>
+      <button class="hero-btn-primary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">\ud83d\udfe2 Start Free Trial — 7 Days Free \u2192</button>
       <button class="hero-btn-secondary" onclick="enterApp()">View Live Demo</button>
     </div>
     <div class="hero-features">
-      <div class="hero-feat"><div class="hero-feat-icon">📈</div><div class="hero-feat-title">Bets the Books Got Wrong</div><div class="hero-feat-desc">We scan 9+ live books and surface every line where the math is in your favor.</div></div>
-      <div class="hero-feat"><div class="hero-feat-icon">🔄</div><div class="hero-feat-title">Lock In Profit Before Tip-Off</div><div class="hero-feat-desc">Bet both sides at different books. Win regardless of the result. Zero risk. Updated live, 24/7.</div></div>
-      <div class="hero-feat"><div class="hero-feat-icon">🎯</div><div class="hero-feat-title">Sharp Picks. Full Reasoning.</div><div class="hero-feat-desc">Every pick delivered by 9AM with the bet, the book, the odds, and exactly why we're backing it.</div></div>
+      <div class="hero-feat"><div class="hero-feat-icon">\ud83d\udcc8</div><div class="hero-feat-title">Bets the Books Got Wrong</div><div class="hero-feat-desc">We scan 9+ live books and surface every line where the math is in your favor.</div></div>
+      <div class="hero-feat"><div class="hero-feat-icon">\ud83d\udd04</div><div class="hero-feat-title">Lock In Profit Before Tip-Off</div><div class="hero-feat-desc">Bet both sides at different books. Win regardless of the result. Zero risk. Updated live, 24/7.</div></div>
+      <div class="hero-feat"><div class="hero-feat-icon">\ud83c\udfaf</div><div class="hero-feat-title">Sharp Picks. Full Reasoning.</div><div class="hero-feat-desc">Every pick delivered by 9AM with the bet, the book, the odds, and exactly why we're backing it.</div></div>
     </div>
     <div style="margin-top:32px;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:12px 20px;font-size:12px;font-family:var(--fm);color:var(--accent);display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;">
-      <span>📈 Today: 3-1</span><span style="color:var(--border)">·</span><span>+2.3 units</span><span style="color:var(--border)">·</span><span>7-Day Hit Rate: 68%</span><span style="color:var(--border)">·</span><span>30-Day ROI: +22%</span>
+      <span>\ud83d\udcc8 Today: 3-1</span><span style="color:var(--border)">\u00b7</span><span>+2.3 units</span><span style="color:var(--border)">\u00b7</span><span>7-Day Hit Rate: 68%</span><span style="color:var(--border)">\u00b7</span><span>30-Day ROI: +22%</span>
     </div>
   </div>
   <div style="position:relative;z-index:1;padding:60px 40px;max-width:900px;margin:0 auto;">
@@ -290,64 +291,63 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div class="price-name">Starter</div><div class="price-amount">$39<span>/mo</span></div>
         <div class="price-desc">Everything you need to bet with an edge on day one.</div>
         <ul class="price-features"><li>Top 3 expert picks daily — by 9AM ET</li><li>Live odds comparison across 9+ books</li><li>EV, Arb, Kelly & Parlay calculators</li><li>Bet tracker with real-time P/L & ROI</li><li>Discord community</li></ul>
-        <button class="price-btn price-btn-outline" onclick="window.open('https://whop.com/prime-edge-picks/the-edge-28','_blank')">Start Free — 7 Days on Us →</button>
+        <button class="price-btn price-btn-outline" onclick="window.open('https://whop.com/prime-edge-picks/the-edge-28','_blank')">Start Free — 7 Days on Us \u2192</button>
       </div>
       <div class="price-card featured">
         <div class="price-name">Pro</div><div class="price-amount">$99<span>/mo</span></div>
         <div class="price-desc">The complete system for serious bettors.</div>
         <ul class="price-features"><li>Everything in Starter</li><li>Full +EV scanner — live, all sports, all books</li><li>Arbitrage finder with live alerts</li><li>Full picks with complete analysis</li><li>Player prop database + trends</li><li>Kelly Criterion optimal bet sizing</li><li>Low Hold, Middles & Promo Finder</li><li>Free Bet Converter</li><li>Priority Discord + analyst access</li></ul>
-        <button class="price-btn price-btn-accent" onclick="window.open('https://whop.com/prime-edge-picks/the-sharp-0c','_blank')">Go Pro — 7 Days Free →</button>
+        <button class="price-btn price-btn-accent" onclick="window.open('https://whop.com/prime-edge-picks/the-sharp-0c','_blank')">Go Pro — 7 Days Free \u2192</button>
       </div>
     </div>
   </div>
 </div>
 
 <div id="sticky-bar" style="position:fixed;bottom:0;left:0;right:0;background:rgba(8,10,13,0.97);border-top:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;z-index:98;backdrop-filter:blur(20px);transform:translateY(100%);transition:transform 0.3s ease;">
-  <span style="font-size:12px;color:var(--muted);font-family:var(--fm);">📈 Today: <span style="color:var(--green)">3-1</span> · 68% Hit Rate · <span style="color:var(--yellow)">+22% ROI</span></span>
-  <button onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:8px 20px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--fh);">Start Free Trial →</button>
+  <span style="font-size:12px;color:var(--muted);font-family:var(--fm);">\ud83d\udcc8 Today: <span style="color:var(--green)">3-1</span> \u00b7 68% Hit Rate \u00b7 <span style="color:var(--yellow)">+22% ROI</span></span>
+  <button onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:8px 20px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--fh);">Start Free Trial \u2192</button>
 </div>
 
 <!-- APP -->
 <div id="app" style="display:none">
   <div class="nav-tabs">
-    <button class="tab-btn" onclick="showTab('live',this)">🔴 Live Now</button>
-    <button class="tab-btn active" onclick="showTab('picks',this)">🎯 Daily Picks</button>
-    <button class="tab-btn" onclick="showTab('ev',this)">📈 Positive EV</button>
-    <button class="tab-btn" onclick="showTab('arb',this)">🔄 Arbitrage</button>
-    <button class="tab-btn" onclick="showTab('parlay',this)">🎲 Parlay Builder</button>
-    <button class="tab-btn" onclick="showTab('odds',this)">📊 Odds Compare</button>
-    <button class="tab-btn" onclick="showTab('tracker',this)">📋 Bet Tracker</button>
-    <button class="tab-btn" onclick="showTab('calc',this)">🔢 Calculators</button>
-    <button class="tab-btn" onclick="showTab('promos',this)">🎁 Promos</button>
-    <button class="tab-btn" onclick="showTab('lowhold',this)">💎 Low Hold</button>
-    <button class="tab-btn" onclick="showTab('middles',this)">🎯 Middles</button>
-    <button class="tab-btn" onclick="showTab('polymarket',this)">🔮 Polymarket</button>
-    <button class="tab-btn" onclick="showTab('tools',this)">🔧 More Tools</button>
+    <button class="tab-btn" onclick="showTab('live',this)">\ud83d\udd34 Live Now</button>
+    <button class="tab-btn active" onclick="showTab('picks',this)">\ud83c\udfaf Daily Picks</button>
+    <button class="tab-btn" onclick="showTab('ev',this)">\ud83d\udcc8 Positive EV</button>
+    <button class="tab-btn" onclick="showTab('arb',this)">\ud83d\udd04 Arbitrage</button>
+    <button class="tab-btn" onclick="showTab('parlay',this)">\ud83c\udfb2 Parlay Builder</button>
+    <button class="tab-btn" onclick="showTab('odds',this)">\ud83d\udcca Odds Compare</button>
+    <button class="tab-btn" onclick="showTab('tracker',this)">\ud83d\udccb Bet Tracker</button>
+    <button class="tab-btn" onclick="showTab('calc',this)">\ud83d\udd22 Calculators</button>
+    <button class="tab-btn" onclick="showTab('promos',this)">\ud83c\udf81 Promos</button>
+    <button class="tab-btn" onclick="showTab('lowhold',this)">\ud83d\udc8e Low Hold</button>
+    <button class="tab-btn" onclick="showTab('middles',this)">\ud83c\udfaf Middles</button>
+    <button class="tab-btn" onclick="showTab('tools',this)">\ud83d\udd27 More Tools</button>
   </div>
   <div class="main">
     <div class="sidebar">
       <div class="sidebar-section">
-        <div class="sidebar-title">🇺🇸 US Sports</div>
-        <div class="sidebar-item active" id="sport-basketball_nba" onclick="selectSport(this,'basketball_nba')">🏀 NBA <span class="sport-count" id="count-basketball_nba"></span></div>
-        <div class="sidebar-item" id="sport-baseball_mlb" onclick="selectSport(this,'baseball_mlb')">⚾ MLB <span class="sport-count" id="count-baseball_mlb"></span></div>
-        <div class="sidebar-item" id="sport-americanfootball_nfl" onclick="selectSport(this,'americanfootball_nfl')">🏈 NFL <span class="sport-count" id="count-americanfootball_nfl"></span></div>
-        <div class="sidebar-item" id="sport-icehockey_nhl" onclick="selectSport(this,'icehockey_nhl')">🏒 NHL <span class="sport-count" id="count-icehockey_nhl"></span></div>
-        <div class="sidebar-item" id="sport-basketball_ncaab" onclick="selectSport(this,'basketball_ncaab')">🏀 NCAAB <span class="sport-count" id="count-basketball_ncaab"></span></div>
-        <div class="sidebar-item" id="sport-soccer_usa_mls" onclick="selectSport(this,'soccer_usa_mls')">⚽ MLS <span class="sport-count" id="count-soccer_usa_mls"></span></div>
+        <div class="sidebar-title">\ud83c\uddfa\ud83c\uddf8 US Sports</div>
+        <div class="sidebar-item active" id="sport-basketball_nba" onclick="selectSport(this,'basketball_nba')">\ud83c\udfc0 NBA <span class="sport-count" id="count-basketball_nba"></span></div>
+        <div class="sidebar-item" id="sport-baseball_mlb" onclick="selectSport(this,'baseball_mlb')">\u26be MLB <span class="sport-count" id="count-baseball_mlb"></span></div>
+        <div class="sidebar-item" id="sport-americanfootball_nfl" onclick="selectSport(this,'americanfootball_nfl')">\ud83c\udfc8 NFL <span class="sport-count" id="count-americanfootball_nfl"></span></div>
+        <div class="sidebar-item" id="sport-icehockey_nhl" onclick="selectSport(this,'icehockey_nhl')">\ud83c\udfd2 NHL <span class="sport-count" id="count-icehockey_nhl"></span></div>
+        <div class="sidebar-item" id="sport-basketball_ncaab" onclick="selectSport(this,'basketball_ncaab')">\ud83c\udfc0 NCAAB <span class="sport-count" id="count-basketball_ncaab"></span></div>
+        <div class="sidebar-item" id="sport-soccer_usa_mls" onclick="selectSport(this,'soccer_usa_mls')">\u26bd MLS <span class="sport-count" id="count-soccer_usa_mls"></span></div>
       </div>
       <div class="sidebar-section">
-        <div class="sidebar-title">🌍 International</div>
-        <div class="sidebar-item" id="sport-soccer_epl" onclick="selectSport(this,'soccer_epl')">⚽ EPL <span class="sport-count" id="count-soccer_epl"></span></div>
-        <div class="sidebar-item" id="sport-soccer_uefa_champs_league" onclick="selectSport(this,'soccer_uefa_champs_league')">⚽ Champions Lg <span class="sport-count" id="count-soccer_uefa_champs_league"></span></div>
-        <div class="sidebar-item" id="sport-soccer_spain_la_liga" onclick="selectSport(this,'soccer_spain_la_liga')">⚽ La Liga <span class="sport-count" id="count-soccer_spain_la_liga"></span></div>
-        <div class="sidebar-item" id="sport-soccer_italy_serie_a" onclick="selectSport(this,'soccer_italy_serie_a')">⚽ Serie A <span class="sport-count" id="count-soccer_italy_serie_a"></span></div>
-        <div class="sidebar-item" id="sport-soccer_germany_bundesliga" onclick="selectSport(this,'soccer_germany_bundesliga')">⚽ Bundesliga <span class="sport-count" id="count-soccer_germany_bundesliga"></span></div>
-        <div class="sidebar-item" id="sport-tennis_atp_french_open" onclick="selectSport(this,'tennis_atp_french_open')">🎾 Tennis ATP <span class="sport-count" id="count-tennis_atp_french_open"></span></div>
+        <div class="sidebar-title">\ud83c\udf0d International</div>
+        <div class="sidebar-item" id="sport-soccer_epl" onclick="selectSport(this,'soccer_epl')">\u26bd EPL <span class="sport-count" id="count-soccer_epl"></span></div>
+        <div class="sidebar-item" id="sport-soccer_uefa_champs_league" onclick="selectSport(this,'soccer_uefa_champs_league')">\u26bd Champions Lg <span class="sport-count" id="count-soccer_uefa_champs_league"></span></div>
+        <div class="sidebar-item" id="sport-soccer_spain_la_liga" onclick="selectSport(this,'soccer_spain_la_liga')">\u26bd La Liga <span class="sport-count" id="count-soccer_spain_la_liga"></span></div>
+        <div class="sidebar-item" id="sport-soccer_italy_serie_a" onclick="selectSport(this,'soccer_italy_serie_a')">\u26bd Serie A <span class="sport-count" id="count-soccer_italy_serie_a"></span></div>
+        <div class="sidebar-item" id="sport-soccer_germany_bundesliga" onclick="selectSport(this,'soccer_germany_bundesliga')">\u26bd Bundesliga <span class="sport-count" id="count-soccer_germany_bundesliga"></span></div>
+        <div class="sidebar-item" id="sport-tennis_atp_french_open" onclick="selectSport(this,'tennis_atp_french_open')">\ud83c\udfbe Tennis ATP <span class="sport-count" id="count-tennis_atp_french_open"></span></div>
       </div>
       <div class="sidebar-section">
-        <div class="sidebar-title">🥊 Combat</div>
-        <div class="sidebar-item" id="sport-mma_mixed_martial_arts" onclick="selectSport(this,'mma_mixed_martial_arts')">🥊 UFC / MMA <span class="sport-count" id="count-mma_mixed_martial_arts"></span></div>
-        <div class="sidebar-item" id="sport-boxing_boxing" onclick="selectSport(this,'boxing_boxing')">🥊 Boxing <span class="sport-count" id="count-boxing_boxing"></span></div>
+        <div class="sidebar-title">\ud83e\udd4a Combat</div>
+        <div class="sidebar-item" id="sport-mma_mixed_martial_arts" onclick="selectSport(this,'mma_mixed_martial_arts')">\ud83e\udd4a UFC / MMA <span class="sport-count" id="count-mma_mixed_martial_arts"></span></div>
+        <div class="sidebar-item" id="sport-boxing_boxing" onclick="selectSport(this,'boxing_boxing')">\ud83e\udd4a Boxing <span class="sport-count" id="count-boxing_boxing"></span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Market</div>
@@ -357,26 +357,26 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Sportsbooks</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ DraftKings</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ FanDuel</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetMGM</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Caesars</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetRivers</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Pinnacle</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Unibet</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetOnline</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 DraftKings</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 FanDuel</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 BetMGM</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 Caesars</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 BetRivers</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 Pinnacle</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 Unibet</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">\u2713 BetOnline</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Account</div>
-        <div class="sidebar-item" style="color:var(--accent);cursor:default;">⚡ Pro Member</div>
-        <div class="sidebar-item" onclick="showLanding()">← Back to Home</div>
+        <div class="sidebar-item" style="color:var(--accent);cursor:default;">\u26a1 Pro Member</div>
+        <div class="sidebar-item" onclick="showLanding()">\u2190 Back to Home</div>
       </div>
     </div>
     <div class="content">
 
       <!-- LIVE NOW - ALL SPORTS -->
       <div id="panel-live" class="panel">
-        <div class="section-title">🔴 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
+        <div class="section-title">\ud83d\udd34 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
         <div class="section-sub">All sports — games live or starting within 4 hours.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Live/Soon</div><div class="stat-value" id="live-count" style="color:var(--red)">—</div><div class="stat-sub">all sports</div></div>
@@ -385,21 +385,21 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="live-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
         </div>
         <div class="sport-filters" id="live-sport-filters">
-          <div class="sport-chip active" onclick="filterLiveSport(this,'all')">🌐 All <span class="chip-count" id="live-chip-count-all">—</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'NBA')">🏀 NBA <span class="chip-count" id="live-chip-count-NBA">0</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'MLB')">⚾ MLB <span class="chip-count" id="live-chip-count-MLB">0</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'NHL')">🏒 NHL <span class="chip-count" id="live-chip-count-NHL">0</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'NFL')">🏈 NFL <span class="chip-count" id="live-chip-count-NFL">0</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'EPL')">⚽ EPL <span class="chip-count" id="live-chip-count-EPL">0</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'MLS')">⚽ MLS <span class="chip-count" id="live-chip-count-MLS">0</span></div>
-          <div class="sport-chip" onclick="filterLiveSport(this,'UFC')">🥊 UFC <span class="chip-count" id="live-chip-count-UFC">0</span></div>
+          <div class="sport-chip active" onclick="filterLiveSport(this,'all')">\ud83c\udf10 All <span class="chip-count" id="live-chip-count-all">—</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'NBA')">\ud83c\udfc0 NBA <span class="chip-count" id="live-chip-count-NBA">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'MLB')">\u26be MLB <span class="chip-count" id="live-chip-count-MLB">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'NHL')">\ud83c\udfd2 NHL <span class="chip-count" id="live-chip-count-NHL">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'NFL')">\ud83c\udfc8 NFL <span class="chip-count" id="live-chip-count-NFL">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'EPL')">\u26bd EPL <span class="chip-count" id="live-chip-count-EPL">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'MLS')">\u26bd MLS <span class="chip-count" id="live-chip-count-MLS">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'UFC')">\ud83e\udd4a UFC <span class="chip-count" id="live-chip-count-UFC">0</span></div>
         </div>
         <div id="live-rows"><div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports...</div></div></div>
       </div>
 
       <!-- DAILY PICKS - ALL SPORTS FROM API -->
       <div id="panel-picks" class="panel active">
-        <div class="section-title">🎯 Today's Expert Picks</div>
+        <div class="section-title">\ud83c\udfaf Today's Expert Picks</div>
         <div class="section-sub">Top +EV picks across all live sports — updated daily. Best odds highlighted.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Picks Today</div><div class="stat-value" id="picks-count" style="color:var(--green)">—</div><div class="stat-sub">all sports</div></div>
@@ -408,26 +408,20 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="picks-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">live data</div></div>
         </div>
         <div class="sport-filters" id="picks-sport-filters">
-          <div class="sport-chip active" onclick="filterPicksSport(this,'all')">🌐 All <span class="chip-count" id="picks-chip-all">—</span></div>
-          <div class="sport-chip" onclick="filterPicksSport(this,'NBA')">🏀 NBA <span class="chip-count" id="picks-chip-NBA">0</span></div>
-          <div class="sport-chip" onclick="filterPicksSport(this,'MLB')">⚾ MLB <span class="chip-count" id="picks-chip-MLB">0</span></div>
-          <div class="sport-chip" onclick="filterPicksSport(this,'NHL')">🏒 NHL <span class="chip-count" id="picks-chip-NHL">0</span></div>
-          <div class="sport-chip" onclick="filterPicksSport(this,'EPL')">⚽ EPL <span class="chip-count" id="picks-chip-EPL">0</span></div>
-          <div class="sport-chip" onclick="filterPicksSport(this,'MLS')">⚽ MLS <span class="chip-count" id="picks-chip-MLS">0</span></div>
-          <div class="sport-chip" onclick="filterPicksSport(this,'UFC')">🥊 UFC <span class="chip-count" id="picks-chip-UFC">0</span></div>
-        </div>
-        <div class="sport-filters" id="picks-odds-filters" style="margin-top:-10px;">
-          <div class="sport-chip active" style="border-color:var(--accent2);color:var(--accent2);background:rgba(79,138,255,0.1);" onclick="filterPicksOdds(this,'all')">📊 All Odds</div>
-          <div class="sport-chip" onclick="filterPicksOdds(this,'fav')" style="border-color:var(--yellow);">⭐ Favorites <span style="font-size:9px;opacity:0.7;">(negative odds)</span></div>
-          <div class="sport-chip" onclick="filterPicksOdds(this,'dog')" style="border-color:var(--red);">🐶 Underdogs <span style="font-size:9px;opacity:0.7;">(positive odds)</span></div>
-          <div class="sport-chip" onclick="filterPicksOdds(this,'small')" style="border-color:var(--green);">🎯 Small Edge <span style="font-size:9px;opacity:0.7;">(+100 to +200)</span></div>
+          <div class="sport-chip active" onclick="filterPicksSport(this,'all')">\ud83c\udf10 All <span class="chip-count" id="picks-chip-all">—</span></div>
+          <div class="sport-chip" onclick="filterPicksSport(this,'NBA')">\ud83c\udfc0 NBA <span class="chip-count" id="picks-chip-NBA">0</span></div>
+          <div class="sport-chip" onclick="filterPicksSport(this,'MLB')">\u26be MLB <span class="chip-count" id="picks-chip-MLB">0</span></div>
+          <div class="sport-chip" onclick="filterPicksSport(this,'NHL')">\ud83c\udfd2 NHL <span class="chip-count" id="picks-chip-NHL">0</span></div>
+          <div class="sport-chip" onclick="filterPicksSport(this,'EPL')">\u26bd EPL <span class="chip-count" id="picks-chip-EPL">0</span></div>
+          <div class="sport-chip" onclick="filterPicksSport(this,'MLS')">\u26bd MLS <span class="chip-count" id="picks-chip-MLS">0</span></div>
+          <div class="sport-chip" onclick="filterPicksSport(this,'UFC')">\ud83e\udd4a UFC <span class="chip-count" id="picks-chip-UFC">0</span></div>
         </div>
         <div id="picks-container"><div class="loading-state"><div class="loading-spinner"></div><div>Loading today's picks from all sports...</div></div></div>
       </div>
 
       <!-- POSITIVE EV - ALL SPORTS -->
       <div id="panel-ev" class="panel">
-        <div class="section-title">📈 Positive EV Bets</div>
+        <div class="section-title">\ud83d\udcc8 Positive EV Bets</div>
         <div class="section-sub">All sports — live odds vs. consensus fair line. Positive EV = mathematically profitable long-term.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">EV Bets Found</div><div class="stat-value" id="ev-count">—</div><div class="stat-sub">all sports</div></div>
@@ -436,14 +430,14 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="ev-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
         </div>
         <div class="sport-filters" id="ev-sport-filters">
-          <div class="sport-chip active" onclick="filterEVSport(this,'all')">🌐 All <span class="chip-count" id="ev-chip-all">—</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'NBA')">🏀 NBA <span class="chip-count" id="ev-chip-NBA">0</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'MLB')">⚾ MLB <span class="chip-count" id="ev-chip-MLB">0</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'NHL')">🏒 NHL <span class="chip-count" id="ev-chip-NHL">0</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'NFL')">🏈 NFL <span class="chip-count" id="ev-chip-NFL">0</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'EPL')">⚽ EPL <span class="chip-count" id="ev-chip-EPL">0</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'MLS')">⚽ MLS <span class="chip-count" id="ev-chip-MLS">0</span></div>
-          <div class="sport-chip" onclick="filterEVSport(this,'UFC')">🥊 UFC <span class="chip-count" id="ev-chip-UFC">0</span></div>
+          <div class="sport-chip active" onclick="filterEVSport(this,'all')">\ud83c\udf10 All <span class="chip-count" id="ev-chip-all">—</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'NBA')">\ud83c\udfc0 NBA <span class="chip-count" id="ev-chip-NBA">0</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'MLB')">\u26be MLB <span class="chip-count" id="ev-chip-MLB">0</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'NHL')">\ud83c\udfd2 NHL <span class="chip-count" id="ev-chip-NHL">0</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'NFL')">\ud83c\udfc8 NFL <span class="chip-count" id="ev-chip-NFL">0</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'EPL')">\u26bd EPL <span class="chip-count" id="ev-chip-EPL">0</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'MLS')">\u26bd MLS <span class="chip-count" id="ev-chip-MLS">0</span></div>
+          <div class="sport-chip" onclick="filterEVSport(this,'UFC')">\ud83e\udd4a UFC <span class="chip-count" id="ev-chip-UFC">0</span></div>
         </div>
         <div class="table-header" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
           <span>Sport</span><span>Outcome / Game</span><span class="col-c">Best Book</span><span class="col-c">Best Odds</span><span class="col-c">Fair Odds</span><span class="col-c">EV %</span><span class="col-c">Bet</span>
@@ -453,7 +447,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 
       <!-- ARB - ALL SPORTS -->
       <div id="panel-arb" class="panel">
-        <div class="section-title">🔄 Arbitrage <span style="font-size:13px;color:var(--green);font-family:var(--fm);font-weight:700">GUARANTEED PROFIT</span></div>
+        <div class="section-title">\ud83d\udd04 Arbitrage <span style="font-size:13px;color:var(--green);font-family:var(--fm);font-weight:700">GUARANTEED PROFIT</span></div>
         <div class="section-sub">All sports — bet both sides at different books, profit locked in regardless of outcome.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Arb Opportunities</div><div class="stat-value" id="arb-count">—</div><div class="stat-sub">all sports</div></div>
@@ -462,31 +456,31 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="stat-card"><div class="stat-label">Sports Scanned</div><div class="stat-value" id="arb-sports-count" style="color:var(--accent)">—</div><div class="stat-sub">live now</div></div>
         </div>
         <div class="sport-filters" id="arb-sport-filters">
-          <div class="sport-chip active" onclick="filterArbSport(this,'all')">🌐 All <span class="chip-count" id="chip-count-all">—</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'NBA')">🏀 NBA <span class="chip-count" id="chip-count-NBA">0</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'MLB')">⚾ MLB <span class="chip-count" id="chip-count-MLB">0</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'NHL')">🏒 NHL <span class="chip-count" id="chip-count-NHL">0</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'NFL')">🏈 NFL <span class="chip-count" id="chip-count-NFL">0</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'EPL')">⚽ EPL <span class="chip-count" id="chip-count-EPL">0</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'MLS')">⚽ MLS <span class="chip-count" id="chip-count-MLS">0</span></div>
-          <div class="sport-chip" onclick="filterArbSport(this,'UFC')">🥊 UFC <span class="chip-count" id="chip-count-UFC">0</span></div>
+          <div class="sport-chip active" onclick="filterArbSport(this,'all')">\ud83c\udf10 All <span class="chip-count" id="chip-count-all">—</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'NBA')">\ud83c\udfc0 NBA <span class="chip-count" id="chip-count-NBA">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'MLB')">\u26be MLB <span class="chip-count" id="chip-count-MLB">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'NHL')">\ud83c\udfd2 NHL <span class="chip-count" id="chip-count-NHL">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'NFL')">\ud83c\udfc8 NFL <span class="chip-count" id="chip-count-NFL">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'EPL')">\u26bd EPL <span class="chip-count" id="chip-count-EPL">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'MLS')">\u26bd MLS <span class="chip-count" id="chip-count-MLS">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'UFC')">\ud83e\udd4a UFC <span class="chip-count" id="chip-count-UFC">0</span></div>
         </div>
         <div id="arb-rows"><div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports for arbitrage...</div></div></div>
       </div>
 
       <!-- PARLAY BUILDER -->
       <div id="panel-parlay" class="panel">
-        <div class="section-title">🎲 Parlay Builder</div>
+        <div class="section-title">\ud83c\udfb2 Parlay Builder</div>
         <div class="section-sub">Build parlays from live +EV picks across all sports. We show true odds, real payout, and expected value.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
           <!-- Left: Pick from live EV bets -->
           <div>
-            <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;">➕ Add Legs from Live +EV Picks</div>
+            <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;">\u2795 Add Legs from Live +EV Picks</div>
             <div id="parlay-ev-picks"><div class="loading-state" style="padding:30px 20px;"><div class="loading-spinner"></div>Loading live picks...</div></div>
           </div>
           <!-- Right: Your parlay -->
           <div>
-            <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;">🎯 Your Parlay <span id="parlay-leg-count" style="font-size:12px;color:var(--muted);font-weight:500;">(0 legs)</span></div>
+            <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;">\ud83c\udfaf Your Parlay <span id="parlay-leg-count" style="font-size:12px;color:var(--muted);font-weight:500;">(0 legs)</span></div>
             <div>
               <div class="calc-field"><label class="calc-label">Stake ($)</label><input class="calc-input" id="parlay-stake-main" placeholder="100" type="number" value="100" oninput="calcParlayMain()"/></div>
             </div>
@@ -508,17 +502,17 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 
       <!-- ODDS COMPARE -->
       <div id="panel-odds" class="panel">
-        <div class="section-title">📊 Live Odds Comparison</div>
+        <div class="section-title">\ud83d\udcca Live Odds Comparison</div>
         <div class="section-sub">Real-time odds across all major books. Best price in green.</div>
         <div id="odds-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
       </div>
 
       <!-- TRACKER -->
       <div id="panel-tracker" class="panel">
-        <div class="section-title">📋 Bet Tracker</div>
+        <div class="section-title">\ud83d\udccb Bet Tracker</div>
         <div class="section-sub">Your full portfolio. P/L and ROI auto-calculated.</div>
         <div class="add-bet-form">
-          <div style="font-size:15px;font-weight:800;margin-bottom:16px;color:#fff;">➕ Log a Bet</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:16px;color:#fff;">\u2795 Log a Bet</div>
           <div class="form-grid">
             <div><label class="calc-label">Game</label><input class="calc-input" id="t-game" placeholder="Lakers vs Warriors"/></div>
             <div><label class="calc-label">Market / Pick</label><input class="calc-input" id="t-market" placeholder="Lakers ML"/></div>
@@ -538,26 +532,26 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 
       <!-- CALCULATORS -->
       <div id="panel-calc" class="panel">
-        <div class="section-title">🔢 Calculators</div>
+        <div class="section-title">\ud83d\udd22 Calculators</div>
         <div class="section-sub">Professional betting math.</div>
         <div class="calc-grid">
-          <div class="calc-card"><div class="calc-title">📈 EV Calculator</div><div class="calc-desc">Is a bet mathematically profitable?</div><div class="calc-field"><label class="calc-label">Your Odds</label><input class="calc-input" id="ev-your-odds" placeholder="+150"/></div><div class="calc-field"><label class="calc-label">Fair/Sharp Odds</label><input class="calc-input" id="ev-fair-odds" placeholder="+120"/></div><div class="calc-field"><label class="calc-label">Stake ($)</label><input class="calc-input" id="ev-stake" placeholder="100" type="number"/></div><button class="calc-btn" onclick="calcEV()">Calculate EV</button><div class="calc-result" id="ev-result"><div class="result-row"><span class="result-key">Implied Prob</span><span class="result-val" id="ev-impl">—</span></div><div class="result-row"><span class="result-key">True Prob</span><span class="result-val" id="ev-true">—</span></div><div class="result-row"><span class="result-key">EV %</span><span class="result-val" id="ev-pct">—</span></div><div class="result-row"><span class="result-key">Expected Profit</span><span class="result-val" id="ev-profit">—</span></div></div></div>
-          <div class="calc-card"><div class="calc-title">🔄 Arbitrage Calculator</div><div class="calc-desc">Exact stakes for guaranteed profit.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="arb-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="arb-b" placeholder="+120"/></div><div class="calc-field"><label class="calc-label">Total Bankroll ($)</label><input class="calc-input" id="arb-bank" placeholder="200" type="number"/></div><button class="calc-btn" onclick="calcArb()">Calculate Arb</button><div class="calc-result" id="arb-result"><div class="result-row"><span class="result-key">Stake Side A</span><span class="result-val" id="arb-stake-a">—</span></div><div class="result-row"><span class="result-key">Stake Side B</span><span class="result-val" id="arb-stake-b">—</span></div><div class="result-row"><span class="result-key">Guaranteed Profit</span><span class="result-val" id="arb-profit">—</span></div><div class="result-row"><span class="result-key">Profit %</span><span class="result-val" id="arb-pct">—</span></div></div></div>
-          <div class="calc-card"><div class="calc-title">💰 Hold / Vig Calculator</div><div class="calc-desc">The book's edge and true no-vig fair odds.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="hold-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="hold-b" placeholder="-110"/></div><button class="calc-btn" onclick="calcHold()">Calculate Hold</button><div class="calc-result" id="hold-result"><div class="result-row"><span class="result-key">Side A Implied</span><span class="result-val" id="hold-a-prob">—</span></div><div class="result-row"><span class="result-key">Side B Implied</span><span class="result-val" id="hold-b-prob">—</span></div><div class="result-row"><span class="result-key">Total Hold (Vig)</span><span class="result-val" id="hold-vig">—</span></div><div class="result-row"><span class="result-key">No-Vig Side A</span><span class="result-val" id="hold-fair-a">—</span></div><div class="result-row"><span class="result-key">No-Vig Side B</span><span class="result-val" id="hold-fair-b">—</span></div></div></div>
-          <div class="calc-card"><div class="calc-title">📐 Kelly Criterion</div><div class="calc-desc">Optimal bet sizing.</div><div class="calc-field"><label class="calc-label">Bankroll ($)</label><input class="calc-input" id="kelly-bank" placeholder="5000" type="number"/></div><div class="calc-field"><label class="calc-label">Your Odds</label><input class="calc-input" id="kelly-odds" placeholder="+150"/></div><div class="calc-field"><label class="calc-label">Win Prob (%)</label><input class="calc-input" id="kelly-prob" placeholder="45" type="number"/></div><button class="calc-btn" onclick="calcKelly()">Calculate Kelly</button><div class="calc-result" id="kelly-result"><div class="result-row"><span class="result-key">Full Kelly</span><span class="result-val" id="kelly-full">—</span></div><div class="result-row"><span class="result-key">Half Kelly (Recommended)</span><span class="result-val" id="kelly-half">—</span></div><div class="result-row"><span class="result-key">Quarter Kelly (Safe)</span><span class="result-val" id="kelly-quarter">—</span></div><div class="result-row"><span class="result-key">Edge %</span><span class="result-val" id="kelly-edge">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">\ud83d\udcc8 EV Calculator</div><div class="calc-desc">Is a bet mathematically profitable?</div><div class="calc-field"><label class="calc-label">Your Odds</label><input class="calc-input" id="ev-your-odds" placeholder="+150"/></div><div class="calc-field"><label class="calc-label">Fair/Sharp Odds</label><input class="calc-input" id="ev-fair-odds" placeholder="+120"/></div><div class="calc-field"><label class="calc-label">Stake ($)</label><input class="calc-input" id="ev-stake" placeholder="100" type="number"/></div><button class="calc-btn" onclick="calcEV()">Calculate EV</button><div class="calc-result" id="ev-result"><div class="result-row"><span class="result-key">Implied Prob</span><span class="result-val" id="ev-impl">—</span></div><div class="result-row"><span class="result-key">True Prob</span><span class="result-val" id="ev-true">—</span></div><div class="result-row"><span class="result-key">EV %</span><span class="result-val" id="ev-pct">—</span></div><div class="result-row"><span class="result-key">Expected Profit</span><span class="result-val" id="ev-profit">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">\ud83d\udd04 Arbitrage Calculator</div><div class="calc-desc">Exact stakes for guaranteed profit.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="arb-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="arb-b" placeholder="+120"/></div><div class="calc-field"><label class="calc-label">Total Bankroll ($)</label><input class="calc-input" id="arb-bank" placeholder="200" type="number"/></div><button class="calc-btn" onclick="calcArb()">Calculate Arb</button><div class="calc-result" id="arb-result"><div class="result-row"><span class="result-key">Stake Side A</span><span class="result-val" id="arb-stake-a">—</span></div><div class="result-row"><span class="result-key">Stake Side B</span><span class="result-val" id="arb-stake-b">—</span></div><div class="result-row"><span class="result-key">Guaranteed Profit</span><span class="result-val" id="arb-profit">—</span></div><div class="result-row"><span class="result-key">Profit %</span><span class="result-val" id="arb-pct">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">\ud83d\udcb0 Hold / Vig Calculator</div><div class="calc-desc">The book's edge and true no-vig fair odds.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="hold-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="hold-b" placeholder="-110"/></div><button class="calc-btn" onclick="calcHold()">Calculate Hold</button><div class="calc-result" id="hold-result"><div class="result-row"><span class="result-key">Side A Implied</span><span class="result-val" id="hold-a-prob">—</span></div><div class="result-row"><span class="result-key">Side B Implied</span><span class="result-val" id="hold-b-prob">—</span></div><div class="result-row"><span class="result-key">Total Hold (Vig)</span><span class="result-val" id="hold-vig">—</span></div><div class="result-row"><span class="result-key">No-Vig Side A</span><span class="result-val" id="hold-fair-a">—</span></div><div class="result-row"><span class="result-key">No-Vig Side B</span><span class="result-val" id="hold-fair-b">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">\ud83d\udcd0 Kelly Criterion</div><div class="calc-desc">Optimal bet sizing.</div><div class="calc-field"><label class="calc-label">Bankroll ($)</label><input class="calc-input" id="kelly-bank" placeholder="5000" type="number"/></div><div class="calc-field"><label class="calc-label">Your Odds</label><input class="calc-input" id="kelly-odds" placeholder="+150"/></div><div class="calc-field"><label class="calc-label">Win Prob (%)</label><input class="calc-input" id="kelly-prob" placeholder="45" type="number"/></div><button class="calc-btn" onclick="calcKelly()">Calculate Kelly</button><div class="calc-result" id="kelly-result"><div class="result-row"><span class="result-key">Full Kelly</span><span class="result-val" id="kelly-full">—</span></div><div class="result-row"><span class="result-key">Half Kelly (Recommended)</span><span class="result-val" id="kelly-half">—</span></div><div class="result-row"><span class="result-key">Quarter Kelly (Safe)</span><span class="result-val" id="kelly-quarter">—</span></div><div class="result-row"><span class="result-key">Edge %</span><span class="result-val" id="kelly-edge">—</span></div></div></div>
         </div>
       </div>
 
       <!-- PROMOS -->
       <div id="panel-promos" class="panel">
-        <div class="section-title">🎁 Promo Finder</div>
+        <div class="section-title">\ud83c\udf81 Promo Finder</div>
         <div class="section-sub">Best signup bonuses sorted by value.</div>
         <div id="promo-rows"></div>
       </div>
 
       <!-- LOW HOLD -->
       <div id="panel-lowhold" class="panel">
-        <div class="section-title">💎 Low Hold Bets</div>
+        <div class="section-title">\ud83d\udc8e Low Hold Bets</div>
         <div class="section-sub">Markets where the sportsbook's edge is lowest.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Low Hold Bets</div><div class="stat-value" id="lh-count">—</div><div class="stat-sub">under 3% hold</div></div>
@@ -571,7 +565,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 
       <!-- MIDDLES -->
       <div id="panel-middles" class="panel">
-        <div class="section-title">🎯 Middles <span style="font-size:13px;color:var(--yellow);font-family:var(--fm);font-weight:700">WIN BOTH SIDES</span></div>
+        <div class="section-title">\ud83c\udfaf Middles <span style="font-size:13px;color:var(--yellow);font-family:var(--fm);font-weight:700">WIN BOTH SIDES</span></div>
         <div class="section-sub">Bet both sides at different numbers.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Middle Opps</div><div class="stat-value" id="mid-count">—</div></div>
@@ -583,37 +577,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       </div>
 
       <!-- MORE TOOLS -->
-      <div id="panel-polymarket" class="panel">
-        <div class="section-title">🔮 Polymarket — Prediction Markets</div>
-        <div id="poly-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-          <div class="stat-card"><div class="stat-label">Markets Live</div><div class="stat-val" id="poly-count">—</div></div>
-          <div class="stat-card"><div class="stat-label">Divergences Found</div><div class="stat-val" id="poly-div-count">—</div></div>
-          <div class="stat-card"><div class="stat-label">Biggest Gap</div><div class="stat-val" id="poly-best-edge">—</div></div>
-          <div class="stat-card"><div class="stat-label">Last Updated</div><div class="stat-val" id="poly-updated">—</div></div>
-        </div>
-        <div class="sport-filters" style="margin-bottom:8px;">
-          <div class="sport-chip active" id="poly-view-markets" onclick="switchPolyView('markets',this)">📊 All Markets</div>
-          <div class="sport-chip" id="poly-view-divergence" onclick="switchPolyView('divergence',this)">⚡ Divergences vs Books</div>
-        </div>
-        <div class="sport-filters" id="poly-filters">
-          <div class="sport-chip active" onclick="filterPoly(this,'all')">🌐 All</div>
-          <div class="sport-chip" onclick="filterPoly(this,'nba')">🏀 NBA</div>
-          <div class="sport-chip" onclick="filterPoly(this,'mlb')">⚾ MLB</div>
-          <div class="sport-chip" onclick="filterPoly(this,'nhl')">🏒 NHL</div>
-          <div class="sport-chip" onclick="filterPoly(this,'nfl')">🏈 NFL</div>
-          <div class="sport-chip" onclick="filterPoly(this,'soccer')">⚽ Soccer</div>
-          <div class="sport-chip" onclick="filterPoly(this,'mma')">🥊 MMA</div>
-        </div>
-        <div id="poly-container"><div class="info-box">🔮 Loading Polymarket prediction markets...</div></div>
-        <div id="poly-div-container" style="display:none;"></div>
-      </div>
-
       <div id="panel-tools" class="panel">
-        <div class="section-title">🔧 More Calculators</div>
+        <div class="section-title">\ud83d\udd27 More Calculators</div>
         <div class="calc-grid">
-          <div class="calc-card"><div class="calc-title">🔄 Odds Converter</div><div class="calc-desc">Convert between American, Decimal, Fractional and Implied Probability.</div><div class="calc-field"><label class="calc-label">American Odds</label><input class="calc-input" id="oc-american" placeholder="-110" oninput="convertOdds('american')"/></div><div class="calc-field"><label class="calc-label">Decimal Odds</label><input class="calc-input" id="oc-decimal" placeholder="1.91" oninput="convertOdds('decimal')"/></div><div class="calc-field"><label class="calc-label">Fractional Odds</label><input class="calc-input" id="oc-fractional" placeholder="10/11" oninput="convertOdds('fractional')"/></div><div class="calc-field"><label class="calc-label">Implied Probability</label><input class="calc-input" id="oc-implied" placeholder="52.4%" oninput="convertOdds('implied')"/></div></div>
-          <div class="calc-card"><div class="calc-title">🎁 Free Bet Converter</div><div class="calc-desc">Convert bonus bets to real cash.</div><div class="calc-field"><label class="calc-label">Free Bet Amount ($)</label><input class="calc-input" id="fb-amount" placeholder="100" type="number"/></div><div class="calc-field"><label class="calc-label">Back Odds</label><input class="calc-input" id="fb-back" placeholder="+200"/></div><div class="calc-field"><label class="calc-label">Lay Odds (hedge book)</label><input class="calc-input" id="fb-lay" placeholder="-220"/></div><button class="calc-btn" onclick="calcFreeBet()">Calculate Conversion</button><div class="calc-result" id="fb-result"><div class="result-row"><span class="result-key">Hedge Stake</span><span class="result-val" id="fb-hedge">—</span></div><div class="result-row"><span class="result-key">Cash Profit (Win)</span><span class="result-val" id="fb-win">—</span></div><div class="result-row"><span class="result-key">Cash Profit (Lose)</span><span class="result-val" id="fb-lose">—</span></div><div class="result-row"><span class="result-key">Conversion Rate</span><span class="result-val" id="fb-rate">—</span></div></div></div>
-          <div class="calc-card"><div class="calc-title">⚖️ No-Vig Fair Odds</div><div class="calc-desc">Strip the juice to find true fair odds.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="nv-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="nv-b" placeholder="-110"/></div><button class="calc-btn" onclick="calcNoVig()">Calculate Fair Odds</button><div class="calc-result" id="nv-result"><div class="result-row"><span class="result-key">Side A Fair Odds</span><span class="result-val" id="nv-fair-a">—</span></div><div class="result-row"><span class="result-key">Side B Fair Odds</span><span class="result-val" id="nv-fair-b">—</span></div><div class="result-row"><span class="result-key">Side A True Prob</span><span class="result-val" id="nv-prob-a">—</span></div><div class="result-row"><span class="result-key">Side B True Prob</span><span class="result-val" id="nv-prob-b">—</span></div><div class="result-row"><span class="result-key">Total Vig</span><span class="result-val" id="nv-vig">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">\ud83d\udd04 Odds Converter</div><div class="calc-desc">Convert between American, Decimal, Fractional and Implied Probability.</div><div class="calc-field"><label class="calc-label">American Odds</label><input class="calc-input" id="oc-american" placeholder="-110" oninput="convertOdds('american')"/></div><div class="calc-field"><label class="calc-label">Decimal Odds</label><input class="calc-input" id="oc-decimal" placeholder="1.91" oninput="convertOdds('decimal')"/></div><div class="calc-field"><label class="calc-label">Fractional Odds</label><input class="calc-input" id="oc-fractional" placeholder="10/11" oninput="convertOdds('fractional')"/></div><div class="calc-field"><label class="calc-label">Implied Probability</label><input class="calc-input" id="oc-implied" placeholder="52.4%" oninput="convertOdds('implied')"/></div></div>
+          <div class="calc-card"><div class="calc-title">\ud83c\udf81 Free Bet Converter</div><div class="calc-desc">Convert bonus bets to real cash.</div><div class="calc-field"><label class="calc-label">Free Bet Amount ($)</label><input class="calc-input" id="fb-amount" placeholder="100" type="number"/></div><div class="calc-field"><label class="calc-label">Back Odds</label><input class="calc-input" id="fb-back" placeholder="+200"/></div><div class="calc-field"><label class="calc-label">Lay Odds (hedge book)</label><input class="calc-input" id="fb-lay" placeholder="-220"/></div><button class="calc-btn" onclick="calcFreeBet()">Calculate Conversion</button><div class="calc-result" id="fb-result"><div class="result-row"><span class="result-key">Hedge Stake</span><span class="result-val" id="fb-hedge">—</span></div><div class="result-row"><span class="result-key">Cash Profit (Win)</span><span class="result-val" id="fb-win">—</span></div><div class="result-row"><span class="result-key">Cash Profit (Lose)</span><span class="result-val" id="fb-lose">—</span></div><div class="result-row"><span class="result-key">Conversion Rate</span><span class="result-val" id="fb-rate">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">\u2696\ufe0f No-Vig Fair Odds</div><div class="calc-desc">Strip the juice to find true fair odds.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="nv-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="nv-b" placeholder="-110"/></div><button class="calc-btn" onclick="calcNoVig()">Calculate Fair Odds</button><div class="calc-result" id="nv-result"><div class="result-row"><span class="result-key">Side A Fair Odds</span><span class="result-val" id="nv-fair-a">—</span></div><div class="result-row"><span class="result-key">Side B Fair Odds</span><span class="result-val" id="nv-fair-b">—</span></div><div class="result-row"><span class="result-key">Side A True Prob</span><span class="result-val" id="nv-prob-a">—</span></div><div class="result-row"><span class="result-key">Side B True Prob</span><span class="result-val" id="nv-prob-b">—</span></div><div class="result-row"><span class="result-key">Total Vig</span><span class="result-val" id="nv-vig">—</span></div></div></div>
         </div>
       </div>
 
@@ -624,30 +593,30 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 <!-- CHAT -->
 <div class="chat-bubble">
   <div class="chat-window" id="chat-window">
-    <div class="chat-header"><div class="chat-avatar">⚡</div><div class="chat-header-info"><div class="chat-header-name">Prime Edge Support</div><div class="chat-header-status"><div class="chat-status-dot"></div>Online now</div></div><button onclick="toggleChat()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 0 0 8px;">×</button></div>
-    <div class="chat-messages" id="chat-messages"><div class="msg msg-bot">Hey! 👋 Welcome to Prime Edge Picks. What do you need?</div></div>
+    <div class="chat-header"><div class="chat-avatar">\u26a1</div><div class="chat-header-info"><div class="chat-header-name">Prime Edge Support</div><div class="chat-header-status"><div class="chat-status-dot"></div>Online now</div></div><button onclick="toggleChat()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 0 0 8px;">\u00d7</button></div>
+    <div class="chat-messages" id="chat-messages"><div class="msg msg-bot">Hey! \ud83d\udc4b Welcome to Prime Edge Picks. What do you need?</div></div>
     <div class="chat-suggestions"><button class="chat-suggestion" onclick="sendSuggestion('What is +EV betting?')">What is +EV?</button><button class="chat-suggestion" onclick="sendSuggestion('How does arbitrage work?')">How does arb work?</button><button class="chat-suggestion" onclick="sendSuggestion('Which sportsbooks do I need?')">Which books?</button></div>
     <div class="chat-input-row"><input class="chat-input" id="chat-input" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendChat()"/><button class="chat-send" onclick="sendChat()">Send</button></div>
   </div>
-  <button class="chat-toggle" onclick="toggleChat()">💬</button>
+  <button class="chat-toggle" onclick="toggleChat()">\ud83d\udcac</button>
 </div>
 
 <script>
 const API_ENDPOINT='/api/odds';
 let currentSport='basketball_nba',currentMarket='h2h',inApp=false,chatOpen=false;
-let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all',picksOddsFilter='all';
+let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all';
 let allArbResults=[],allEVResults=[],allLiveResults=[],allPicksResults=[];
 let parlayLegs=[];
 
 const ARB_SPORTS=[
-  {key:'basketball_nba',label:'NBA',emoji:'🏀',color:'#4f8aff',bg:'rgba(79,138,255,0.1)'},
-  {key:'baseball_mlb',label:'MLB',emoji:'⚾',color:'#f5c842',bg:'rgba(245,200,66,0.1)'},
-  {key:'icehockey_nhl',label:'NHL',emoji:'🏒',color:'#00e5a0',bg:'rgba(0,229,160,0.1)'},
-  {key:'americanfootball_nfl',label:'NFL',emoji:'🏈',color:'#ff6b35',bg:'rgba(255,107,53,0.1)'},
-  {key:'soccer_epl',label:'EPL',emoji:'⚽',color:'#8b5cf6',bg:'rgba(139,92,246,0.1)'},
-  {key:'soccer_usa_mls',label:'MLS',emoji:'⚽',color:'#06b6d4',bg:'rgba(6,182,212,0.1)'},
-  {key:'mma_mixed_martial_arts',label:'UFC',emoji:'🥊',color:'#ff4757',bg:'rgba(255,71,87,0.1)'},
-  {key:'soccer_uefa_champs_league',label:'UCL',emoji:'⚽',color:'#ffd700',bg:'rgba(255,215,0,0.1)'},
+  {key:'basketball_nba',label:'NBA',emoji:'\ud83c\udfc0',color:'#4f8aff',bg:'rgba(79,138,255,0.1)'},
+  {key:'baseball_mlb',label:'MLB',emoji:'\u26be',color:'#f5c842',bg:'rgba(245,200,66,0.1)'},
+  {key:'icehockey_nhl',label:'NHL',emoji:'\ud83c\udfd2',color:'#00e5a0',bg:'rgba(0,229,160,0.1)'},
+  {key:'americanfootball_nfl',label:'NFL',emoji:'\ud83c\udfc8',color:'#ff6b35',bg:'rgba(255,107,53,0.1)'},
+  {key:'soccer_epl',label:'EPL',emoji:'\u26bd',color:'#8b5cf6',bg:'rgba(139,92,246,0.1)'},
+  {key:'soccer_usa_mls',label:'MLS',emoji:'\u26bd',color:'#06b6d4',bg:'rgba(6,182,212,0.1)'},
+  {key:'mma_mixed_martial_arts',label:'UFC',emoji:'\ud83e\udd4a',color:'#ff4757',bg:'rgba(255,71,87,0.1)'},
+  {key:'soccer_uefa_champs_league',label:'UCL',emoji:'\u26bd',color:'#ffd700',bg:'rgba(255,215,0,0.1)'},
 ];
 
 let trackerBets=[
@@ -770,7 +739,7 @@ function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters 
 
 function renderArbRows(){
   const filtered=arbFilter==='all'?allArbResults:allArbResults.filter(a=>a.sport===arbFilter);
-  if(!filtered.length){document.getElementById('arb-rows').innerHTML=`<div class="info-box">ℹ️ No arbitrage opportunities found${arbFilter!=='all'?' for '+arbFilter:''} right now. True arbs are rare — check back shortly.</div>`;return;}
+  if(!filtered.length){document.getElementById('arb-rows').innerHTML=`<div class="info-box">\u2139\ufe0f No arbitrage opportunities found${arbFilter!=='all'?' for '+arbFilter:''} right now. True arbs are rare — check back shortly.</div>`;return;}
   document.getElementById('arb-rows').innerHTML=filtered.map(a=>`
     <div class="arb-card">
       <div class="arb-card-top">
@@ -780,7 +749,7 @@ function renderArbRows(){
         <div class="arb-dollar-block"><div class="arb-dollar-amt">+$${a.profit200}</div><div class="arb-dollar-label">On $200</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);">
-        ${a.legs.map((leg,i)=>`<div class="arb-leg-block" style="${i===0?'border-right:1px solid var(--border);':''}"><div class="arb-leg-left"><div class="arb-leg-outcome">${leg.name}</div><div class="arb-leg-book">${leg.book}</div><div class="arb-leg-stake">Stake: $${leg.stake} of $200</div></div><div class="arb-leg-right"><div class="arb-leg-odds">${fmt(leg.odds)}</div><button class="arb-leg-bet-btn" onclick="openBook('${leg.book}')">BET →</button></div></div>`).join('')}
+        ${a.legs.map((leg,i)=>`<div class="arb-leg-block" style="${i===0?'border-right:1px solid var(--border);':''}"><div class="arb-leg-left"><div class="arb-leg-outcome">${leg.name}</div><div class="arb-leg-book">${leg.book}</div><div class="arb-leg-stake">Stake: $${leg.stake} of $200</div></div><div class="arb-leg-right"><div class="arb-leg-odds">${fmt(leg.odds)}</div><button class="arb-leg-bet-btn" onclick="openBook('${leg.book}')">BET \u2192</button></div></div>`).join('')}
       </div>
     </div>`).join('');
 }
@@ -833,16 +802,16 @@ function filterEVSport(el,sport){document.querySelectorAll('#ev-sport-filters .s
 
 function renderEVRows(){
   const filtered=evFilter==='all'?allEVResults:allEVResults.filter(r=>r.sport===evFilter);
-  if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found right now. Check back shortly — odds update every 90 seconds.</div>';return;}
+  if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">\u2139\ufe0f No +EV bets found right now. Check back shortly — odds update every 90 seconds.</div>';return;}
   document.getElementById('ev-rows').innerHTML=filtered.map(r=>`
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
       <div><div class="arb-sport-badge" style="background:${r.sportBg};color:${r.sportColor};border:1px solid ${r.sportColor}40;font-size:8px;">${r.sportEmoji} ${r.sport}</div></div>
-      <div><div class="game-teams">${r.name}</div><div class="game-meta">${r.game} · ${fmtT(r.time)}</div></div>
+      <div><div class="game-teams">${r.name}</div><div class="game-meta">${r.game} \u00b7 ${fmtT(r.time)}</div></div>
       <div class="col-c"><div class="col-l">Book</div><div class="book-tag">${r.bestBook}</div></div>
       <div class="col-c"><div class="col-l">Best Odds</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(r.bestOdds)}</div></div>
       <div class="col-c"><div class="col-l">Fair Odds</div><div style="font-family:var(--fm);font-size:14px;color:var(--muted)">${fmt(r.fair)}</div></div>
       <div class="col-c"><div class="col-l">EV %</div><div class="ev-badge ev-pos">+${r.ev}%</div></div>
-      <div class="col-c"><button class="bet-btn" onclick="openBook('${r.bestBook}')">BET →</button></div>
+      <div class="col-c"><button class="bet-btn" onclick="openBook('${r.bestBook}')">BET \u2192</button></div>
     </div></div>`).join('');
 }
 
@@ -867,18 +836,9 @@ function buildPicksFromEV(){
 
 function filterPicksSport(el,sport){document.querySelectorAll('#picks-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');picksFilter=sport;renderPicksRows();}
 
-function filterPicksOdds(el,type){
-  document.querySelectorAll('#picks-odds-filters .sport-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');picksOddsFilter=type;renderPicksRows();
-}
-
 function renderPicksRows(){
-  let filtered=picksFilter==='all'?allPicksResults:allPicksResults.filter(p=>p.sport===picksFilter);
-  // Apply odds filter
-  if(picksOddsFilter==='fav') filtered=filtered.filter(p=>p.bestOdds<0);
-  else if(picksOddsFilter==='dog') filtered=filtered.filter(p=>p.bestOdds>0);
-  else if(picksOddsFilter==='small') filtered=filtered.filter(p=>p.bestOdds>=100&&p.bestOdds<=200);
-  if(!filtered.length){document.getElementById('picks-container').innerHTML='<div class="info-box">ℹ️ No picks match this filter right now. Try a different odds type or sport.</div>';return;}
+  const filtered=picksFilter==='all'?allPicksResults:allPicksResults.filter(p=>p.sport===picksFilter);
+  if(!filtered.length){document.getElementById('picks-container').innerHTML='<div class="info-box">\u2139\ufe0f No picks available right now. Picks load from live +EV data — check back shortly.</div>';return;}
   const analyses=[
     'Strong +EV opportunity. True probability significantly better than implied odds at this book.',
     'Book has mispriced this line vs. the consensus market. Bet before it corrects.',
@@ -905,7 +865,7 @@ function renderPicksRows(){
         <div class="pick-odds-badge">${fmt(p.bestOdds)}</div>
         <div class="pick-book">@ ${p.bestBook}</div>
         <div class="ev-badge ev-pos" style="margin-left:8px;">+${p.ev}% EV</div>
-        <button class="bet-btn" style="margin-left:auto" onclick="openBook('${p.bestBook}')">BET →</button>
+        <button class="bet-btn" style="margin-left:auto" onclick="openBook('${p.bestBook}')">BET \u2192</button>
       </div>
       <div class="pick-analysis">${analyses[i%analyses.length]} Fair line: ${fmt(p.fair)}. Best available: ${fmt(p.bestOdds)} @ ${p.bestBook}.</div>
     </div>`).join('');
@@ -945,10 +905,10 @@ function filterLiveSport(el,sport){document.querySelectorAll('#live-sport-filter
 function renderLiveRows(){
   const now=Date.now();
   const filtered=liveFilter==='all'?allLiveResults:allLiveResults.filter(g=>g.sportLabel===liveFilter);
-  if(!filtered.length){document.getElementById('live-rows').innerHTML=`<div class="info-box">ℹ️ No live or upcoming games${liveFilter!=='all'?' for '+liveFilter:''} in the next 4 hours.</div>`;return;}
+  if(!filtered.length){document.getElementById('live-rows').innerHTML=`<div class="info-box">\u2139\ufe0f No live or upcoming games${liveFilter!=='all'?' for '+liveFilter:''} in the next 4 hours.</div>`;return;}
   document.getElementById('live-rows').innerHTML=filtered.map(g=>{
     const t=new Date(g.commence_time).getTime();const isLive=t<=now;const minsUntil=Math.round((t-now)/60000);
-    const timeLabel=isLive?'<span style="color:var(--red);font-weight:700;font-family:var(--fm);">● LIVE</span>':minsUntil<60?`<span style="color:var(--yellow);font-family:var(--fm);">⚡ ${minsUntil}m</span>`:`<span style="color:var(--muted);font-family:var(--fm);">${fmtT(g.commence_time)}</span>`;
+    const timeLabel=isLive?'<span style="color:var(--red);font-weight:700;font-family:var(--fm);">\u25cf LIVE</span>':minsUntil<60?`<span style="color:var(--yellow);font-family:var(--fm);">\u26a1 ${minsUntil}m</span>`:`<span style="color:var(--muted);font-family:var(--fm);">${fmtT(g.commence_time)}</span>`;
     const books=g.bookmakers||[];
     const bestOdds={};
     books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!bestOdds[o.name]||o.price>bestOdds[o.name].odds)bestOdds[o.name]={odds:o.price,book:bm.title};})));
@@ -959,9 +919,9 @@ function renderLiveRows(){
     return`<div class="arb-card">
       <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;padding:16px 20px;align-items:center;">
         <div class="arb-sport-badge" style="background:${g.sportBg};color:${g.sportColor};border:1px solid ${g.sportColor}40">${g.sportEmoji} ${g.sportLabel}</div>
-        <div><div class="arb-game-name">${g.home_team} vs ${g.away_team}</div><div class="arb-game-time">${timeLabel} · ${books.length} books</div></div>
+        <div><div class="arb-game-name">${g.home_team} vs ${g.away_team}</div><div class="arb-game-time">${timeLabel} \u00b7 ${books.length} books</div></div>
         ${gameEV>0?`<div style="text-align:center;min-width:70px;"><div style="font-size:14px;font-weight:800;color:var(--green);font-family:var(--fm);">+${(gameEV*100).toFixed(1)}%</div><div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Best EV</div></div>`:''}
-        <div><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET →</button></div>
+        <div><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET \u2192</button></div>
       </div>
       <div style="display:flex;gap:8px;padding:0 20px 16px;overflow-x:auto;flex-wrap:wrap;">
         ${outcomes.map(([name,data])=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:140px;cursor:pointer;" onclick="openBook('${data.book}')"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">${name}</div><div style="font-size:20px;font-weight:900;color:var(--accent);font-family:var(--fm);">${fmt(data.odds)}</div><div style="font-size:10px;color:var(--accent);font-weight:600;margin-top:3px;">${data.book}</div></div>`).join('')}
@@ -975,7 +935,7 @@ function renderLiveRows(){
 // =====================
 function renderParlayEVPicks(){
   const picks=allEVResults.slice(0,15);
-  if(!picks.length){document.getElementById('parlay-ev-picks').innerHTML='<div class="info-box">ℹ️ Loading live +EV picks for parlay builder...</div>';return;}
+  if(!picks.length){document.getElementById('parlay-ev-picks').innerHTML='<div class="info-box">\u2139\ufe0f Loading live +EV picks for parlay builder...</div>';return;}
   document.getElementById('parlay-ev-picks').innerHTML=picks.map((p,i)=>`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border 0.15s;" onclick="addParlayLegFromEV(${i})" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
       <div class="arb-sport-badge" style="background:${p.sportBg};color:${p.sportColor};border:1px solid ${p.sportColor}40;font-size:8px;flex-shrink:0;">${p.sportEmoji}</div>
@@ -1015,13 +975,13 @@ function renderParlayLegs(){
       <div class="parlay-leg-num">${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.name}</div>
-        <div style="font-size:10px;color:var(--muted);">${l.sport} · ${l.book}</div>
+        <div style="font-size:10px;color:var(--muted);">${l.sport} \u00b7 ${l.book}</div>
       </div>
       <div style="text-align:right;flex-shrink:0;margin-right:8px;">
         <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent);">${fmt(l.odds)}</div>
         <div style="font-size:9px;color:var(--green);">+${l.ev}% EV</div>
       </div>
-      <button class="parlay-remove" onclick="removeParlayLeg(${i})">×</button>
+      <button class="parlay-remove" onclick="removeParlayLeg(${i})">\u00d7</button>
     </div>`).join('');
 }
 
@@ -1047,7 +1007,7 @@ function calcParlayMain(){
 async function loadSingleSport(){
   ss('fetching...');
   const data=await fetchSport(currentSport,currentMarket);
-  if(data.length){ss(`✓ ${data.length} games`);const el=document.getElementById('count-'+currentSport);if(el){const soon=data.filter(g=>new Date(g.commence_time).getTime()<=Date.now()+14400000).length;el.textContent=soon||'';}}else{ss('no data');}
+  if(data.length){ss(`\u2713 ${data.length} games`);const el=document.getElementById('count-'+currentSport);if(el){const soon=data.filter(g=>new Date(g.commence_time).getTime()<=Date.now()+14400000).length;el.textContent=soon||'';}}else{ss('no data');}
   renderOdds(data,!data.length);renderLowHold(data,!data.length);renderMiddles(data,!data.length);
 }
 
@@ -1058,7 +1018,7 @@ function generateDemoData(){
 }
 
 function renderOdds(data,isDemo){
-  if(isDemo||!data.length){document.getElementById('odds-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB.</div>';return;}
+  if(isDemo||!data.length){document.getElementById('odds-rows').innerHTML='<div class="info-box">\u2139\ufe0f No live games for this sport. Switch to NBA or MLB.</div>';return;}
   document.getElementById('odds-rows').innerHTML=data.map(g=>{
     const books=g.bookmakers||[];if(!books.length)return'';
     const h=g.home_team,a=g.away_team;
@@ -1071,7 +1031,7 @@ function renderOdds(data,isDemo){
 
 function renderPromos(){
   const p=[{book:'DraftKings',s:'DK',c:'#1b8a3c',o:'$200 in Bonus Bets',d:'Bet $5, get $200 instantly.',v:'$200',cv:'100%'},{book:'FanDuel',s:'FD',c:'#1565c0',o:'$1,000 No-Sweat Bet',d:'First bet refunded up to $1,000.',v:'$1,000',cv:'85%'},{book:'BetMGM',s:'MGM',c:'#c9a227',o:'$150 in Bonus Bets',d:'Bet $10 get $150.',v:'$150',cv:'88%'},{book:'Caesars',s:'CZR',c:'#7b1fa2',o:'Up to $1,000 First Bet',d:'First bet matched up to $1,000.',v:'$1,000',cv:'82%'},{book:'BetRivers',s:'BR',c:'#bf360c',o:'$500 Second Chance',d:'Second chance bet up to $500.',v:'$500',cv:'87%'}];
-  document.getElementById('promo-rows').innerHTML=p.map(x=>`<div class="promo-card"><div class="book-av" style="background:${x.c}18;color:${x.c};border:1px solid ${x.c}35">${x.s}</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">${x.book}</div><div style="font-size:13px;font-weight:600;margin:3px 0">${x.o}</div><div style="font-size:12px;color:var(--muted)">${x.d}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:22px;font-weight:800;color:var(--accent);font-family:var(--fm);">${x.v}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Conv: <span style="color:var(--green);font-weight:700">${x.cv}</span></div><button class="bet-btn" style="margin-top:10px" onclick="openBook('${x.book}')">CLAIM →</button></div></div>`).join('');
+  document.getElementById('promo-rows').innerHTML=p.map(x=>`<div class="promo-card"><div class="book-av" style="background:${x.c}18;color:${x.c};border:1px solid ${x.c}35">${x.s}</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">${x.book}</div><div style="font-size:13px;font-weight:600;margin:3px 0">${x.o}</div><div style="font-size:12px;color:var(--muted)">${x.d}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:22px;font-weight:800;color:var(--accent);font-family:var(--fm);">${x.v}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Conv: <span style="color:var(--green);font-weight:700">${x.cv}</span></div><button class="bet-btn" style="margin-top:10px" onclick="openBook('${x.book}')">CLAIM \u2192</button></div></div>`).join('');
 }
 
 function renderTracker(){
@@ -1080,7 +1040,7 @@ function renderTracker(){
   let pl=0;trackerBets.forEach(b=>{const d=atod(parseFloat(b.odds));if(b.status==='WIN')pl+=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl-=parseFloat(b.stake);});
   const roi=stk?(pl/stk*100).toFixed(1):0;
   document.getElementById('tracker-stats').innerHTML=`<div class="tracker-card"><div class="tv">${trackerBets.length}</div><div class="tl">Total Bets</div></div><div class="tracker-card"><div class="tv" style="color:var(--green)">${w}</div><div class="tl">Wins</div></div><div class="tracker-card"><div class="tv" style="color:var(--red)">${l}</div><div class="tl">Losses</div></div><div class="tracker-card"><div class="tv" style="color:${pl>=0?'var(--green)':'var(--red)'}">${pl>=0?'+':''}$${pl.toFixed(0)}</div><div class="tl">P/L</div></div><div class="tracker-card"><div class="tv" style="color:${roi>=0?'var(--green)':'var(--red)'}">${roi}%</div><div class="tl">ROI</div></div>`;
-  document.getElementById('tracker-rows').innerHTML=trackerBets.map(b=>{const d=atod(parseFloat(b.odds));let pl=0;if(b.status==='WIN')pl=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl=-parseFloat(b.stake);return`<div class="btr"><div><div style="font-size:13px;font-weight:700;color:#fff">${b.game}</div><div style="font-size:11px;color:var(--muted)">${b.market} · <span style="color:var(--accent2)">${b.type}</span></div></div><div style="font-family:var(--fm);font-size:12px;color:var(--muted)">${b.book}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700">${b.odds}</div><div style="font-family:var(--fm);font-size:13px">$${b.stake}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700;color:${b.status==='WIN'?'var(--green)':b.status==='LOSS'?'var(--red)':'var(--yellow)'}">${b.status==='PENDING'?'—':(pl>=0?'+':'')+`$${pl.toFixed(0)}`}</div><div class="${b.status==='WIN'?'sw':b.status==='LOSS'?'sl':'sp'}">${b.status}</div></div>`;}).join('');
+  document.getElementById('tracker-rows').innerHTML=trackerBets.map(b=>{const d=atod(parseFloat(b.odds));let pl=0;if(b.status==='WIN')pl=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl=-parseFloat(b.stake);return`<div class="btr"><div><div style="font-size:13px;font-weight:700;color:#fff">${b.game}</div><div style="font-size:11px;color:var(--muted)">${b.market} \u00b7 <span style="color:var(--accent2)">${b.type}</span></div></div><div style="font-family:var(--fm);font-size:12px;color:var(--muted)">${b.book}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700">${b.odds}</div><div style="font-family:var(--fm);font-size:13px">$${b.stake}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700;color:${b.status==='WIN'?'var(--green)':b.status==='LOSS'?'var(--red)':'var(--yellow)'}">${b.status==='PENDING'?'—':(pl>=0?'+':'')+`$${pl.toFixed(0)}`}</div><div class="${b.status==='WIN'?'sw':b.status==='LOSS'?'sl':'sp'}">${b.status}</div></div>`;}).join('');
 }
 
 function addBet(){
@@ -1094,7 +1054,7 @@ function calcArb(){const oA=po(document.getElementById('arb-a').value),oB=po(doc
 function calcHold(){const oA=po(document.getElementById('hold-a').value),oB=po(document.getElementById('hold-b').value);if(isNaN(oA)||isNaN(oB))return;const pA=ip(oA),pB=ip(oB),nvA=pA/(pA+pB),nvB=pB/(pA+pB);document.getElementById('hold-result').classList.add('show');document.getElementById('hold-a-prob').textContent=(pA*100).toFixed(1)+'%';document.getElementById('hold-b-prob').textContent=(pB*100).toFixed(1)+'%';document.getElementById('hold-vig').textContent=((pA+pB-1)*100).toFixed(2)+'%';document.getElementById('hold-fair-a').textContent=fmt(dtoa(1/nvA));document.getElementById('hold-fair-b').textContent=fmt(dtoa(1/nvB));}
 function calcKelly(){const bk=parseFloat(document.getElementById('kelly-bank').value)||5000,od=po(document.getElementById('kelly-odds').value),pr=parseFloat(document.getElementById('kelly-prob').value)/100;if(isNaN(od)||isNaN(pr))return;const b=atod(od)-1,q=1-pr,k=(b*pr-q)/b;document.getElementById('kelly-result').classList.add('show');document.getElementById('kelly-full').textContent=k>0?'$'+(k*bk).toFixed(2):'No Edge';document.getElementById('kelly-half').textContent=k>0?'$'+(k/2*bk).toFixed(2):'No Edge';document.getElementById('kelly-quarter').textContent=k>0?'$'+(k/4*bk).toFixed(2):'No Edge';const ke=document.getElementById('kelly-edge');ke.textContent=(k*100>=0?'+':''+(k*100).toFixed(2))+'%';ke.style.color=k>=0?'var(--green)':'var(--red)';}
 
-function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');if(id==='polymarket')loadPolymarket();}
+// showTab defined below with polymarket support
 function selectSport(el,sport){
   ['basketball_nba','baseball_mlb','americanfootball_nfl','icehockey_nhl','basketball_ncaab','soccer_usa_mls','soccer_epl','soccer_uefa_champs_league','soccer_spain_la_liga','soccer_italy_serie_a','soccer_germany_bundesliga','tennis_atp_french_open','mma_mixed_martial_arts','boxing_boxing'].forEach(s=>{const el2=document.getElementById('sport-'+s);if(el2)el2.classList.remove('active');});
   el.classList.add('active');currentSport=sport;loadSingleSport();
@@ -1102,24 +1062,24 @@ function selectSport(el,sport){
 function selectMarket(el,market){el.closest('.sidebar-section').querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');currentMarket=market;loadSingleSport();}
 
 function renderLowHold(data,isDemo){
-  if(isDemo||!data.length){document.getElementById('lh-count').textContent='0';document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';document.getElementById('lh-games').textContent='0';document.getElementById('lh-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB.</div>';return;}
+  if(isDemo||!data.length){document.getElementById('lh-count').textContent='0';document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';document.getElementById('lh-games').textContent='0';document.getElementById('lh-rows').innerHTML='<div class="info-box">\u2139\ufe0f No live games for this sport. Switch to NBA or MLB.</div>';return;}
   const rows=[];data.forEach(g=>{const books=g.bookmakers||[];books.forEach(bm=>{(bm.markets||[]).forEach(mk=>{if(mk.outcomes.length<2)return;const oA=mk.outcomes[0],oB=mk.outcomes[1];if(!validOdds(oA.price)||!validOdds(oB.price))return;const hold=(ip(oA.price)+ip(oB.price)-1)*100;if(hold>=0&&hold<=4)rows.push({game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,book:bm.title,sideA:oA.name,oddsA:oA.price,sideB:oB.name,oddsB:oB.price,hold:hold.toFixed(2)});});});});
   rows.sort((a,b)=>parseFloat(a.hold)-parseFloat(b.hold));
   document.getElementById('lh-count').textContent=rows.length;document.getElementById('lh-games').textContent=data.length;
   if(rows.length){document.getElementById('lh-avg').textContent=(rows.reduce((s,r)=>s+parseFloat(r.hold),0)/rows.length).toFixed(2)+'%';document.getElementById('lh-best').textContent=rows[0].hold+'%';}else{document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';}
-  if(!rows.length){document.getElementById('lh-rows').innerHTML='<div class="info-box">ℹ️ No low hold markets found.</div>';return;}
-  document.getElementById('lh-rows').innerHTML=rows.map(r=>`<div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr"><div><div class="game-teams">${r.game}</div><div class="game-meta">${fmtT(r.time)}</div></div><div class="col-c"><div class="col-l">Book</div><div class="book-tag">${r.book}</div></div><div class="col-c"><div class="col-l">${r.sideA}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsA)}</div></div><div class="col-c"><div class="col-l">${r.sideB}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsB)}</div></div><div class="col-c"><div class="col-l">Hold</div><div style="font-family:var(--fm);font-size:14px;font-weight:700;color:${parseFloat(r.hold)<2?'var(--green)':'var(--yellow)'}">${r.hold}%</div></div><div class="col-c"><button class="bet-btn" onclick="openBook('${r.book}')">BET →</button></div></div></div>`).join('');
+  if(!rows.length){document.getElementById('lh-rows').innerHTML='<div class="info-box">\u2139\ufe0f No low hold markets found.</div>';return;}
+  document.getElementById('lh-rows').innerHTML=rows.map(r=>`<div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr"><div><div class="game-teams">${r.game}</div><div class="game-meta">${fmtT(r.time)}</div></div><div class="col-c"><div class="col-l">Book</div><div class="book-tag">${r.book}</div></div><div class="col-c"><div class="col-l">${r.sideA}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsA)}</div></div><div class="col-c"><div class="col-l">${r.sideB}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsB)}</div></div><div class="col-c"><div class="col-l">Hold</div><div style="font-family:var(--fm);font-size:14px;font-weight:700;color:${parseFloat(r.hold)<2?'var(--green)':'var(--yellow)'}">${r.hold}%</div></div><div class="col-c"><button class="bet-btn" onclick="openBook('${r.book}')">BET \u2192</button></div></div></div>`).join('');
 }
 
 function renderMiddles(data,isDemo){
-  if(isDemo||!data.length){document.getElementById('mid-count').textContent='0';document.getElementById('mid-window').textContent='—';document.getElementById('mid-best').textContent='—';document.getElementById('mid-books').textContent='—';document.getElementById('mid-rows').innerHTML='<div class="info-box">ℹ️ Switch to Spreads market and try NBA or NFL.</div>';return;}
+  if(isDemo||!data.length){document.getElementById('mid-count').textContent='0';document.getElementById('mid-window').textContent='—';document.getElementById('mid-best').textContent='—';document.getElementById('mid-books').textContent='—';document.getElementById('mid-rows').innerHTML='<div class="info-box">\u2139\ufe0f Switch to Spreads market and try NBA or NFL.</div>';return;}
   const middles=[];const allBooks=new Set();
   data.forEach(g=>{const books=g.bookmakers||[];books.forEach(b=>allBooks.add(b.key));const sbo={};books.forEach(bm=>{(bm.markets||[]).forEach(mk=>{if(mk.key!=='spreads')return;mk.outcomes.forEach(o=>{if(!sbo[o.name])sbo[o.name]=[];sbo[o.name].push({book:bm.title,point:o.point,odds:o.price});});});});const teams=Object.keys(sbo);if(teams.length<2)return;const[teamA,teamB]=teams;const oA=sbo[teamA],oB=sbo[teamB];if(!oA||!oB)return;oA.forEach(a=>{oB.forEach(b=>{if(a.book===b.book)return;const w=Math.abs(a.point-(-b.point));if(w>=1.5&&w<=6)middles.push({game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,teamA,bookA:a.book,lineA:a.point,oddsA:a.odds,teamB,bookB:b.book,lineB:b.point,oddsB:b.odds,window:w.toFixed(1)});});});});
   const seen=new Set();const unique=middles.filter(m=>{const k=m.game+m.window;if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>parseFloat(b.window)-parseFloat(a.window));
   document.getElementById('mid-count').textContent=unique.length;document.getElementById('mid-books').textContent=allBooks.size;
   if(unique.length){document.getElementById('mid-window').textContent=(unique.reduce((s,m)=>s+parseFloat(m.window),0)/unique.length).toFixed(1)+' pts';document.getElementById('mid-best').textContent=unique[0].window+' pts';}else{document.getElementById('mid-window').textContent='—';document.getElementById('mid-best').textContent='—';}
-  if(!unique.length){document.getElementById('mid-rows').innerHTML='<div class="info-box">ℹ️ No middles found.</div>';return;}
-  document.getElementById('mid-rows').innerHTML=unique.map(m=>`<div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr"><div><div class="game-teams">${m.game}</div><div class="game-meta">${fmtT(m.time)}</div></div><div class="col-c"><div class="col-l">${m.teamA} @ ${m.bookA}</div><div class="odds-pill">${m.lineA>0?'+':''}${m.lineA} (${fmt(m.oddsA)})</div></div><div class="col-c"><div class="col-l">${m.teamB} @ ${m.bookB}</div><div class="odds-pill">${m.lineB>0?'+':''}${m.lineB} (${fmt(m.oddsB)})</div></div><div class="col-c"><div class="col-l">Window</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--yellow)">${m.window} pts</div></div><div class="col-c"><button class="bet-btn" style="background:var(--yellow);color:#000" onclick="openBook('${m.bookA}')">BET →</button></div></div></div>`).join('');
+  if(!unique.length){document.getElementById('mid-rows').innerHTML='<div class="info-box">\u2139\ufe0f No middles found.</div>';return;}
+  document.getElementById('mid-rows').innerHTML=unique.map(m=>`<div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr"><div><div class="game-teams">${m.game}</div><div class="game-meta">${fmtT(m.time)}</div></div><div class="col-c"><div class="col-l">${m.teamA} @ ${m.bookA}</div><div class="odds-pill">${m.lineA>0?'+':''}${m.lineA} (${fmt(m.oddsA)})</div></div><div class="col-c"><div class="col-l">${m.teamB} @ ${m.bookB}</div><div class="odds-pill">${m.lineB>0?'+':''}${m.lineB} (${fmt(m.oddsB)})</div></div><div class="col-c"><div class="col-l">Window</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--yellow)">${m.window} pts</div></div><div class="col-c"><button class="bet-btn" style="background:var(--yellow);color:#000" onclick="openBook('${m.bookA}')">BET \u2192</button></div></div></div>`).join('');
 }
 
 function convertOdds(from){
@@ -1154,10 +1114,11 @@ async function loadSportCounts(){
   }
 }
 
-// Auto-refresh every 90s
-setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();loadPolymarket();}},90000);
 
-// POLYMARKET - Phase 2: Markets + Divergence vs Books
+// Auto-refresh every 90s
+setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();if(typeof loadPolymarket==='function')loadPolymarket();}},90000);
+
+// POLYMARKET - Phase 2
 let allPolyMarkets=[], polyFilter='all', polyView='markets', polyOddsCache={};
 
 async function loadPolymarket(){
@@ -1180,7 +1141,7 @@ async function loadPolymarket(){
         return terms.some(s=>q.includes(s));
       });
     } catch(e2) {
-      container.innerHTML='<div class="info-box">⚠️ Could not load Polymarket data. Try again shortly.</div>';
+      if(container) container.innerHTML='<div class="info-box">⚠️ Could not load Polymarket data. Try again shortly.</div>';
       return;
     }
   }
@@ -1225,8 +1186,7 @@ function findDivergences(){
   allPolyMarkets.forEach(m=>{
     let prices=[];
     try{prices=JSON.parse(m.outcomePrices);}catch(e){return;}
-    const outcomes=m.outcomes?(typeof m.outcomes==='string'?JSON.parse(m.outcomes):m.outcomes):[];
-    const [team1,team2]=extractTeamNames(m.question);
+    const [team1]=extractTeamNames(m.question);
     if(!team1) return;
     let matchedGame=null,matchedOutcomeIdx=0;
     for(const game of allGames){
@@ -1284,6 +1244,39 @@ function renderPolyView(){
   else renderPolyMarkets();
 }
 
+function renderPolyMarkets(){
+  const container=document.getElementById('poly-container');
+  const divContainer=document.getElementById('poly-div-container');
+  if(!container) return;
+  container.style.display='block';
+  divContainer.style.display='none';
+  let markets=allPolyMarkets;
+  if(polyFilter!=='all') markets=markets.filter(m=>detectSport(m.question)===polyFilter);
+  document.getElementById('poly-div-count').textContent=findDivergences().length;
+  if(!markets.length){container.innerHTML='<div class="info-box">No markets found for this filter.</div>';return;}
+  const sportColor={nba:'#4f8aff',mlb:'#f5c842',nhl:'#00e5a0',nfl:'#ff7043',soccer:'#ab47bc',mma:'#ef5350',other:'#00e5a0'};
+  const sportEmoji={nba:'🏀',mlb:'⚾',nhl:'🏒',nfl:'🏈',soccer:'⚽',mma:'🥊',other:'🔮'};
+  let html='';
+  markets.slice(0,40).forEach(m=>{
+    let prices=[];try{prices=JSON.parse(m.outcomePrices);}catch(e){return;}
+    const outcomes=m.outcomes?(typeof m.outcomes==='string'?JSON.parse(m.outcomes):m.outcomes):[];
+    const sport=detectSport(m.question);const col=sportColor[sport]||'#00e5a0';const emo=sportEmoji[sport]||'🔮';
+    const vol=m.volume?'$'+Number(m.volume).toLocaleString('en',{maximumFractionDigits:0}):'—';
+    const liq=m.liquidity?'$'+Number(m.liquidity).toLocaleString('en',{maximumFractionDigits:0}):'—';
+    const endDate=m.endDate?new Date(m.endDate).toLocaleDateString():'—';
+    const polyUrl=m.slug?`https://polymarket.com/event/${m.slug}`:'https://polymarket.com';
+    let outHtml='';
+    prices.forEach((p,i)=>{
+      const prob=Math.round(parseFloat(p)*100);
+      const label=outcomes[i]||(i===0?'Yes':'No');
+      const american=prob>=50?('-'+Math.round((prob/(100-prob))*100)):('+'+Math.round(((100-prob)/prob)*100));
+      outHtml+=`<div style="flex:1;background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;"><div style="font-size:10px;color:#5a6480;margin-bottom:4px;text-transform:uppercase;">${label}</div><div style="font-size:22px;font-weight:700;color:${prob>50?'#00e5a0':'#4f8aff'};">${prob}%</div><div style="font-size:11px;color:#5a6480;">${american}</div></div>`;
+    });
+    html+=`<div style="background:#0a0c12;border:1px solid #1e2536;border-radius:10px;padding:16px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="background:${col}22;color:${col};font-size:10px;padding:3px 8px;border-radius:4px;font-weight:600;">${emo} ${sport.toUpperCase()}</span><span style="font-size:10px;color:#5a6480;">Closes ${endDate}</span><span style="font-size:10px;color:#5a6480;margin-left:auto;">Vol: ${vol}</span></div><div style="font-size:14px;color:#e0e6f0;font-weight:600;margin-bottom:12px;">${m.question}</div><div style="display:flex;gap:8px;margin-bottom:12px;">${outHtml}</div><div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10px;color:#5a6480;">Liquidity: ${liq}</span><a href="${polyUrl}" target="_blank" style="background:#00e5a0;color:#000;font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;text-decoration:none;">BET ON POLY →</a></div></div>`;
+  });
+  container.innerHTML=html||'<div class="info-box">No markets found.</div>';
+}
+
 function renderDivergences(){
   const container=document.getElementById('poly-container');
   const divContainer=document.getElementById('poly-div-container');
@@ -1295,14 +1288,10 @@ function renderDivergences(){
   document.getElementById('poly-best-edge').textContent=divs.length?Math.abs(divs[0].gap)+'%':'—';
   const sportColor={nba:'#4f8aff',mlb:'#f5c842',nhl:'#00e5a0',nfl:'#ff7043',soccer:'#ab47bc',mma:'#ef5350',other:'#00e5a0'};
   const sportEmoji={nba:'🏀',mlb:'⚾',nhl:'🏒',nfl:'🏈',soccer:'⚽',mma:'🥊',other:'🔮'};
-  if(!filtered.length){
-    divContainer.innerHTML='<div class="info-box">⚡ No significant divergences right now — Polymarket and sportsbooks are in agreement. Check back closer to game time when markets get more active.</div>';
-    return;
-  }
-  let html='<div style="background:#0d1117;border:1px solid #1e2536;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#5a6480;line-height:1.6;">⚡ <strong style="color:#00e5a0;">Divergence = Edge.</strong> When Polymarket crowd probability differs from sportsbook implied probability by 5%+, it signals a potential mispricing. Positive gap = Poly thinks team more likely to win than books — bet the books. Negative gap = books favour the team more — potential Poly value.</div>';
+  if(!filtered.length){divContainer.innerHTML='<div class="info-box">⚡ No significant divergences right now. Check back closer to game time.</div>';return;}
+  let html='<div style="background:#0d1117;border:1px solid #1e2536;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#5a6480;line-height:1.6;">⚡ <strong style="color:#00e5a0;">Divergence = Edge.</strong> When Polymarket crowd probability differs from sportsbook implied probability by 5%+, it signals a potential mispricing.</div>';
   filtered.forEach(d=>{
-    const col=sportColor[d.sport]||'#00e5a0';
-    const emo=sportEmoji[d.sport]||'🔮';
+    const col=sportColor[d.sport]||'#00e5a0';const emo=sportEmoji[d.sport]||'🔮';
     const gapColor=d.gap>0?'#00e5a0':'#ff5252';
     const gapLabel=d.gap>0?'Poly HIGHER than books':'Poly LOWER than books';
     const action=d.gap>0?`Books underpricing ${d.team1} — bet the books`:`Polymarket underestimates ${d.team1} — value on Poly`;
@@ -1316,19 +1305,9 @@ function renderDivergences(){
       <div style="font-size:13px;color:#e0e6f0;font-weight:600;margin-bottom:4px;">${d.question}</div>
       <div style="font-size:10px;color:#5a6480;margin-bottom:12px;">Matched to: ${d.matchedGame}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div style="background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;">
-          <div style="font-size:9px;color:#5a6480;margin-bottom:4px;letter-spacing:1px;">POLY PROB</div>
-          <div style="font-size:24px;font-weight:700;color:#00e5a0;font-family:var(--fh);">${d.polyProb}%</div>
-        </div>
-        <div style="background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;">
-          <div style="font-size:9px;color:#5a6480;margin-bottom:4px;letter-spacing:1px;">BOOK IMPLIED</div>
-          <div style="font-size:24px;font-weight:700;color:#4f8aff;font-family:var(--fh);">${d.bookProb}%</div>
-          <div style="font-size:10px;color:#5a6480;">${bookAmerican}</div>
-        </div>
-        <div style="background:#0d1117;border:1px solid ${gapColor}44;padding:10px;border-radius:6px;text-align:center;">
-          <div style="font-size:9px;color:#5a6480;margin-bottom:4px;letter-spacing:1px;">EDGE</div>
-          <div style="font-size:24px;font-weight:700;color:${gapColor};font-family:var(--fh);">${d.gap>0?'+':''}${d.gap}%</div>
-        </div>
+        <div style="background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;"><div style="font-size:9px;color:#5a6480;margin-bottom:4px;">POLY PROB</div><div style="font-size:24px;font-weight:700;color:#00e5a0;">${d.polyProb}%</div></div>
+        <div style="background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;"><div style="font-size:9px;color:#5a6480;margin-bottom:4px;">BOOK IMPLIED</div><div style="font-size:24px;font-weight:700;color:#4f8aff;">${d.bookProb}%</div><div style="font-size:10px;color:#5a6480;">${bookAmerican}</div></div>
+        <div style="background:#0d1117;border:1px solid ${gapColor}44;padding:10px;border-radius:6px;text-align:center;"><div style="font-size:9px;color:#5a6480;margin-bottom:4px;">EDGE</div><div style="font-size:24px;font-weight:700;color:${gapColor};">${d.gap>0?'+':''}${d.gap}%</div></div>
       </div>
       <div style="background:#0d1117;border:1px solid #1e2536;border-radius:6px;padding:10px;margin-bottom:10px;font-size:12px;color:#00e5a0;">💡 ${action}</div>
       <div style="display:flex;gap:8px;">
@@ -1351,7 +1330,15 @@ function detectSport(q){
   return 'other';
 }
 
-</script></script>
+function showTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='polymarket') loadPolymarket();
+}
+
+</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
