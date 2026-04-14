@@ -452,14 +452,25 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <!-- LIVE NOW -->
       <div id="panel-live" class="panel">
         <div class="section-title">🔴 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
-        <div class="section-sub">Games in progress or starting within 4 hours.</div>
+        <div class="section-sub">Scanning ALL sports simultaneously — games live or starting within 4 hours.</div>
         <div class="stats-bar">
-          <div class="stat-card"><div class="stat-label">Live/Soon</div><div class="stat-value" id="live-count" style="color:var(--red)">—</div><div class="stat-sub">games today</div></div>
+          <div class="stat-card"><div class="stat-label">Live/Soon</div><div class="stat-value" id="live-count" style="color:var(--red)">—</div><div class="stat-sub">all sports</div></div>
           <div class="stat-card"><div class="stat-label">Starting Soon</div><div class="stat-value" id="live-soon" style="color:var(--yellow)">—</div><div class="stat-sub">within 2 hrs</div></div>
           <div class="stat-card"><div class="stat-label">Best EV Live</div><div class="stat-value" id="live-ev" style="color:var(--accent)">—</div><div class="stat-sub">right now</div></div>
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="live-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
         </div>
-        <div id="live-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading live games...</div></div>
+        <!-- Sport filter chips -->
+        <div class="sport-filters" id="live-sport-filters">
+          <div class="sport-chip active" onclick="filterLiveSport(this,'all')">🌐 All Sports <span class="chip-count" id="live-chip-count-all">—</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'NBA')">🏀 NBA <span class="chip-count" id="live-chip-count-NBA">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'MLB')">⚾ MLB <span class="chip-count" id="live-chip-count-MLB">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'NHL')">🏒 NHL <span class="chip-count" id="live-chip-count-NHL">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'NFL')">🏈 NFL <span class="chip-count" id="live-chip-count-NFL">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'EPL')">⚽ EPL <span class="chip-count" id="live-chip-count-EPL">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'MLS')">⚽ MLS <span class="chip-count" id="live-chip-count-MLS">0</span></div>
+          <div class="sport-chip" onclick="filterLiveSport(this,'UFC')">🥊 UFC <span class="chip-count" id="live-chip-count-UFC">0</span></div>
+        </div>
+        <div id="live-rows"><div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports for live games...</div><div style="font-size:11px;margin-top:8px;color:var(--muted)">Fetching NBA · MLB · NHL · EPL · MLS · UFC simultaneously</div></div></div>
       </div>
 
       <!-- PICKS -->
@@ -684,6 +695,7 @@ function enterApp(){
   renderPicks();renderPromos();renderTracker();
   loadData();
   loadAllArbSports();
+  loadAllLiveSports();
   setTimeout(loadSportCounts,3000);
 }
 
@@ -1095,8 +1107,79 @@ function addParlayLeg(){const container=document.getElementById('parlay-legs');c
 function calcParlay(){const legs=Array.from(document.querySelectorAll('.parlay-leg')).map(i=>po(i.value)).filter(v=>!isNaN(v));const stake=parseFloat(document.getElementById('parlay-stake').value)||100;if(legs.length<2)return;const totalDec=legs.reduce((prod,o)=>prod*atod(o),1);const totalProb=legs.reduce((prod,o)=>prod*ip(o),1);const parlayOdds=totalDec>=2?Math.round((totalDec-1)*100):Math.round(-100/(totalDec-1));const payout=stake*totalDec;const ev=totalProb*(totalDec-1)-(1-totalProb);document.getElementById('parlay-result').classList.add('show');document.getElementById('parlay-odds').textContent=fmt(parlayOdds);document.getElementById('parlay-payout').textContent='+$'+payout.toFixed(2);document.getElementById('parlay-prob').textContent=(totalProb*100).toFixed(2)+'%';const evEl=document.getElementById('parlay-ev');const evDollar=ev*stake;evEl.textContent=(evDollar>=0?'+$':'-$')+Math.abs(evDollar).toFixed(2);evEl.style.color=evDollar>=0?'var(--green)':'var(--red)';}
 function calcNoVig(){const oA=po(document.getElementById('nv-a').value);const oB=po(document.getElementById('nv-b').value);if(isNaN(oA)||isNaN(oB))return;const pA=ip(oA),pB=ip(oB),nvA=pA/(pA+pB),nvB=pB/(pA+pB);document.getElementById('nv-result').classList.add('show');document.getElementById('nv-fair-a').textContent=fmt(dtoa(1/nvA));document.getElementById('nv-fair-b').textContent=fmt(dtoa(1/nvB));document.getElementById('nv-prob-a').textContent=(nvA*100).toFixed(2)+'%';document.getElementById('nv-prob-b').textContent=(nvB*100).toFixed(2)+'%';document.getElementById('nv-vig').textContent=((pA+pB-1)*100).toFixed(2)+'%';}
 
-// Auto-refresh arb every 90s
-setInterval(()=>{if(inApp){loadData();loadAllArbSports();}},90000);
+// =====================
+// ALL-SPORTS LIVE ENGINE
+// =====================
+let allLiveResults=[];
+let liveFilter='all';
+
+async function fetchSportLive(sportConfig){
+  try{
+    const r=await fetch(`${API_ENDPOINT}?sport=${sportConfig.key}&market=h2h`);
+    if(!r.ok)return[];
+    const data=await r.json();
+    if(!Array.isArray(data)||!data.length)return[];
+    const now=Date.now();
+    const cutoff=now+14400000;
+    return data.filter(g=>new Date(g.commence_time).getTime()<=cutoff).map(g=>({...g,sportLabel:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg}));
+  }catch(e){return[];}
+}
+
+async function loadAllLiveSports(){
+  document.getElementById('live-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports for live games...</div><div style="font-size:11px;margin-top:8px;color:var(--muted)">Fetching ${ARB_SPORTS.map(s=>s.label).join(' · ')}</div></div>`;
+  const results=await Promise.all(ARB_SPORTS.map(s=>fetchSportLive(s)));
+  const now=Date.now();
+  allLiveResults=results.flat().sort((a,b)=>new Date(a.commence_time)-new Date(b.commence_time));
+  const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
+  allLiveResults.forEach(g=>{if(counts[g.sportLabel]!==undefined)counts[g.sportLabel]++;});
+  ARB_SPORTS.forEach(s=>{const el=document.getElementById('live-chip-count-'+s.label);if(el)el.textContent=counts[s.label]||0;});
+  const allChip=document.getElementById('live-chip-count-all');if(allChip)allChip.textContent=allLiveResults.length;
+  document.getElementById('live-count').textContent=allLiveResults.length;
+  const soonGames=allLiveResults.filter(g=>new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+7200000);
+  document.getElementById('live-soon').textContent=soonGames.length;
+  document.getElementById('live-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  let bestEV=0;
+  allLiveResults.forEach(g=>{const books=g.bookmakers||[];const om={};books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({odds:o.price});})));Object.values(om).forEach(offers=>{if(offers.length<2)return;const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);if(isFinite(ev)&&ev>bestEV)bestEV=ev;});});
+  document.getElementById('live-ev').textContent=bestEV>0?'+'+(bestEV*100).toFixed(1)+'%':'—';
+  renderLiveRows();
+}
+
+function filterLiveSport(el,sport){
+  document.querySelectorAll('#live-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');liveFilter=sport;renderLiveRows();
+}
+
+function renderLiveRows(){
+  const now=Date.now();
+  const filtered=liveFilter==='all'?allLiveResults:allLiveResults.filter(g=>g.sportLabel===liveFilter);
+  if(!filtered.length){document.getElementById('live-rows').innerHTML=`<div class="info-box">ℹ️ No live or upcoming games${liveFilter!=='all'?' for '+liveFilter:''} in the next 4 hours.</div>`;return;}
+  document.getElementById('live-rows').innerHTML=filtered.map(g=>{
+    const t=new Date(g.commence_time).getTime();
+    const isLive=t<=now;const minsUntil=Math.round((t-now)/60000);
+    const timeLabel=isLive?'<span style="display:inline-flex;align-items:center;gap:4px;color:var(--red);font-weight:700;font-family:var(--fm);">● LIVE</span>':minsUntil<60?`<span style="color:var(--yellow);font-family:var(--fm);">⚡ ${minsUntil}m</span>`:`<span style="color:var(--muted);font-family:var(--fm);">${fmtT(g.commence_time)}</span>`;
+    const books=g.bookmakers||[];
+    const bestOdds={};
+    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!bestOdds[o.name]||o.price>bestOdds[o.name].odds)bestOdds[o.name]={odds:o.price,book:bm.title};})));
+    const outcomes=Object.entries(bestOdds);
+    let gameEV=0;const om={};
+    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({odds:o.price});})));
+    Object.values(om).forEach(offers=>{if(offers.length<2)return;const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);if(isFinite(ev)&&ev>gameEV)gameEV=ev;});
+    return`<div class="arb-card">
+      <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;padding:16px 20px;align-items:center;">
+        <div class="arb-sport-badge" style="background:${g.sportBg};color:${g.sportColor};border:1px solid ${g.sportColor}40">${g.sportEmoji} ${g.sportLabel}</div>
+        <div><div class="arb-game-name">${g.home_team} vs ${g.away_team}</div><div class="arb-game-time">${timeLabel} · ${books.length} books</div></div>
+        ${gameEV>0?`<div style="text-align:center;min-width:70px;"><div style="font-size:14px;font-weight:800;color:var(--green);font-family:var(--fm);">+${(gameEV*100).toFixed(1)}%</div><div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Best EV</div></div>`:''}
+        <div><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET →</button></div>
+      </div>
+      <div style="display:flex;gap:8px;padding:0 20px 16px;overflow-x:auto;flex-wrap:wrap;">
+        ${outcomes.map(([name,data])=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:140px;cursor:pointer;transition:border 0.15s;" onclick="openBook('${data.book}')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div><div style="font-size:20px;font-weight:900;color:var(--accent);font-family:var(--fm);">${fmt(data.odds)}</div><div style="font-size:10px;color:var(--accent);font-weight:600;margin-top:3px;">${data.book}</div></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Auto-refresh all tabs every 90s
+setInterval(()=>{if(inApp){loadData();loadAllArbSports();loadAllLiveSports();}},90000);
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
