@@ -321,6 +321,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     <button class="tab-btn" onclick="showTab('promos',this)">🎁 Promos</button>
     <button class="tab-btn" onclick="showTab('lowhold',this)">💎 Low Hold</button>
     <button class="tab-btn" onclick="showTab('middles',this)">🎯 Middles</button>
+    <button class="tab-btn" onclick="showTab('polymarket',this)">🔮 Polymarket</button>
     <button class="tab-btn" onclick="showTab('tools',this)">🔧 More Tools</button>
   </div>
   <div class="main">
@@ -582,6 +583,26 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       </div>
 
       <!-- MORE TOOLS -->
+      <div id="panel-polymarket" class="panel">
+        <div class="section-title">🔮 Polymarket — Prediction Markets</div>
+        <div id="poly-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-label">Markets Live</div><div class="stat-val" id="poly-count">—</div></div>
+          <div class="stat-card"><div class="stat-label">Sports Markets</div><div class="stat-val" id="poly-sports-count">—</div></div>
+          <div class="stat-card"><div class="stat-label">Biggest Edge</div><div class="stat-val" id="poly-best-edge">—</div></div>
+          <div class="stat-card"><div class="stat-label">Last Updated</div><div class="stat-val" id="poly-updated">—</div></div>
+        </div>
+        <div class="sport-filters" id="poly-filters">
+          <div class="sport-chip active" onclick="filterPoly(this,'all')">🌐 All</div>
+          <div class="sport-chip" onclick="filterPoly(this,'nba')">🏀 NBA</div>
+          <div class="sport-chip" onclick="filterPoly(this,'mlb')">⚾ MLB</div>
+          <div class="sport-chip" onclick="filterPoly(this,'nhl')">🏒 NHL</div>
+          <div class="sport-chip" onclick="filterPoly(this,'nfl')">🏈 NFL</div>
+          <div class="sport-chip" onclick="filterPoly(this,'soccer')">⚽ Soccer</div>
+          <div class="sport-chip" onclick="filterPoly(this,'mma')">🥊 MMA</div>
+        </div>
+        <div id="poly-container"><div class="info-box">🔮 Loading Polymarket prediction markets...</div></div>
+      </div>
+
       <div id="panel-tools" class="panel">
         <div class="section-title">🔧 More Calculators</div>
         <div class="calc-grid">
@@ -1068,7 +1089,7 @@ function calcArb(){const oA=po(document.getElementById('arb-a').value),oB=po(doc
 function calcHold(){const oA=po(document.getElementById('hold-a').value),oB=po(document.getElementById('hold-b').value);if(isNaN(oA)||isNaN(oB))return;const pA=ip(oA),pB=ip(oB),nvA=pA/(pA+pB),nvB=pB/(pA+pB);document.getElementById('hold-result').classList.add('show');document.getElementById('hold-a-prob').textContent=(pA*100).toFixed(1)+'%';document.getElementById('hold-b-prob').textContent=(pB*100).toFixed(1)+'%';document.getElementById('hold-vig').textContent=((pA+pB-1)*100).toFixed(2)+'%';document.getElementById('hold-fair-a').textContent=fmt(dtoa(1/nvA));document.getElementById('hold-fair-b').textContent=fmt(dtoa(1/nvB));}
 function calcKelly(){const bk=parseFloat(document.getElementById('kelly-bank').value)||5000,od=po(document.getElementById('kelly-odds').value),pr=parseFloat(document.getElementById('kelly-prob').value)/100;if(isNaN(od)||isNaN(pr))return;const b=atod(od)-1,q=1-pr,k=(b*pr-q)/b;document.getElementById('kelly-result').classList.add('show');document.getElementById('kelly-full').textContent=k>0?'$'+(k*bk).toFixed(2):'No Edge';document.getElementById('kelly-half').textContent=k>0?'$'+(k/2*bk).toFixed(2):'No Edge';document.getElementById('kelly-quarter').textContent=k>0?'$'+(k/4*bk).toFixed(2):'No Edge';const ke=document.getElementById('kelly-edge');ke.textContent=(k*100>=0?'+':''+(k*100).toFixed(2))+'%';ke.style.color=k>=0?'var(--green)':'var(--red)';}
 
-function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');}
+function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');if(id==='polymarket')loadPolymarket();}
 function selectSport(el,sport){
   ['basketball_nba','baseball_mlb','americanfootball_nfl','icehockey_nhl','basketball_ncaab','soccer_usa_mls','soccer_epl','soccer_uefa_champs_league','soccer_spain_la_liga','soccer_italy_serie_a','soccer_germany_bundesliga','tennis_atp_french_open','mma_mixed_martial_arts','boxing_boxing'].forEach(s=>{const el2=document.getElementById('sport-'+s);if(el2)el2.classList.remove('active');});
   el.classList.add('active');currentSport=sport;loadSingleSport();
@@ -1129,7 +1150,119 @@ async function loadSportCounts(){
 }
 
 // Auto-refresh every 90s
-setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();}},90000);
+setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();loadPolymarket();}},90000);
+
+// POLYMARKET
+let allPolyMarkets=[], polyFilter='all';
+
+async function loadPolymarket(){
+  const container=document.getElementById('poly-container');
+  if(!container) return;
+  container.innerHTML='<div class="info-box">🔮 Fetching Polymarket prediction markets...</div>';
+  try {
+    const res = await fetch('https://gamma-api.polymarket.com/markets?closed=false&limit=100&tag_slug=sports');
+    const data = await res.json();
+    allPolyMarkets = data.filter(m => m.outcomePrices && m.question);
+    if(!allPolyMarkets.length) throw new Error('empty');
+    renderPolyMarkets();
+  } catch(e) {
+    try {
+      const res2 = await fetch('https://gamma-api.polymarket.com/markets?closed=false&limit=100&active=true');
+      const data2 = await res2.json();
+      const terms=['nba','nfl','mlb','nhl','soccer','ufc','mma','championship','playoffs','series','game','match','win','beat','score','league','season'];
+      allPolyMarkets = data2.filter(m => {
+        if(!m.question||!m.outcomePrices) return false;
+        const q=m.question.toLowerCase();
+        return terms.some(s=>q.includes(s));
+      });
+      renderPolyMarkets();
+    } catch(e2) {
+      container.innerHTML='<div class="info-box">⚠️ Could not load Polymarket data. Their API may be temporarily unavailable.</div>';
+    }
+  }
+}
+
+function detectSport(q){
+  q=q.toLowerCase();
+  if(q.includes('nba')||q.includes('lakers')||q.includes('celtics')||q.includes('warriors')||q.includes('knicks')||q.includes('basketball')) return 'nba';
+  if(q.includes('mlb')||q.includes('yankees')||q.includes('dodgers')||q.includes('baseball')||q.includes('world series')) return 'mlb';
+  if(q.includes('nhl')||q.includes('hockey')||q.includes('stanley cup')) return 'nhl';
+  if(q.includes('nfl')||q.includes('super bowl')||q.includes('quarterback')||q.includes('touchdown')) return 'nfl';
+  if(q.includes('soccer')||q.includes('premier league')||q.includes('champions league')||q.includes('mls')||q.includes('fifa')||q.includes('epl')) return 'soccer';
+  if(q.includes('ufc')||q.includes('mma')||q.includes('fight')||q.includes('boxing')||q.includes('bout')) return 'mma';
+  return 'other';
+}
+
+function filterPoly(el,sport){
+  document.querySelectorAll('#poly-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  polyFilter=sport;
+  renderPolyMarkets();
+}
+
+function renderPolyMarkets(){
+  const container=document.getElementById('poly-container');
+  if(!container) return;
+  let markets=allPolyMarkets;
+  if(polyFilter!=='all') markets=markets.filter(m=>detectSport(m.question)===polyFilter);
+
+  document.getElementById('poly-count').textContent=allPolyMarkets.length;
+  document.getElementById('poly-sports-count').textContent=markets.length;
+  document.getElementById('poly-updated').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+  if(!markets.length){
+    container.innerHTML='<div class="info-box">No markets found for this filter.</div>';
+    document.getElementById('poly-best-edge').textContent='—';
+    return;
+  }
+
+  const sportColor={nba:'#4f8aff',mlb:'#f5c842',nhl:'#00e5a0',nfl:'#ff7043',soccer:'#ab47bc',mma:'#ef5350',other:'#00e5a0'};
+  const sportEmoji={nba:'🏀',mlb:'⚾',nhl:'🏒',nfl:'🏈',soccer:'⚽',mma:'🥊',other:'🔮'};
+  let bestEdge=0, html='';
+
+  markets.slice(0,40).forEach(m=>{
+    let prices=[];
+    try{prices=JSON.parse(m.outcomePrices);}catch(e){return;}
+    const outcomes=m.outcomes?(typeof m.outcomes==='string'?JSON.parse(m.outcomes):m.outcomes):[];
+    const sport=detectSport(m.question);
+    const col=sportColor[sport]||'#00e5a0';
+    const emo=sportEmoji[sport]||'🔮';
+    const vol=m.volume?'$'+Number(m.volume).toLocaleString('en',{maximumFractionDigits:0}):'—';
+    const liq=m.liquidity?'$'+Number(m.liquidity).toLocaleString('en',{maximumFractionDigits:0}):'—';
+    const endDate=m.endDate?new Date(m.endDate).toLocaleDateString():'—';
+    const polyUrl=m.slug?`https://polymarket.com/event/${m.slug}`:'https://polymarket.com';
+
+    let outHtml='';
+    prices.forEach((p,i)=>{
+      const prob=Math.round(parseFloat(p)*100);
+      const label=outcomes[i]||(i===0?'Yes':'No');
+      const american=prob>=50?('-'+Math.round((prob/(100-prob))*100)):('+'+Math.round(((100-prob)/prob)*100));
+      if(prob>bestEdge) bestEdge=prob;
+      outHtml+=`<div style="flex:1;background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;">
+        <div style="font-size:10px;color:#5a6480;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">${label}</div>
+        <div style="font-size:22px;font-weight:700;color:${prob>50?'#00e5a0':'#4f8aff'};font-family:var(--fh);">${prob}%</div>
+        <div style="font-size:11px;color:#5a6480;margin-top:2px;">${american}</div>
+      </div>`;
+    });
+
+    html+=`<div style="background:#0a0c12;border:1px solid #1e2536;border-radius:10px;padding:16px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="background:${col}22;color:${col};font-size:10px;padding:3px 8px;border-radius:4px;font-weight:600;letter-spacing:1px;">${emo} ${sport.toUpperCase()}</span>
+        <span style="font-size:10px;color:#5a6480;">Closes ${endDate}</span>
+        <span style="font-size:10px;color:#5a6480;margin-left:auto;">Vol: ${vol}</span>
+      </div>
+      <div style="font-size:14px;color:#e0e6f0;font-weight:600;margin-bottom:12px;line-height:1.4;">${m.question}</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">${outHtml}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:10px;color:#5a6480;">Liquidity: ${liq}</span>
+        <a href="${polyUrl}" target="_blank" style="background:#00e5a0;color:#000;font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;text-decoration:none;letter-spacing:1px;">BET ON POLY →</a>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('poly-best-edge').textContent=bestEdge?bestEdge+'%':'—';
+  container.innerHTML=html||'<div class="info-box">No markets found.</div>';
+}
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
