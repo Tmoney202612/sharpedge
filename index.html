@@ -587,9 +587,13 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div class="section-title">🔮 Polymarket — Prediction Markets</div>
         <div id="poly-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
           <div class="stat-card"><div class="stat-label">Markets Live</div><div class="stat-val" id="poly-count">—</div></div>
-          <div class="stat-card"><div class="stat-label">Sports Markets</div><div class="stat-val" id="poly-sports-count">—</div></div>
-          <div class="stat-card"><div class="stat-label">Biggest Edge</div><div class="stat-val" id="poly-best-edge">—</div></div>
+          <div class="stat-card"><div class="stat-label">Divergences Found</div><div class="stat-val" id="poly-div-count">—</div></div>
+          <div class="stat-card"><div class="stat-label">Biggest Gap</div><div class="stat-val" id="poly-best-edge">—</div></div>
           <div class="stat-card"><div class="stat-label">Last Updated</div><div class="stat-val" id="poly-updated">—</div></div>
+        </div>
+        <div class="sport-filters" style="margin-bottom:8px;">
+          <div class="sport-chip active" id="poly-view-markets" onclick="switchPolyView('markets',this)">📊 All Markets</div>
+          <div class="sport-chip" id="poly-view-divergence" onclick="switchPolyView('divergence',this)">⚡ Divergences vs Books</div>
         </div>
         <div class="sport-filters" id="poly-filters">
           <div class="sport-chip active" onclick="filterPoly(this,'all')">🌐 All</div>
@@ -601,6 +605,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="sport-chip" onclick="filterPoly(this,'mma')">🥊 MMA</div>
         </div>
         <div id="poly-container"><div class="info-box">🔮 Loading Polymarket prediction markets...</div></div>
+        <div id="poly-div-container" style="display:none;"></div>
       </div>
 
       <div id="panel-tools" class="panel">
@@ -1152,8 +1157,8 @@ async function loadSportCounts(){
 // Auto-refresh every 90s
 setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();loadPolymarket();}},90000);
 
-// POLYMARKET
-let allPolyMarkets=[], polyFilter='all';
+// POLYMARKET - Phase 2: Markets + Divergence vs Books
+let allPolyMarkets=[], polyFilter='all', polyView='markets', polyOddsCache={};
 
 async function loadPolymarket(){
   const container=document.getElementById('poly-container');
@@ -1164,7 +1169,6 @@ async function loadPolymarket(){
     const data = await res.json();
     allPolyMarkets = data.filter(m => m.outcomePrices && m.question);
     if(!allPolyMarkets.length) throw new Error('empty');
-    renderPolyMarkets();
   } catch(e) {
     try {
       const res2 = await fetch('https://gamma-api.polymarket.com/markets?closed=false&limit=100&active=true');
@@ -1175,11 +1179,165 @@ async function loadPolymarket(){
         const q=m.question.toLowerCase();
         return terms.some(s=>q.includes(s));
       });
-      renderPolyMarkets();
     } catch(e2) {
-      container.innerHTML='<div class="info-box">⚠️ Could not load Polymarket data. Their API may be temporarily unavailable.</div>';
+      container.innerHTML='<div class="info-box">⚠️ Could not load Polymarket data. Try again shortly.</div>';
+      return;
     }
   }
+  await loadOddsForDivergence();
+  renderPolyView();
+}
+
+async function loadOddsForDivergence(){
+  const sports=['basketball_nba','baseball_mlb','icehockey_nhl','americanfootball_nfl','soccer_epl','mma_mixed_martial_arts'];
+  await Promise.allSettled(sports.map(s=>
+    fetch(`${API_ENDPOINT}?sport=${s}&market=h2h`)
+      .then(r=>r.json()).then(d=>{polyOddsCache[s]=d;}).catch(()=>{})
+  ));
+}
+
+function extractTeamNames(question){
+  const vsPat=question.match(/(.+?)\s+(?:vs\.?|versus|v\.)\s+(.+?)(?:\s+|$)/i);
+  if(vsPat) return [vsPat[1].trim(),vsPat[2].trim()];
+  const beatPat=question.match(/Will (.+?) (?:beat|defeat|win against) (.+?)(?:\?|$)/i);
+  if(beatPat) return [beatPat[1].trim(),beatPat[2].trim()];
+  const winPat=question.match(/Will (.+?) win/i);
+  if(winPat) return [winPat[1].trim(),null];
+  return [null,null];
+}
+
+function fuzzyMatch(name,bookName){
+  if(!name||!bookName) return false;
+  const a=name.toLowerCase().replace(/[^a-z0-9 ]/g,'');
+  const b=bookName.toLowerCase().replace(/[^a-z0-9 ]/g,'');
+  const aWords=a.split(' ').filter(w=>w.length>3);
+  const bWords=b.split(' ').filter(w=>w.length>3);
+  return aWords.some(w=>b.includes(w))||bWords.some(w=>a.includes(w));
+}
+
+function findDivergences(){
+  const divergences=[];
+  const allGames=[];
+  Object.values(polyOddsCache).forEach(sportData=>{
+    if(!Array.isArray(sportData)) return;
+    sportData.forEach(game=>{ if(game.bookmakers&&game.bookmakers.length) allGames.push(game); });
+  });
+  allPolyMarkets.forEach(m=>{
+    let prices=[];
+    try{prices=JSON.parse(m.outcomePrices);}catch(e){return;}
+    const outcomes=m.outcomes?(typeof m.outcomes==='string'?JSON.parse(m.outcomes):m.outcomes):[];
+    const [team1,team2]=extractTeamNames(m.question);
+    if(!team1) return;
+    let matchedGame=null,matchedOutcomeIdx=0;
+    for(const game of allGames){
+      if(fuzzyMatch(team1,game.home_team)||fuzzyMatch(team1,game.away_team)){
+        matchedGame=game;
+        matchedOutcomeIdx=fuzzyMatch(team1,game.home_team)?0:1;
+        break;
+      }
+    }
+    if(!matchedGame) return;
+    let bestBookOdds=null;
+    matchedGame.bookmakers.forEach(bk=>{
+      const mkt=bk.markets&&bk.markets.find(mk=>mk.key==='h2h');
+      if(!mkt) return;
+      const outcome=mkt.outcomes[matchedOutcomeIdx];
+      if(!outcome) return;
+      if(bestBookOdds===null||outcome.price>bestBookOdds) bestBookOdds=outcome.price;
+    });
+    if(bestBookOdds===null) return;
+    const bookProb=bestBookOdds>0?(100/(bestBookOdds+100)):(Math.abs(bestBookOdds)/(Math.abs(bestBookOdds)+100));
+    const polyProb=parseFloat(prices[0]);
+    const gap=Math.round((polyProb-bookProb)*100);
+    if(Math.abs(gap)>=5){
+      divergences.push({
+        question:m.question,team1,polyProb:Math.round(polyProb*100),
+        bookProb:Math.round(bookProb*100),gap,bestBookOdds,
+        sport:detectSport(m.question),
+        polyUrl:m.slug?`https://polymarket.com/event/${m.slug}`:'https://polymarket.com',
+        matchedGame:`${matchedGame.home_team} vs ${matchedGame.away_team}`,
+        vol:m.volume?Number(m.volume):0
+      });
+    }
+  });
+  return divergences.sort((a,b)=>Math.abs(b.gap)-Math.abs(a.gap));
+}
+
+function switchPolyView(view,el){
+  polyView=view;
+  document.querySelectorAll('#panel-polymarket .sport-filters:first-of-type .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderPolyView();
+}
+
+function filterPoly(el,sport){
+  document.querySelectorAll('#poly-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  polyFilter=sport;
+  renderPolyView();
+}
+
+function renderPolyView(){
+  document.getElementById('poly-updated').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('poly-count').textContent=allPolyMarkets.length;
+  if(polyView==='divergence') renderDivergences();
+  else renderPolyMarkets();
+}
+
+function renderDivergences(){
+  const container=document.getElementById('poly-container');
+  const divContainer=document.getElementById('poly-div-container');
+  container.style.display='none';
+  divContainer.style.display='block';
+  const divs=findDivergences();
+  const filtered=polyFilter==='all'?divs:divs.filter(d=>d.sport===polyFilter);
+  document.getElementById('poly-div-count').textContent=divs.length;
+  document.getElementById('poly-best-edge').textContent=divs.length?Math.abs(divs[0].gap)+'%':'—';
+  const sportColor={nba:'#4f8aff',mlb:'#f5c842',nhl:'#00e5a0',nfl:'#ff7043',soccer:'#ab47bc',mma:'#ef5350',other:'#00e5a0'};
+  const sportEmoji={nba:'🏀',mlb:'⚾',nhl:'🏒',nfl:'🏈',soccer:'⚽',mma:'🥊',other:'🔮'};
+  if(!filtered.length){
+    divContainer.innerHTML='<div class="info-box">⚡ No significant divergences right now — Polymarket and sportsbooks are in agreement. Check back closer to game time when markets get more active.</div>';
+    return;
+  }
+  let html='<div style="background:#0d1117;border:1px solid #1e2536;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#5a6480;line-height:1.6;">⚡ <strong style="color:#00e5a0;">Divergence = Edge.</strong> When Polymarket crowd probability differs from sportsbook implied probability by 5%+, it signals a potential mispricing. Positive gap = Poly thinks team more likely to win than books — bet the books. Negative gap = books favour the team more — potential Poly value.</div>';
+  filtered.forEach(d=>{
+    const col=sportColor[d.sport]||'#00e5a0';
+    const emo=sportEmoji[d.sport]||'🔮';
+    const gapColor=d.gap>0?'#00e5a0':'#ff5252';
+    const gapLabel=d.gap>0?'Poly HIGHER than books':'Poly LOWER than books';
+    const action=d.gap>0?`Books underpricing ${d.team1} — bet the books`:`Polymarket underestimates ${d.team1} — value on Poly`;
+    const bookAmerican=d.bestBookOdds>0?'+'+d.bestBookOdds:d.bestBookOdds;
+    html+=`<div style="background:#0a0c12;border:1px solid ${gapColor}44;border-left:3px solid ${gapColor};border-radius:10px;padding:16px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="background:${col}22;color:${col};font-size:10px;padding:3px 8px;border-radius:4px;font-weight:600;">${emo} ${d.sport.toUpperCase()}</span>
+        <span style="background:${gapColor}22;color:${gapColor};font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;">${d.gap>0?'+':''}${d.gap}% GAP</span>
+        <span style="font-size:10px;color:#5a6480;margin-left:auto;">${gapLabel}</span>
+      </div>
+      <div style="font-size:13px;color:#e0e6f0;font-weight:600;margin-bottom:4px;">${d.question}</div>
+      <div style="font-size:10px;color:#5a6480;margin-bottom:12px;">Matched to: ${d.matchedGame}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div style="background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;">
+          <div style="font-size:9px;color:#5a6480;margin-bottom:4px;letter-spacing:1px;">POLY PROB</div>
+          <div style="font-size:24px;font-weight:700;color:#00e5a0;font-family:var(--fh);">${d.polyProb}%</div>
+        </div>
+        <div style="background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;">
+          <div style="font-size:9px;color:#5a6480;margin-bottom:4px;letter-spacing:1px;">BOOK IMPLIED</div>
+          <div style="font-size:24px;font-weight:700;color:#4f8aff;font-family:var(--fh);">${d.bookProb}%</div>
+          <div style="font-size:10px;color:#5a6480;">${bookAmerican}</div>
+        </div>
+        <div style="background:#0d1117;border:1px solid ${gapColor}44;padding:10px;border-radius:6px;text-align:center;">
+          <div style="font-size:9px;color:#5a6480;margin-bottom:4px;letter-spacing:1px;">EDGE</div>
+          <div style="font-size:24px;font-weight:700;color:${gapColor};font-family:var(--fh);">${d.gap>0?'+':''}${d.gap}%</div>
+        </div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e2536;border-radius:6px;padding:10px;margin-bottom:10px;font-size:12px;color:#00e5a0;">💡 ${action}</div>
+      <div style="display:flex;gap:8px;">
+        <a href="${d.polyUrl}" target="_blank" style="flex:1;background:#1e2536;color:#e0e6f0;font-size:11px;font-weight:600;padding:8px;border-radius:6px;text-decoration:none;text-align:center;">View on Polymarket</a>
+        <a href="https://www.draftkings.com" target="_blank" style="flex:1;background:#00e5a0;color:#000;font-size:11px;font-weight:700;padding:8px;border-radius:6px;text-decoration:none;text-align:center;">Bet on Books →</a>
+      </div>
+    </div>`;
+  });
+  divContainer.innerHTML=html;
 }
 
 function detectSport(q){
@@ -1193,77 +1351,7 @@ function detectSport(q){
   return 'other';
 }
 
-function filterPoly(el,sport){
-  document.querySelectorAll('#poly-filters .sport-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  polyFilter=sport;
-  renderPolyMarkets();
-}
-
-function renderPolyMarkets(){
-  const container=document.getElementById('poly-container');
-  if(!container) return;
-  let markets=allPolyMarkets;
-  if(polyFilter!=='all') markets=markets.filter(m=>detectSport(m.question)===polyFilter);
-
-  document.getElementById('poly-count').textContent=allPolyMarkets.length;
-  document.getElementById('poly-sports-count').textContent=markets.length;
-  document.getElementById('poly-updated').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-
-  if(!markets.length){
-    container.innerHTML='<div class="info-box">No markets found for this filter.</div>';
-    document.getElementById('poly-best-edge').textContent='—';
-    return;
-  }
-
-  const sportColor={nba:'#4f8aff',mlb:'#f5c842',nhl:'#00e5a0',nfl:'#ff7043',soccer:'#ab47bc',mma:'#ef5350',other:'#00e5a0'};
-  const sportEmoji={nba:'🏀',mlb:'⚾',nhl:'🏒',nfl:'🏈',soccer:'⚽',mma:'🥊',other:'🔮'};
-  let bestEdge=0, html='';
-
-  markets.slice(0,40).forEach(m=>{
-    let prices=[];
-    try{prices=JSON.parse(m.outcomePrices);}catch(e){return;}
-    const outcomes=m.outcomes?(typeof m.outcomes==='string'?JSON.parse(m.outcomes):m.outcomes):[];
-    const sport=detectSport(m.question);
-    const col=sportColor[sport]||'#00e5a0';
-    const emo=sportEmoji[sport]||'🔮';
-    const vol=m.volume?'$'+Number(m.volume).toLocaleString('en',{maximumFractionDigits:0}):'—';
-    const liq=m.liquidity?'$'+Number(m.liquidity).toLocaleString('en',{maximumFractionDigits:0}):'—';
-    const endDate=m.endDate?new Date(m.endDate).toLocaleDateString():'—';
-    const polyUrl=m.slug?`https://polymarket.com/event/${m.slug}`:'https://polymarket.com';
-
-    let outHtml='';
-    prices.forEach((p,i)=>{
-      const prob=Math.round(parseFloat(p)*100);
-      const label=outcomes[i]||(i===0?'Yes':'No');
-      const american=prob>=50?('-'+Math.round((prob/(100-prob))*100)):('+'+Math.round(((100-prob)/prob)*100));
-      if(prob>bestEdge) bestEdge=prob;
-      outHtml+=`<div style="flex:1;background:#0d1117;border:1px solid #1e2536;padding:10px;border-radius:6px;text-align:center;">
-        <div style="font-size:10px;color:#5a6480;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">${label}</div>
-        <div style="font-size:22px;font-weight:700;color:${prob>50?'#00e5a0':'#4f8aff'};font-family:var(--fh);">${prob}%</div>
-        <div style="font-size:11px;color:#5a6480;margin-top:2px;">${american}</div>
-      </div>`;
-    });
-
-    html+=`<div style="background:#0a0c12;border:1px solid #1e2536;border-radius:10px;padding:16px;margin-bottom:12px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-        <span style="background:${col}22;color:${col};font-size:10px;padding:3px 8px;border-radius:4px;font-weight:600;letter-spacing:1px;">${emo} ${sport.toUpperCase()}</span>
-        <span style="font-size:10px;color:#5a6480;">Closes ${endDate}</span>
-        <span style="font-size:10px;color:#5a6480;margin-left:auto;">Vol: ${vol}</span>
-      </div>
-      <div style="font-size:14px;color:#e0e6f0;font-weight:600;margin-bottom:12px;line-height:1.4;">${m.question}</div>
-      <div style="display:flex;gap:8px;margin-bottom:12px;">${outHtml}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:10px;color:#5a6480;">Liquidity: ${liq}</span>
-        <a href="${polyUrl}" target="_blank" style="background:#00e5a0;color:#000;font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;text-decoration:none;letter-spacing:1px;">BET ON POLY →</a>
-      </div>
-    </div>`;
-  });
-
-  document.getElementById('poly-best-edge').textContent=bestEdge?bestEdge+'%':'—';
-  container.innerHTML=html||'<div class="info-box">No markets found.</div>';
-}
-</script>
+</script></script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
