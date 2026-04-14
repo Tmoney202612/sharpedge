@@ -415,6 +415,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="sport-chip" onclick="filterPicksSport(this,'MLS')">⚽ MLS <span class="chip-count" id="picks-chip-MLS">0</span></div>
           <div class="sport-chip" onclick="filterPicksSport(this,'UFC')">🥊 UFC <span class="chip-count" id="picks-chip-UFC">0</span></div>
         </div>
+        <div class="sport-filters" id="picks-odds-filters" style="margin-top:-10px;">
+          <div class="sport-chip active" style="border-color:var(--accent2);color:var(--accent2);background:rgba(79,138,255,0.1);" onclick="filterPicksOdds(this,'all')">📊 All Odds</div>
+          <div class="sport-chip" onclick="filterPicksOdds(this,'fav')" style="border-color:var(--yellow);">⭐ Favorites <span style="font-size:9px;opacity:0.7;">(negative odds)</span></div>
+          <div class="sport-chip" onclick="filterPicksOdds(this,'dog')" style="border-color:var(--red);">🐶 Underdogs <span style="font-size:9px;opacity:0.7;">(positive odds)</span></div>
+          <div class="sport-chip" onclick="filterPicksOdds(this,'small')" style="border-color:var(--green);">🎯 Small Edge <span style="font-size:9px;opacity:0.7;">(+100 to +200)</span></div>
+        </div>
         <div id="picks-container"><div class="loading-state"><div class="loading-spinner"></div><div>Loading today's picks from all sports...</div></div></div>
       </div>
 
@@ -603,7 +609,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 <script>
 const API_ENDPOINT='/api/odds';
 let currentSport='basketball_nba',currentMarket='h2h',inApp=false,chatOpen=false;
-let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all';
+let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all',picksOddsFilter='all';
 let allArbResults=[],allEVResults=[],allLiveResults=[],allPicksResults=[];
 let parlayLegs=[];
 
@@ -835,9 +841,18 @@ function buildPicksFromEV(){
 
 function filterPicksSport(el,sport){document.querySelectorAll('#picks-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');picksFilter=sport;renderPicksRows();}
 
+function filterPicksOdds(el,type){
+  document.querySelectorAll('#picks-odds-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');picksOddsFilter=type;renderPicksRows();
+}
+
 function renderPicksRows(){
-  const filtered=picksFilter==='all'?allPicksResults:allPicksResults.filter(p=>p.sport===picksFilter);
-  if(!filtered.length){document.getElementById('picks-container').innerHTML='<div class="info-box">ℹ️ No picks available right now. Picks load from live +EV data — check back shortly.</div>';return;}
+  let filtered=picksFilter==='all'?allPicksResults:allPicksResults.filter(p=>p.sport===picksFilter);
+  // Apply odds filter
+  if(picksOddsFilter==='fav') filtered=filtered.filter(p=>p.bestOdds<0);
+  else if(picksOddsFilter==='dog') filtered=filtered.filter(p=>p.bestOdds>0);
+  else if(picksOddsFilter==='small') filtered=filtered.filter(p=>p.bestOdds>=100&&p.bestOdds<=200);
+  if(!filtered.length){document.getElementById('picks-container').innerHTML='<div class="info-box">ℹ️ No picks match this filter right now. Try a different odds type or sport.</div>';return;}
   const analyses=[
     'Strong +EV opportunity. True probability significantly better than implied odds at this book.',
     'Book has mispriced this line vs. the consensus market. Bet before it corrects.',
