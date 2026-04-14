@@ -711,7 +711,6 @@ async function fetchSportArbs(sportConfig){
     const arbs=[];
     data.forEach(g=>{
       const books=g.bookmakers||[];if(books.length<2)return;
-      // Build outcome map: {outcomeName: [{book, odds}]}
       const om={};
       books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{
         if(!validOdds(o.price))return;
@@ -719,63 +718,41 @@ async function fetchSportArbs(sportConfig){
         om[o.name].push({book:bm.title,odds:o.price});
       })));
       const sides=Object.entries(om);if(sides.length<2)return;
-
-      // For each outcome, get best odds — but then ensure different books across all legs
-      // Try all combinations of one offer per outcome to find cross-book arbs
-      const outcomeOffers=sides.map(([name,offers])=>offers.map(o=>({name,book:o.book,odds:o.price})));
-
-      // Generate combos: one offer per outcome, all from different books
-      function getCombos(offers,idx,current,usedBooks){
-        if(idx===offers.length){
-          // Check if all different books
-          if(new Set(current.map(o=>o.book)).size===current.length) return[current];
-          return[];
-        }
-        const results=[];
-        for(const offer of offers[idx]){
-          if(!usedBooks.has(offer.book)){
-            results.push(...getCombos(offers,idx+1,[...current,offer],new Set([...usedBooks,offer.book])));
-          }
-        }
-        return results;
+      // Get best odds per outcome
+      const best=sides.map(([n,offs])=>{const b=offs.reduce((a,b)=>a.odds>b.odds?a:b);return{name:n,book:b.book,odds:b.odds};});
+      const sA=best[0],sB=best[1];
+      if(!validOdds(sA.odds)||!validOdds(sB.odds))return;
+      // KEY FIX: skip if same book
+      if(sA.book===sB.book){
+        // Try to find next best for sB from a different book
+        const altB=om[sB.name]?.filter(o=>o.book!==sA.book).reduce((a,b)=>a.odds>b.odds?a:b,{odds:-9999,book:''});
+        if(!altB||!validOdds(altB.odds))return;
+        sB.odds=altB.odds;sB.book=altB.book;
       }
-
-      // Only run combo check for 2-3 outcomes (performance)
-      if(outcomeOffers.length>3)return;
-      const combos=getCombos(outcomeOffers,0,[],new Set());
-
-      for(const combo of combos){
-        const tot=combo.reduce((s,o)=>s+ip(o.odds),0);
-        if(tot<1){
-          const p=((1/tot)-1)*100;
-          if(p>0.05&&isFinite(p)&&p<50){ // cap at 50% to filter bad data
-            const bk=200;
-            const stakes=combo.map(o=>({...o,stake:(ip(o.odds)/tot*bk).toFixed(2)}));
-            const profit=(bk*p/100).toFixed(2);
-            // Use first two legs as sA/sB for display, pass all legs
-            arbs.push({
-              sport:sportConfig.label,sportEmoji:sportConfig.emoji,
-              sportColor:sportConfig.color,sportBg:sportConfig.bg,
-              game:`${g.home_team} vs ${g.away_team}`,
-              time:g.commence_time,
-              sA:{name:stakes[0].name,book:stakes[0].book,odds:stakes[0].odds},
-              sB:{name:stakes[1].name,book:stakes[1].book,odds:stakes[1].odds},
-              legs:stakes,
-              profit:p.toFixed(2),tot,
-              stakeA:stakes[0].stake,stakeB:stakes[1].stake,
-              profit200:profit
-            });
-          }
+      if(sA.book===sB.book)return; // still same, skip
+      const tot=ip(sA.odds)+ip(sB.odds);
+      if(tot<1){
+        const p=((1/tot)-1)*100;
+        if(p>0.05&&isFinite(p)){
+          const bk=200;
+          const stakeA=(ip(sA.odds)/tot*bk).toFixed(2);
+          const stakeB=(ip(sB.odds)/tot*bk).toFixed(2);
+          const profit=(bk*p/100).toFixed(2);
+          const legs=[
+            {name:sA.name,book:sA.book,odds:sA.odds,stake:stakeA},
+            {name:sB.name,book:sB.book,odds:sB.odds,stake:stakeB},
+          ];
+          arbs.push({
+            sport:sportConfig.label,sportEmoji:sportConfig.emoji,
+            sportColor:sportConfig.color,sportBg:sportConfig.bg,
+            game:`${g.home_team} vs ${g.away_team}`,
+            time:g.commence_time,sA,sB,legs,
+            profit:p.toFixed(2),tot,stakeA,stakeB,profit200:profit
+          });
         }
       }
     });
-    // Deduplicate: keep best profit per game
-    const seen=new Map();
-    arbs.forEach(a=>{
-      const key=a.game;
-      if(!seen.has(key)||parseFloat(a.profit)>parseFloat(seen.get(key).profit))seen.set(key,a);
-    });
-    return Array.from(seen.values());
+    return arbs;
   }catch(e){return[];}
 }
 
