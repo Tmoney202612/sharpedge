@@ -702,55 +702,75 @@ async function loadAllArbSports(){
   renderArbRows();
 }
 
-async function fetchSportArbs(sportConfig){
+async function fetchSportArbs(sport){
   try{
-    const data=await fetchSport(sportConfig.key);
-    if(!data.length)return[];
-    const arbs=[];
+    const data=await fetchSport(sport,'h2h');
+    if(!data||!data.length)return[];
+    const labels={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL','soccer_usa_mls':'MLS','mma_mixed_martial_arts':'UFC'};
+    const opps=[];
     data.forEach(g=>{
-      const books=g.bookmakers||[];if(books.length<2)return;
+      const books=g.bookmakers||[];if(books.length<3)return;
       const om={};
-      books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});})));
-      const sides=Object.entries(om);if(sides.length<2)return;
-      const best=sides.map(([n,offs])=>{const b=offs.reduce((a,b)=>a.odds>b.odds?a:b);return{name:n,book:b.book,odds:b.odds};});
-      let sA=best[0],sB=best[1];
-      if(!validOdds(sA.odds)||!validOdds(sB.odds))return;
-      if(sA.book===sB.book){
-        const altB=om[sB.name]?.filter(o=>o.book!==sA.book).sort((a,b)=>b.odds-a.odds)[0];
-        if(!altB||!validOdds(altB.odds))return;
-        sB={...sB,odds:altB.odds,book:altB.book};
-      }
-      if(sA.book===sB.book)return;
-      const tot=ip(sA.odds)+ip(sB.odds);
-      if(tot<1){
-        const p=((1/tot)-1)*100;
-        if(p>0.05&&isFinite(p)){
-          const bk=200,stakeA=(ip(sA.odds)/tot*bk).toFixed(2),stakeB=(ip(sB.odds)/tot*bk).toFixed(2);
-          arbs.push({sport:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg,game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,sA,sB,legs:[{name:sA.name,book:sA.book,odds:sA.odds,stake:stakeA},{name:sB.name,book:sB.book,odds:sB.odds,stake:stakeB}],profit:p.toFixed(2),tot,stakeA,stakeB,profit200:(bk*p/100).toFixed(2)});
-        }
-      }
+      books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{
+        if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});
+      })));
+      const entries=Object.entries(om);if(entries.length<2)return;
+      const [n1,o1]=entries[0],[n2,o2]=entries[1];
+      const best1=o1.reduce((a,b)=>a.odds>b.odds?a:b);
+      const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
+      const d1=atod(best1.odds),d2=atod(best2.odds);
+      const margin=(1/d1+1/d2-1)*100;
+      if(margin>3)return;
+      opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,
+        leg1:{name:n1,book:best1.book,odds:best1.odds},leg2:{name:n2,book:best2.book,odds:best2.odds},
+        margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
     });
-    return arbs;
+    return opps.sort((a,b)=>a.margin-b.margin);
   }catch(e){return[];}
 }
 
 function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');arbFilter=sport;renderArbRows();}
 
 function renderArbRows(){
-  const filtered=arbFilter==='all'?allArbResults:allArbResults.filter(a=>a.sport===arbFilter);
-  if(!filtered.length){document.getElementById('arb-rows').innerHTML=`<div class="info-box">ℹ️ No arbitrage opportunities found${arbFilter!=='all'?' for '+arbFilter:''} right now. True arbs are rare — check back shortly.</div>`;return;}
-  document.getElementById('arb-rows').innerHTML=filtered.map(a=>`
-    <div class="arb-card">
-      <div class="arb-card-top">
-        <div class="arb-sport-badge" style="background:${a.sportBg};color:${a.sportColor};border:1px solid ${a.sportColor}40">${a.sportEmoji} ${a.sport}</div>
-        <div class="arb-game-info"><div class="arb-game-name">${a.game}</div><div class="arb-game-time">${fmtT(a.time)}</div></div>
-        <div class="arb-profit-block"><div class="arb-profit-pct">+${a.profit}%</div><div class="arb-profit-label">Guaranteed</div></div>
-        <div class="arb-dollar-block"><div class="arb-dollar-amt">+$${a.profit200}</div><div class="arb-dollar-label">On $200</div></div>
+  const filtered=arbFilter==='all'?allArbOpps:allArbOpps.filter(o=>o.sport===arbFilter);
+  const container=document.getElementById('arb-rows');
+  if(!container)return;
+  if(!filtered.length){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';return;}
+  const STAKE=200;
+  container.innerHTML=filtered.map(o=>{
+    const leg1=o.leg1,leg2=o.leg2;if(!leg1||!leg2)return'';
+    const d1=atod(leg1.odds),d2=atod(leg2.odds);
+    const s1=(STAKE*d2/(d1+d2)).toFixed(2),s2=(STAKE*d1/(d1+d2)).toFixed(2);
+    const gameDate=o.commenceTime?new Date(o.commenceTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+    const badge=o.isArb?
+      '<span style="background:rgba(0,229,160,0.15);color:#00e5a0;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">✓ TRUE ARB</span>':
+      '<span style="background:rgba(255,200,0,0.1);color:#ffc800;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">BEST LINE</span>';
+    const profitStr=o.isArb?
+      `<div style="text-align:right;"><div style="font-size:18px;font-weight:800;color:#00e5a0;">+${(o.profit*100).toFixed(2)}%</div><div style="font-size:11px;color:var(--muted);">GUARANTEED</div></div><div style="text-align:right;"><div style="font-size:18px;font-weight:800;color:#fff;">+$${(o.profit*STAKE).toFixed(2)}</div><div style="font-size:11px;color:var(--muted);">ON $${STAKE}</div></div>`:
+      `<div style="text-align:right;"><div style="font-size:18px;font-weight:800;color:#ffc800;">${o.margin.toFixed(2)}%</div><div style="font-size:11px;color:var(--muted);">MARGIN</div></div>`;
+    return `<div style="background:var(--card);border:1px solid ${o.isArb?'rgba(0,229,160,0.4)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span><span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span></div>
+        <div style="display:flex;align-items:center;gap:16px;">${profitStr}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);">
-        ${a.legs.map((leg,i)=>`<div class="arb-leg-block" style="${i===0?'border-right:1px solid var(--border);':''}"><div class="arb-leg-left"><div class="arb-leg-outcome">${leg.name}</div><div class="arb-leg-book">${leg.book}</div><div class="arb-leg-stake">Stake: $${leg.stake} of $200</div></div><div class="arb-leg-right"><div class="arb-leg-odds">${fmt(leg.odds)}</div><button class="arb-leg-bet-btn" onclick="openBook('${leg.book}')">BET →</button></div></div>`).join('')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;">
+        <div style="padding:16px;border-right:1px solid var(--border);">
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg1.name}</div>
+          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px;">${leg1.book}</div>
+          <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px;">${fmt(leg1.odds)}</div>
+          ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s1+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
+          <button onclick="openBook('${leg1.book}')" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+        </div>
+        <div style="padding:16px;">
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
+          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px;">${leg2.book}</div>
+          <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px;">${fmt(leg2.odds)}</div>
+          ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
+          <button onclick="openBook('${leg2.book}')" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+        </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // =====================
