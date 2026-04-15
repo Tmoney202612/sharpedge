@@ -8,8 +8,10 @@ export default async function handler(req, res) {
   try {
     const r = await fetch(url);
     const data = await r.json();
+    const now = new Date();
+    const upcoming = Array.isArray(data) ? data.filter(g => new Date(g.commence_time) > now) : data;
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
-    res.status(200).json(data);
+    res.status(200).json(upcoming);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
