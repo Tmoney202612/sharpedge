@@ -1060,6 +1060,7 @@ function selectSport(el,sport){
   });
   el.classList.add('active');
   currentSport=sport;
+  // Always reload data for the selected sport - this updates EV, Arb, Odds, Live, Low Hold, Middles
   loadData();
   renderPicks(sport);
 }
