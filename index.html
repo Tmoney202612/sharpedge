@@ -1051,9 +1051,18 @@ function selectSport(el,sport){
   });
   el.classList.add('active');
   currentSport=sport;
-  // Always reload data for the selected sport - this updates EV, Arb, Odds, Live, Low Hold, Middles
   loadData();
   renderPicks(sport);
+  // Map sport key to chip label and click matching filter chip
+  const sportToChip={basketball_nba:'NBA',baseball_mlb:'MLB',americanfootball_nfl:'NFL',icehockey_nhl:'NHL',soccer_epl:'EPL',soccer_usa_mls:'MLS',mma_mixed_martial_arts:'UFC',baseball_ncaa:'NCAA',basketball_ncaab:'NCAAB'};
+  const chipLabel=sportToChip[sport];
+  const activePanel=document.querySelector('.panel.active');
+  if(activePanel&&chipLabel){
+    const chips=activePanel.querySelectorAll('.sport-chip');
+    chips.forEach(chip=>{
+      if(chip.textContent.trim().startsWith(chipLabel)){chip.click();}
+    });
+  }
 }
 function selectMarket(el,market){el.closest('.sidebar-section').querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');currentMarket=market;loadSingleSport();}
 
