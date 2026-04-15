@@ -706,7 +706,7 @@ async function fetchSportArbs(sportConfig){
     const data=await fetchSport(sportConfig.key);
     if(!data.length)return[];
     const arbs=[];
-    const now=Date.now();data=data.filter(g=>new Date(g.commence_time).getTime()>now-10800000);data.forEach(g=>{
+    data.forEach(g=>{
       const books=g.bookmakers||[];if(books.length<2)return;
       const om={};
       books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});})));
