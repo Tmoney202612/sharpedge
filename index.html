@@ -361,8 +361,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetMGM</div>
         <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Caesars</div>
         <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetRivers</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Pinnacle</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Unibet</div>
+                <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Unibet</div>
         <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetOnline</div>
       </div>
       <div class="sidebar-section">
@@ -634,6 +633,7 @@ function validOdds(o){return typeof o==='number'&&!isNaN(o)&&isFinite(o)&&o!==0&
 function fmtT(iso){const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
 function ss(msg){const el=document.getElementById('api-status');if(el)el.textContent=msg;}
 
+const SHARP_BOOKS=['Pinnacle','BetOnline'];// Sharp reference books - no US retail
 const BOOK_URLS={
   'DraftKings':'https://www.draftkings.com','FanDuel':'https://www.fanduel.com/sports',
   'BetMGM':'https://www.betmgm.com','Caesars':'https://www.caesars.com/sportsbook-and-casino',
@@ -810,7 +810,7 @@ function renderEVRows(){
       <div class="col-c"><div class="col-l">Best Odds</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(r.bestOdds)}</div></div>
       <div class="col-c"><div class="col-l">Fair Odds</div><div style="font-family:var(--fm);font-size:14px;color:var(--muted)">${fmt(r.fair)}</div></div>
       <div class="col-c"><div class="col-l">EV %</div><div class="ev-badge ev-pos">+${r.ev}%</div></div>
-      <div class="col-c"><button class="bet-btn" onclick="openBook('${r.bestBook}')">BET →</button></div>
+      <div class="col-c">${SHARP_BOOKS.includes(r.bestBook)?'<span style="font-size:10px;color:var(--muted);font-family:var(--fm);">Sharp ref only</span>':`<button class="bet-btn" onclick="openBook('${r.bestBook}')">BET →</button>`}</div>
     </div></div>`).join('');
 }
 
