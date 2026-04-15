@@ -1114,7 +1114,7 @@ let parlayLegsLive=[];
 async function loadParlayLivePicks(){
   const container=document.getElementById('parlay-live-picks');
   if(!container)return;
-  const data=await fetchOdds(currentSport,currentMarket);
+  const data=await fetchSport(currentSport,currentMarket);
   if(!data||!data.length){container.innerHTML='<div class="info-box">No live picks. Try switching sports.</div>';return;}
   const picks=[];
   data.forEach(g=>{
