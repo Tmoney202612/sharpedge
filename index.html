@@ -237,7 +237,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   .arb-card-top{grid-template-columns:auto 1fr auto;}
   .arb-dollar-block{display:none;}
 }
-</style>
+.odds-best{background:rgba(0,229,160,0.15)!important;color:#00e5a0!important;border-radius:4px;}.odds-worst{background:rgba(255,71,87,0.06)!important;color:#ff6b7a!important;border-radius:4px;}</style>
 </head>
 <body>
 
@@ -728,20 +728,59 @@ async function fetchSportArbs(sportConfig){
 function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');arbFilter=sport;renderArbRows();}
 
 function renderArbRows(){
-  const filtered=arbFilter==='all'?allArbResults:allArbResults.filter(a=>a.sport===arbFilter);
-  if(!filtered.length){document.getElementById('arb-rows').innerHTML=`<div class="info-box">ℹ️ No arbitrage opportunities found${arbFilter!=='all'?' for '+arbFilter:''} right now. True arbs are rare — check back shortly.</div>`;return;}
-  document.getElementById('arb-rows').innerHTML=filtered.map(a=>`
-    <div class="arb-card">
-      <div class="arb-card-top">
-        <div class="arb-sport-badge" style="background:${a.sportBg};color:${a.sportColor};border:1px solid ${a.sportColor}40">${a.sportEmoji} ${a.sport}</div>
-        <div class="arb-game-info"><div class="arb-game-name">${a.game}</div><div class="arb-game-time">${fmtT(a.time)}</div></div>
-        <div class="arb-profit-block"><div class="arb-profit-pct">+${a.profit}%</div><div class="arb-profit-label">Guaranteed</div></div>
-        <div class="arb-dollar-block"><div class="arb-dollar-amt">+$${a.profit200}</div><div class="arb-dollar-label">On $200</div></div>
+  const filtered=arbFilter==='all'?allArbOpps:allArbOpps.filter(o=>o.sport===arbFilter);
+  const container=document.getElementById('arb-rows');
+  if(!container)return;
+  if(!filtered.length){container.innerHTML='<div class="loading-state">No arbitrage opportunities found right now. Markets are efficient — check back soon.</div>';return;}
+  const STAKE=200;
+  container.innerHTML=filtered.map(o=>{
+    const profit=o.profit||0;
+    const profitPct=(profit*100).toFixed(2);
+    const profitDollar=(profit*STAKE).toFixed(2);
+    const leg1=o.leg1,leg2=o.leg2;
+    if(!leg1||!leg2)return '';
+    // Calculate optimal stakes
+    const d1=atod(leg1.odds),d2=atod(leg2.odds);
+    const s1=(STAKE*d2/(d1+d2-1)).toFixed(2);
+    const s2=(STAKE*d1/(d1+d2-1)).toFixed(2);
+    const gameDate=o.commenceTime?new Date(o.commenceTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+    const sportEmoji={'basketball_nba':'🏀','baseball_mlb':'⚾','icehockey_nhl':'🏒','americanfootball_nfl':'🏈','soccer_epl':'⚽','soccer_uefa_champs_league':'⚽','soccer_spain_la_liga':'⚽','mma_mixed_martial_arts':'🥊'}[o.sport]||'🎯';
+    return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;background:rgba(0,229,160,0.1);color:var(--accent);padding:2px 8px;border-radius:4px;font-weight:700;">${sportEmoji} ${o.sportLabel||o.sport}</span>
+          <span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span>
+          <span style="font-size:11px;color:var(--muted);">${gameDate}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:800;color:var(--green);">+${profitPct}%</div>
+            <div style="font-size:11px;color:var(--muted);">GUARANTEED</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:800;color:#fff;">+${profitDollar}</div>
+            <div style="font-size:11px;color:var(--muted);">ON ${STAKE}</div>
+          </div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);">
-        ${a.legs.map((leg,i)=>`<div class="arb-leg-block" style="${i===0?'border-right:1px solid var(--border);':''}"><div class="arb-leg-left"><div class="arb-leg-outcome">${leg.name}</div><div class="arb-leg-book">${leg.book}</div><div class="arb-leg-stake">Stake: $${leg.stake} of $200</div></div><div class="arb-leg-right"><div class="arb-leg-odds">${fmt(leg.odds)}</div><button class="arb-leg-bet-btn" onclick="openBook('${leg.book}')">BET →</button></div></div>`).join('')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+        <div style="padding:16px;border-right:1px solid var(--border);">
+          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">${leg1.name}</div>
+          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:8px;">${leg1.book}</div>
+          <div style="font-family:var(--fm);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:8px;">${fmt(leg1.odds)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: ${s1} of ${STAKE}</div>
+          <button onclick="openBook('${leg1.book}')" style="background:var(--accent);color:#000;border:none;padding:8px 20px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+        </div>
+        <div style="padding:16px;">
+          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
+          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:8px;">${leg2.book}</div>
+          <div style="font-family:var(--fm);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:8px;">${fmt(leg2.odds)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: ${s2} of ${STAKE}</div>
+          <button onclick="openBook('${leg2.book}')" style="background:var(--accent);color:#000;border:none;padding:8px 20px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+        </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // =====================
