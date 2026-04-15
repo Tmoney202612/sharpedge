@@ -468,37 +468,28 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <!-- PARLAY BUILDER -->
       <div id="panel-parlay" class="panel">
         <div class="section-title">🎲 Parlay Builder</div>
-        <div class="section-sub">Build parlays from live +EV picks across all sports. We show true odds, real payout, and expected value.</div>
+        <div class="section-sub">Live +EV picks only. Upcoming games only.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <!-- Left: Pick from live EV bets -->
           <div>
-            <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;">➕ Add Legs from Live +EV Picks</div>
-            <div id="parlay-ev-picks"><div class="loading-state" style="padding:30px 20px;"><div class="loading-spinner"></div>Loading live picks...</div></div>
+            <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;">➕ Live +EV Picks</div>
+            <div id="parlay-live-picks"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
           </div>
-          <!-- Right: Your parlay -->
           <div>
-            <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;">🎯 Your Parlay <span id="parlay-leg-count" style="font-size:12px;color:var(--muted);font-weight:500;">(0 legs)</span></div>
-            <div>
-              <div class="calc-field"><label class="calc-label">Stake ($)</label><input class="calc-input" id="parlay-stake-main" placeholder="100" type="number" value="100" oninput="calcParlayMain()"/></div>
+            <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;">🎯 Your Parlay <span id="parlay-leg-count" style="font-size:12px;color:var(--muted);font-weight:500;">(0 legs)</span></div>
+            <div class="calc-field"><label class="calc-label">Stake ($)</label><input class="calc-input" id="parlay-stake" placeholder="100" type="number" value="100" oninput="calcParlayLive()"/></div>
+            <div id="parlay-legs-display" style="margin-bottom:12px;"></div>
+            <div id="parlay-result-live" style="display:none;" class="calc-result show">
+              <div class="result-row"><span class="result-key">Parlay Odds</span><span class="result-val" id="pl-odds">—</span></div>
+              <div class="result-row"><span class="result-key">Potential Payout</span><span class="result-val" id="pl-payout">—</span></div>
+              <div class="result-row"><span class="result-key">Win Probability</span><span class="result-val" id="pl-prob">—</span></div>
+              <div class="result-row"><span class="result-key">Expected Value</span><span class="result-val" id="pl-ev">—</span></div>
             </div>
-            <div id="parlay-legs-display" style="margin-bottom:16px;"></div>
-            <div id="parlay-result-main" style="display:none;" class="parlay-result-card">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Parlay Odds</div><div id="pm-odds" style="font-size:28px;font-weight:900;color:var(--accent);font-family:var(--fm);">—</div></div>
-                <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Potential Payout</div><div id="pm-payout" style="font-size:28px;font-weight:900;color:var(--green);font-family:var(--fm);">—</div></div>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Win Probability</div><div id="pm-prob" style="font-size:20px;font-weight:800;color:var(--accent2);font-family:var(--fm);">—</div></div>
-                <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Expected Value</div><div id="pm-ev" style="font-size:20px;font-weight:800;font-family:var(--fm);">—</div></div>
-              </div>
-            </div>
-            <div id="parlay-empty" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px;text-align:center;color:var(--muted);font-size:13px;">Add legs from the left panel to build your parlay</div>
+            <div id="parlay-empty-msg" style="color:var(--muted);font-size:13px;padding:20px;text-align:center;">Add legs from the left panel</div>
           </div>
         </div>
       </div>
 
-      <!-- ODDS COMPARE -->
-      <div id="panel-odds" class="panel">
+      id="panel-odds" class="panel">
         <div class="section-title">📊 Live Odds Comparison</div>
         <div class="section-sub">Real-time odds across all major books. Best price in green.</div>
         <div id="odds-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
@@ -1122,6 +1113,55 @@ async function loadSportCounts(){
 // Auto-refresh every 90s
 setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();}},90000);
 </script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/insights/script.js">
+let parlayLegsLive=[];
+async function loadParlayLivePicks(){
+  const container=document.getElementById('parlay-live-picks');
+  if(!container)return;
+  const data=await fetchOdds(currentSport,currentMarket);
+  if(!data||!data.length){container.innerHTML='<div class="info-box">No live picks. Try switching sports.</div>';return;}
+  const picks=[];
+  data.forEach(g=>{
+    const books=g.bookmakers||[];if(books.length<2)return;
+    const om={};
+    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});})));
+    Object.entries(om).forEach(([name,offers])=>{
+      if(offers.length<2)return;
+      const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);
+      const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;
+      const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);
+      if(!isFinite(ev)||ev<=0.003)return;
+      picks.push({game:g.home_team+' vs '+g.away_team,name,book:best.book,odds:best.odds,ev:(ev*100).toFixed(1)});
+    });
+  });
+  picks.sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev));
+  if(!picks.length){container.innerHTML='<div class="info-box">No +EV picks right now.</div>';return;}
+  window._parlayPicks=picks;
+  container.innerHTML=picks.slice(0,15).map((p,i)=>'<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="addParlayLiveLeg('+i+')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+p.name+'</div><div style="font-size:10px;color:var(--muted);">'+p.game+'</div></div><div style="text-align:right;flex-shrink:0;"><div style="font-family:var(--fm);font-size:15px;font-weight:800;color:var(--accent);">'+fmt(p.odds)+'</div><div style="font-size:9px;color:var(--green);">+'+p.ev+'% EV</div></div><div style="background:var(--accent);color:#000;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:800;">ADD</div></div>').join('');
+}
+function addParlayLiveLeg(idx){const p=(window._parlayPicks||[])[idx];if(!p)return;if(parlayLegsLive.find(l=>l.name===p.name&&l.game===p.game)){alert('Already added!');return;}parlayLegsLive.push(p);renderParlayLiveLegs();calcParlayLive();}
+function removeParlayLiveLeg(idx){parlayLegsLive.splice(idx,1);renderParlayLiveLegs();calcParlayLive();}
+function renderParlayLiveLegs(){
+  const cnt=document.getElementById('parlay-leg-count');if(cnt)cnt.textContent='('+parlayLegsLive.length+' leg'+(parlayLegsLive.length!==1?'s':'')+')';
+  const disp=document.getElementById('parlay-legs-display');const empty=document.getElementById('parlay-empty-msg');
+  if(!parlayLegsLive.length){if(disp)disp.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  if(disp)disp.innerHTML=parlayLegsLive.map((l,i)=>'<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;"><div style="width:22px;height:22px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">'+(i+1)+'</div><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:700;color:#fff;">'+l.name+'</div><div style="font-size:10px;color:var(--muted);">'+l.book+'</div></div><div style="font-family:var(--fm);font-size:14px;font-weight:800;color:var(--accent);">'+fmt(l.odds)+'</div><button onclick="removeParlayLiveLeg('+i+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0;">×</button></div>').join('');
+}
+function calcParlayLive(){
+  if(parlayLegsLive.length<2){const r=document.getElementById('parlay-result-live');if(r)r.style.display='none';return;}
+  const stake=parseFloat(document.getElementById('parlay-stake').value)||100;
+  const totalDec=parlayLegsLive.reduce((prod,l)=>prod*atod(l.odds),1);
+  const totalProb=parlayLegsLive.reduce((prod,l)=>prod*ip(l.odds),1);
+  const parlayOdds=totalDec>=2?Math.round((totalDec-1)*100):Math.round(-100/(totalDec-1));
+  const payout=stake*totalDec;const ev=totalProb*(totalDec-1)-(1-totalProb);const evDollar=ev*stake;
+  const r=document.getElementById('parlay-result-live');if(r)r.style.display='block';
+  document.getElementById('pl-odds').textContent=fmt(parlayOdds);
+  document.getElementById('pl-payout').textContent='+$'+payout.toFixed(2);
+  document.getElementById('pl-prob').textContent=(totalProb*100).toFixed(2)+'%';
+  const evEl=document.getElementById('pl-ev');if(evEl){evEl.textContent=(evDollar>=0?'+$':'-$')+Math.abs(evDollar).toFixed(2);evEl.style.color=evDollar>=0?'var(--green)':'var(--red)';}
+}
+
+</script>
 </body>
 </html>
