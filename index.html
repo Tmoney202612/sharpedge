@@ -686,20 +686,25 @@ async function fetchSport(key,market='h2h'){
 // ALL-SPORTS ARB ENGINE
 // =====================
 async function loadAllArbSports(){
-  document.getElementById('arb-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports for arbitrage...</div></div>`;
-  const results=await Promise.all(ARB_SPORTS.map(s=>fetchSportArbs(s)));
-  allArbResults=results.flat().sort((a,b)=>parseFloat(b.profit)-parseFloat(a.profit));
-  const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
-  allArbResults.forEach(a=>{if(counts[a.sport]!==undefined)counts[a.sport]++;});
-  ARB_SPORTS.forEach(s=>{const el=document.getElementById('chip-count-'+s.label);if(el)el.textContent=counts[s.label]||0;});
-  const allChip=document.getElementById('chip-count-all');if(allChip)allChip.textContent=allArbResults.length;
-  document.getElementById('arb-count').textContent=allArbResults.length;
-  document.getElementById('arb-sports-count').textContent=ARB_SPORTS.filter(s=>counts[s.label]>0).length;
-  if(allArbResults.length){
-    document.getElementById('arb-best').textContent='+'+allArbResults[0].profit+'%';
-    document.getElementById('arb-avg').textContent='+'+(allArbResults.reduce((s,a)=>s+parseFloat(a.profit),0)/allArbResults.length).toFixed(2)+'%';
-  }else{document.getElementById('arb-best').textContent='—';document.getElementById('arb-avg').textContent='—';}
-  renderArbRows();
+  const container=document.getElementById('arb-rows');
+  if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning for arbitrage & best lines...</div>';
+  window.allArbOpps=[];
+  const sports=['basketball_nba','baseball_mlb','icehockey_nhl','soccer_epl','soccer_usa_mls','mma_mixed_martial_arts'];
+  let done=0;
+  sports.forEach(sport=>{
+    fetchSportArbs(sport).then(opps=>{
+      window.allArbOpps=[...window.allArbOpps,...opps];
+      window.allArbOpps.sort((a,b)=>a.margin-b.margin);
+      done++;
+      if(done===sports.length||window.allArbOpps.length>0){
+        renderArbRows();
+        const el=document.getElementById('arb-count');if(el)el.textContent=window.allArbOpps.length;
+        const arbs=window.allArbOpps.filter(o=>o.isArb);
+        const bp=document.getElementById('arb-best-profit');
+        if(bp&&arbs.length)bp.textContent='+'+( Math.max(...arbs.map(o=>o.profit*100)).toFixed(2))+'%';
+      }
+    });
+  });
 }
 
 async function fetchSportArbs(sport){
