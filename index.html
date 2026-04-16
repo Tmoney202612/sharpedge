@@ -480,14 +480,14 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div class="section-title">🎲 Parlay Builder</div>
         <div class="section-sub">AI-generated best parlay from live +EV picks. Click a sport to rebuild.</div>
         <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-          <button onclick="buildBestParlay('basketball_nba',this)" style="background:var(--accent);color:#000;border:none;padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NBA</button>
+          <button onclick="buildBestParlay('basketball_nba',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NBA</button>
           <button onclick="buildBestParlay('baseball_mlb',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">MLB</button>
           <button onclick="buildBestParlay('icehockey_nhl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NHL</button>
           <button onclick="buildBestParlay('americanfootball_nfl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NFL</button>
           <button onclick="buildBestParlay('soccer_epl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">EPL</button>
         </div>
         <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;" id="parlay-grid">
-          <div id="parlay-slip"><div class="loading-state"><div class="loading-spinner"></div>Loading best parlay...</div></div>
+          <div id="parlay-slip"><div class="info-box">👆 Click a sport above to build a parlay from today's best +EV picks.</div></div>
           <div id="parlay-calc" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;">
             <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:16px;">Your Bet</div>
             <div class="calc-field"><label class="calc-label">Wager ($)</label><input class="calc-input" id="pl-wager" type="number" value="100" oninput="updateParlayCalc()"/></div>
@@ -673,6 +673,17 @@ function enterApp(){
   loadAllEVSports();
   loadAllLiveSports();
   setTimeout(loadSportCounts,3000);
+  setTimeout(()=>{
+    const sportOrder=['basketball_nba','icehockey_nhl','baseball_mlb','mma_mixed_martial_arts','soccer_usa_mls','soccer_epl'];
+    async function tryParlay(i){
+      if(i>=sportOrder.length){const slip=document.getElementById('parlay-slip');if(slip)slip.innerHTML='<div class="info-box">No +EV parlays available for today\'s games. Click a sport above to check manually.</div>';return;}
+      const data=await fetchSport(sportOrder[i],'h2h');
+      const now=Date.now();const todayGames=data.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+86400000);
+      if(todayGames.length>=2){buildBestParlay(sportOrder[i],document.querySelector('[onclick*="'+sportOrder[i]+'"]'));}
+      else{tryParlay(i+1);}
+    }
+    tryParlay(0);
+  },2000);
 }
 
 async function fetchSport(key,market='h2h'){
@@ -1069,9 +1080,11 @@ async function buildBestParlay(sport,btn){
   if(slip)slip.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Finding best parlay...</div>';
   if(calc)calc.style.display='none';
   const data=await fetchSport(sport,'h2h');
-  if(!data||!data.length){if(slip)slip.innerHTML='<div class="info-box">No upcoming games.</div>';return;}
+  const now=Date.now();const todayCutoff=now+86400000;
+  const todayData=data.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=todayCutoff);
+  if(!todayData||!todayData.length){if(slip)slip.innerHTML='<div class="info-box">No games today for this sport. Try another.</div>';return;}
   const picks=[];
-  data.forEach(g=>{
+  todayData.forEach(g=>{
     const books=g.bookmakers||[];if(books.length<2)return;
     const om={};
     books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{
