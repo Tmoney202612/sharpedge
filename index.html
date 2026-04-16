@@ -430,6 +430,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="stat-card"><div class="stat-label">Sports Scanned</div><div class="stat-value" id="ev-sports" style="color:var(--yellow)">—</div><div class="stat-sub">live now</div></div>
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="ev-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
         </div>
+        <div class="sport-filters" id="ev-date-filters" style="margin-bottom:8px;">
+          <div class="sport-chip active" onclick="filterEVDate(this,'today')">📅 Today</div>
+          <div class="sport-chip" onclick="filterEVDate(this,'week')">🗓️ This Week</div>
+          <div class="sport-chip" onclick="filterEVDate(this,'all')">📊 All Upcoming</div>
+          <div class="sport-chip" onclick="filterEVDate(this,'best')">🔥 Best EV</div>
+        </div>
         <div class="sport-filters" id="ev-sport-filters">
           <div class="sport-chip active" onclick="filterEVSport(this,'all')">🌐 All <span class="chip-count" id="ev-chip-all">—</span></div>
           <div class="sport-chip" onclick="filterEVSport(this,'NBA')">🏀 NBA <span class="chip-count" id="ev-chip-NBA">0</span></div>
@@ -600,6 +606,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 const API_ENDPOINT='/api/odds';
 let currentSport='basketball_nba',currentMarket='h2h',inApp=false,chatOpen=false;
 let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all';
+let evDateFilter='today';
 let allArbResults=[],allEVResults=[],allLiveResults=[],allPicksResults=[];
 let parlayLegs=[];
 
@@ -814,9 +821,15 @@ async function fetchSportEV(sportConfig){
 
 function filterEVSport(el,sport){document.querySelectorAll('#ev-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');evFilter=sport;renderEVRows();}
 
+function filterEVDate(el,range){document.querySelectorAll('#ev-date-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');evDateFilter=range;renderEVRows();}
+
 function renderEVRows(){
-  const filtered=evFilter==='all'?allEVResults:allEVResults.filter(r=>r.sport===evFilter);
-  if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found right now. Check back shortly — odds update every 90 seconds.</div>';return;}
+  const now=Date.now();
+  let filtered=evFilter==='all'?[...allEVResults]:allEVResults.filter(r=>r.sport===evFilter);
+  if(evDateFilter==='today'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+86400000);}
+  else if(evDateFilter==='week'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+604800000);}
+  else if(evDateFilter==='best'){filtered=filtered.sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev)).slice(0,30);}
+  if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "All Upcoming" for more results.</div>';return;}
   document.getElementById('ev-rows').innerHTML=filtered.map(r=>`
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
       <div><div class="arb-sport-badge" style="background:${r.sportBg};color:${r.sportColor};border:1px solid ${r.sportColor}40;font-size:8px;">${r.sportEmoji} ${r.sport}</div></div>
