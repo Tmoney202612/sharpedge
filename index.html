@@ -219,7 +219,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .arb-leg-odds{font-size:20px;font-weight:900;color:var(--accent);font-family:var(--fm);letter-spacing:-0.5px;}
 .arb-leg-bet-btn{margin-top:6px;padding:6px 14px;background:var(--accent);color:#000;border:none;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--fh);transition:all 0.15s;display:block;width:100%;text-align:center;}
 .arb-leg-bet-btn:hover{background:#00c98a;}
-/* PARLAY BUILDER */
 .parlay-leg-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
 .parlay-leg-num{width:24px;height:24px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
 .parlay-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0;flex-shrink:0;}
@@ -324,8 +323,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     <button class="tab-btn" onclick="showTab('tracker',this)">📋 Bet Tracker</button>
     <button class="tab-btn" onclick="showTab('calc',this)">🔢 Calculators</button>
     <button class="tab-btn" onclick="showTab('promos',this)">🎁 Promos</button>
-    
-    
     <button class="tab-btn" onclick="showTab('tools',this)">🔧 More Tools</button>
   </div>
   <div class="main">
@@ -378,7 +375,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     </div>
     <div class="content">
 
-      <!-- LIVE NOW - ALL SPORTS -->
+      <!-- LIVE NOW -->
       <div id="panel-live" class="panel">
         <div class="section-title">🔴 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
         <div class="section-sub">All sports — games live or starting within 4 hours.</div>
@@ -401,7 +398,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div id="live-rows"><div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports...</div></div></div>
       </div>
 
-      <!-- DAILY PICKS - ALL SPORTS FROM API -->
+      <!-- DAILY PICKS -->
       <div id="panel-picks" class="panel active">
         <div class="section-title">🎯 Today's Expert Picks</div>
         <div class="section-sub">Top +EV picks across all live sports — updated daily. Best odds highlighted.</div>
@@ -423,7 +420,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div id="picks-container"><div class="loading-state"><div class="loading-spinner"></div><div>Loading today's picks from all sports...</div></div></div>
       </div>
 
-      <!-- POSITIVE EV - ALL SPORTS -->
+      <!-- POSITIVE EV -->
       <div id="panel-ev" class="panel">
         <div class="section-title">📈 Positive EV Bets</div>
         <div class="section-sub">All sports — live odds vs. consensus fair line. Positive EV = mathematically profitable long-term.</div>
@@ -449,7 +446,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         <div id="ev-rows"><div class="loading-state"><div class="loading-spinner"></div>Scanning all sports for +EV bets...</div></div>
       </div>
 
-      <!-- ARB - ALL SPORTS -->
+      <!-- ARB -->
       <div id="panel-arb" class="panel">
         <div class="section-title">🔄 Arbitrage <span style="font-size:13px;color:var(--green);font-family:var(--fm);font-weight:700">GUARANTEED PROFIT</span></div>
         <div class="section-sub">All sports — bet both sides at different books, profit locked in regardless of outcome.</div>
@@ -498,7 +495,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
         </div>
       </div>
 
-      id="panel-odds" class="panel">
+      <!-- FIX 4: Added missing <div tag -->
+      <div id="panel-odds" class="panel">
         <div class="section-title">📊 Live Odds Comparison</div>
         <div class="section-sub">Real-time odds across all major books. Best price in green.</div>
         <div id="odds-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
@@ -603,122 +601,6 @@ const API_ENDPOINT='/api/odds';
 let currentSport='basketball_nba',currentMarket='h2h',inApp=false,chatOpen=false;
 let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all';
 let allArbResults=[],allEVResults=[],allLiveResults=[],allPicksResults=[];
-
-  // Daily Picks Automation - Updates every day at 6AM EST
-  async function generateDailyPicks() {
-        const today = new Date();
-      const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
-
-        // Sports data APIs - using public endpoints
-        const sportsAPIs = {
-                  nba: `https://api.sportsdata.io/v3/nba/scores/json/GamesByDate/${dateString}`,
-                  mlb: `https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/${dateString}`,
-          nhl: `https://api.sportsdata.io/v3/nhl/scores/json/GamesByDate/${dateString}`
-        };
-
-        const todaysPicks = [];
-
-      // Sample picks data structure
-        const samplePicks = [
-          {
-                        sport: 'NBA',
-                        game: 'Lakers vs Warriors',
-                        bet: 'LAL ML',
-                        odds: '-110',
-                        book: 'DraftKings',
-                        ev: '+3.2%',
-                        reasoning: 'Strong value based on recent performance'
-          },
-          {
-                        sport: 'MLB', 
-                        game: 'Yankees vs Red Sox',
-                        bet: 'NYY -1.5',
-                        odds: '+115',
-                        book: 'FanDuel',
-                        ev: '+5.7%',
-                        reasoning: 'Pitching matchup favors Yankees'
-          },
-          {
-                        sport: 'NHL',
-                        game: 'Rangers vs Bruins',
-                        bet: 'BOS ML',
-              odds: '-125',
-                        book: 'BetMGM',
-                        ev: '+2.1%',
-                        reasoning: 'Home ice advantage and strong goaltending'
-          }
-              ];
-
-        return samplePicks;
-  }
-
-  function updateDailyPicks() {
-        generateDailyPicks().then(picks => {
-                  const picksContainer = document.getElementById('picks-container');
-                  if (!picksContainer) return;
-
-                  const picksHTML = `
-                              <div style="padding: 20px;">
-                                              <h3 style="color: #00ff88; margin-bottom: 16px;">🎯 Today's Live Picks - ${new Date().toLocaleDateString()}</h3>
-                  <div style="display: grid; gap: 12px;">
-                                      ${picks.map(pick => `
-                                                              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px;">
-                                                                                          <div>
-                                                                                                                          <span style="background: #53D337; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 8px;">${pick.sport}</span>
-                                                                                                                                                          <span style="font-weight: bold;">${pick.game}</span>
-                                                                                                                                                                                          <div style="font-size: 13px; color: #888; margin-top: 2px;">${pick.reasoning}</div>
-                                                                                                                                                                                                                      </div>
-                                                                                                                                                                                                                                                  <div style="text-align: right;">
-                                                                                                                                                                                                                                                                                  <div style="font-weight: bold; color: #00ff88;">${pick.bet}</div>
-                                                                                                                                                                                                                                                                                                                  <div style="font-size: 11px; color: #666;">${pick.book}</div>
-                                                                                                                                                                                                                                                                                                                                                  <div style="font-size: 11px; color: #00ff88;">${pick.odds} (EV ${pick.ev})</div>
-                                                                                                                                                                                                                                                                                                                                                                              </div>
-                          </div>
-                                              `).join('')}
-                                                              </div>
-                                                                              <div style="text-align: center; margin-top: 20px; padding: 12px; background: #2a2a2a; border-radius: 8px;">
-                      <div style="color: #00ff88; font-weight: bold;">${picks.length} Live Picks Available</div>
-                                          <div style="font-size: 12px; color: #888; margin-top: 4px;">Updated daily at 6AM EST • All sports covered</div>
-                                                          </div>
-                                                                      </div>
-                                                                              `;
-
-                  picksContainer.innerHTML = picksHTML;
-                  console.log(`✅ Updated ${picks.length} daily picks for ${new Date().toDateString()}`);
-        });
-  }
-
-  // Auto-update picks on page load
-  document.addEventListener('DOMContentLoaded', function() {
-        updateDailyPicks();
-
-        // /U/p dAautteo -puipcdkast ee vdeariyl yh opuirc ktso
-     fkuenecpt icoonn tuepndta tferDeasihl
-    y P i c ksse(t)I n{t
-                       e r v a lc(ounpsdta tpeiDcakisl y=P i[c
-                         k s ,   6 0   *  {6s0p o*r t1:0 0'0N)B;A '/,/  gEavmeer:y  'hLoaukre
-                       r}s) ;v
-    s
-   /W/a rMrainourasl' ,r ebferte:s h' LbAuLt tMoLn' ,f oord dpsi:c k's-
-      1f1u0n'c,t iboono kr:e f'rDersahfPtiKciknsg(s)' ,{ 
-      e v :   'u+p3d.a2t%e'D}a,i
-                            l y P i c k s ( ){;s
-                                              p}ort: 'MLB', game: 'Yankees vs Red Sox', bet: 'NYY -1.5', odds: '+115', book: 'FanDuel', ev: '+5.7%'},
-  {sport: 'NHL', game: 'Rangers vs Bruins', bet: 'BOS ML', odds: '-125', book: 'BetMGM', ev: '+2.1%'}
-      ];
-
-      const container = document.getElementById('picks-container');
-      if (container) {
-                container.innerHTML = picks.map(pick => 
-                              `<div style="padding:12px;margin:8px;background:#1a1a1a;border-radius:8px;">
-                                              <span style="background:#53D337;color:white;padding:2px 6px;border-radius:4px;">${pick.sport}</span>
-                                                              <strong>${pick.game}</strong> - ${pick.bet} ${pick.odds} @ ${pick.book} (EV ${pick.ev})
-                                                                          </div>`
-                          ).join('');
-      }
-  }
-
-  document.addEventListener('DOMContentLoaded', updateDailyPicks);
 let parlayLegs=[];
 
 const ARB_SPORTS=[
@@ -739,7 +621,6 @@ let trackerBets=[
   {game:'Celtics vs Bucks',market:'Celtics ML',odds:'-130',stake:130,book:'Caesars',type:'Expert Pick',status:'PENDING'},
 ];
 
-// MATH
 function atod(o){return o>0?1+o/100:1+100/Math.abs(o);}
 function ip(o){return 1/atod(o);}
 function dtoa(d){return d>=2?Math.round((d-1)*100):Math.round(-100/(d-1));}
@@ -747,7 +628,6 @@ function fmt(n){return n>=0?`+${n}`:`${n}`;}
 function validOdds(o){return typeof o==='number'&&!isNaN(o)&&isFinite(o)&&o!==0&&(o>=105||o<=-105);}
 function fmtT(iso){const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
 function ss(msg){const el=document.getElementById('api-status');if(el)el.textContent=msg;}
-
 
 const BOOK_COLORS={'DraftKings':'#53D337','FanDuel':'#1493FF','BetMGM':'#C9A84C','Caesars':'#C5A028','BetRivers':'#E4002B','Pinnacle':'#FFD700','Unibet':'#007B5E','BetOnline':'#FF6600','PointsBet':'#E4002B','Bovada':'#B22222'};
 function bookColor(b){return BOOK_COLORS[b]||'#00e5a0';}
@@ -788,9 +668,6 @@ function enterApp(){
   setTimeout(loadSportCounts,3000);
 }
 
-// =====================
-// FETCH HELPERS
-// =====================
 async function fetchSport(key,market='h2h'){
   try{
     const r=await fetch(`${API_ENDPOINT}?sport=${key}&market=${market}`);
@@ -800,9 +677,6 @@ async function fetchSport(key,market='h2h'){
   }catch(e){return[];}
 }
 
-// =====================
-// ALL-SPORTS ARB ENGINE
-// =====================
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning for arbitrage & best lines...</div>';
@@ -896,9 +770,6 @@ function renderArbRows(){
   }).join('');
 }
 
-// =====================
-// ALL-SPORTS EV ENGINE
-// =====================
 async function loadAllEVSports(){
   document.getElementById('ev-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div>Scanning all sports for +EV bets...</div>`;
   const results=await Promise.all(ARB_SPORTS.map(s=>fetchSportEV(s)));
@@ -912,7 +783,6 @@ async function loadAllEVSports(){
   document.getElementById('ev-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   if(allEVResults.length)document.getElementById('ev-avg').textContent='+'+(allEVResults.reduce((s,r)=>s+parseFloat(r.ev),0)/allEVResults.length).toFixed(1)+'%';
   renderEVRows();
-  // Also load picks from EV data
   buildPicksFromEV();
 }
 
@@ -957,12 +827,8 @@ function renderEVRows(){
     </div></div>`).join('');
 }
 
-// =====================
-// DAILY PICKS FROM API
-// =====================
 function buildPicksFromEV(){
-  // Take top EV bets and present as expert picks
-  const topPicks=allEVResults.slice(0,20); // top 20 EV bets become picks
+  const topPicks=allEVResults.slice(0,20);
   allPicksResults=topPicks;
   const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
   allPicksResults.forEach(p=>{if(counts[p.sport]!==undefined)counts[p.sport]++;});
@@ -973,7 +839,6 @@ function buildPicksFromEV(){
   document.getElementById('picks-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   if(allPicksResults.length)document.getElementById('picks-avg-ev').textContent='+'+(allPicksResults.reduce((s,r)=>s+parseFloat(r.ev),0)/allPicksResults.length).toFixed(1)+'%';
   renderPicksRows();
-  renderParlayEVPicks();
 }
 
 function filterPicksSport(el,sport){document.querySelectorAll('#picks-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');picksFilter=sport;renderPicksRows();}
@@ -1013,9 +878,6 @@ function renderPicksRows(){
     </div>`).join('');
 }
 
-// =====================
-// ALL-SPORTS LIVE ENGINE
-// =====================
 async function loadAllLiveSports(){
   document.getElementById('live-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div>Scanning all sports for live games...</div>`;
   const results=await Promise.all(ARB_SPORTS.map(s=>fetchSportLive(s)));
@@ -1072,91 +934,11 @@ function renderLiveRows(){
   }).join('');
 }
 
-// =====================
-// PARLAY BUILDER
-// =====================
-function renderParlayEVPicks(){
-  const picks=allEVResults.slice(0,15);
-  if(!picks.length){document.getElementById('parlay-ev-picks').innerHTML='<div class="info-box">ℹ️ Loading live +EV picks for parlay builder...</div>';return;}
-  document.getElementById('parlay-ev-picks').innerHTML=picks.map((p,i)=>`
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border 0.15s;" onclick="addParlayLegFromEV(${i})" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-      <div class="arb-sport-badge" style="background:${p.sportBg};color:${p.sportColor};border:1px solid ${p.sportColor}40;font-size:8px;flex-shrink:0;">${p.sportEmoji}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
-        <div style="font-size:10px;color:var(--muted);">${p.game.split(' vs ')[0].split(' ').slice(-1)[0]} vs ${p.game.split(' vs ')[1]?.split(' ').slice(-1)[0]||''}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;">
-        <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent);">${fmt(p.bestOdds)}</div>
-        <div style="font-size:9px;color:var(--green);font-weight:700;">+${p.ev}% EV</div>
-      </div>
-      <div style="background:var(--accent);color:#000;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:800;flex-shrink:0;">ADD</div>
-    </div>`).join('');
-}
-
-function addParlayLegFromEV(idx){
-  const pick=allEVResults[idx];if(!pick)return;
-  if(parlayLegs.find(l=>l.name===pick.name&&l.game===pick.game)){alert('Already in parlay!');return;}
-  parlayLegs.push({name:pick.name,game:pick.game,odds:pick.bestOdds,book:pick.bestBook,ev:pick.ev,sport:pick.sport,sportEmoji:pick.sportEmoji});
-  renderParlayLegs();
-  calcParlayMain();
-}
-
-function removeParlayLeg(idx){parlayLegs.splice(idx,1);renderParlayLegs();calcParlayMain();}
-
-function renderParlayLegs(){
-  document.getElementById('parlay-leg-count').textContent=`(${parlayLegs.length} leg${parlayLegs.length!==1?'s':''})`;
-  if(!parlayLegs.length){
-    document.getElementById('parlay-legs-display').innerHTML='';
-    document.getElementById('parlay-result-main').style.display='none';
-    document.getElementById('parlay-empty').style.display='block';
-    return;
-  }
-  document.getElementById('parlay-empty').style.display='none';
-  document.getElementById('parlay-legs-display').innerHTML=parlayLegs.map((l,i)=>`
-    <div class="parlay-leg-row">
-      <div class="parlay-leg-num">${i+1}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.name}</div>
-        <div style="font-size:10px;color:var(--muted);">${l.sport} · ${l.book}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;margin-right:8px;">
-        <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent);">${fmt(l.odds)}</div>
-        <div style="font-size:9px;color:var(--green);">+${l.ev}% EV</div>
-      </div>
-      <button class="parlay-remove" onclick="removeParlayLeg(${i})">×</button>
-    </div>`).join('');
-}
-
-function calcParlayMain(){
-  if(parlayLegs.length<2){document.getElementById('parlay-result-main').style.display='none';return;}
-  const stake=parseFloat(document.getElementById('parlay-stake-main').value)||100;
-  const totalDec=parlayLegs.reduce((prod,l)=>prod*atod(l.odds),1);
-  const totalProb=parlayLegs.reduce((prod,l)=>prod*ip(l.odds),1);
-  const parlayOdds=totalDec>=2?Math.round((totalDec-1)*100):Math.round(-100/(totalDec-1));
-  const payout=stake*totalDec;
-  const ev=totalProb*(totalDec-1)-(1-totalProb);
-  const evDollar=ev*stake;
-  document.getElementById('parlay-result-main').style.display='block';
-  document.getElementById('pm-odds').textContent=fmt(parlayOdds);
-  document.getElementById('pm-payout').textContent='+$'+payout.toFixed(2);
-  document.getElementById('pm-prob').textContent=(totalProb*100).toFixed(2)+'%';
-  const evEl=document.getElementById('pm-ev');
-  evEl.textContent=(evDollar>=0?'+$':'-$')+Math.abs(evDollar).toFixed(2);
-  evEl.style.color=evDollar>=0?'var(--green)':'var(--red)';
-}
-
-// SINGLE SPORT (for Odds Compare, Low Hold, Middles)
 async function loadSingleSport(){
   ss('fetching...');
   const data=await fetchSport(currentSport,currentMarket);
   if(data.length){ss(`✓ ${data.length} games`);const el=document.getElementById('count-'+currentSport);if(el){const soon=data.filter(g=>new Date(g.commence_time).getTime()<=Date.now()+14400000).length;el.textContent=soon||'';}}else{ss('no data');}
   renderOdds(data,!data.length);renderLowHold(data,!data.length);renderMiddles(data,!data.length);
-}
-
-function generateDemoData(){
-  const games=[{home:'Los Angeles Lakers',away:'Golden State Warriors',time:new Date(Date.now()+3600000*3).toISOString()},{home:'Boston Celtics',away:'Milwaukee Bucks',time:new Date(Date.now()+3600000*5).toISOString()},{home:'Denver Nuggets',away:'Phoenix Suns',time:new Date(Date.now()+3600000*7).toISOString()}];
-  const bookList=['DraftKings','FanDuel','BetMGM','Caesars','BetRivers','Pinnacle'];
-  return games.map(g=>{const baseH=[-150,-130,-120,-110,110][Math.floor(Math.random()*5)];const baseA=baseH>0?-(baseH+20):(Math.abs(baseH)-20);return{home_team:g.home,away_team:g.away,commence_time:g.time,bookmakers:bookList.map(bk=>({key:bk.toLowerCase(),title:bk,markets:[{key:'h2h',outcomes:[{name:g.home,price:baseH+Math.floor(Math.random()*15-7)},{name:g.away,price:baseA+Math.floor(Math.random()*15-7)}]}]}))};});
 }
 
 function renderOdds(data,isDemo){
@@ -1256,10 +1038,10 @@ async function loadSportCounts(){
   }
 }
 
-// Auto-refresh every 90s
 setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();}},90000);
 </script>
-<script defer src="/_vercel/insights/script.js">
+<script defer src="/_vercel/insights/script.js"></script>
+<script>
 var _parlayLegs=[];
 async function buildBestParlay(sport,btn){
   document.querySelectorAll('[onclick*="buildBestParlay"]').forEach(b=>{b.style.background='var(--card)';b.style.color='var(--text)';b.style.border='1px solid var(--border)';});
@@ -1331,7 +1113,6 @@ function updateParlayCalc(){
   if(el('pl-r-prob'))el('pl-r-prob').textContent=(totalProb*100).toFixed(2)+'%';
   if(el('pl-r-ev')){el('pl-r-ev').textContent=(ev>=0?'+$':'-$')+Math.abs(ev).toFixed(2);el('pl-r-ev').style.color=ev>=0?'var(--green)':'var(--red)';}
 }
-
 
 function showLegalModal(t){
   const c={
