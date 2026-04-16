@@ -637,10 +637,10 @@ const BOOK_COLORS={'DraftKings':'#53D337','FanDuel':'#1493FF','BetMGM':'#C9A84C'
 function bookColor(b){return BOOK_COLORS[b]||'#00e5a0';}
 function bookBadge(b){const c=BOOK_COLORS[b]||'#00e5a0';return '<span style="font-size:11px;font-weight:800;color:'+c+';background:'+c+'18;border:1px solid '+c+'35;padding:2px 7px;border-radius:5px;font-family:var(--fm);">'+b+'</span>';}
 const BOOK_URLS={
-  'DraftKings':'https://www.draftkings.com','FanDuel':'https://www.fanduel.com/sports',
-  'BetMGM':'https://www.betmgm.com','Caesars':'https://www.caesars.com/sportsbook-and-casino',
-  'BetRivers':'https://www.betrivers.com','PointsBet':'https://www.pointsbet.com',
-  'Pinnacle':'https://www.pinnacle.com','Unibet':'https://www.unibet.com','BetOnline':'https://www.betonline.ag',
+  'DraftKings':'https://sportsbook.draftkings.com/','FanDuel':'https://sportsbook.fanduel.com/',
+  'BetMGM':'https://sports.betmgm.com/','Caesars':'https://www.caesars.com/sportsbook-and-casino',
+  'BetRivers':'https://www.betrivers.com/','PointsBet':'https://www.pointsbet.com',
+  'Pinnacle':'https://www.pinnacle.com/en/','Unibet':'https://www.unibet.com/betting','BetOnline':'https://www.betonline.ag/sportsbook',
 };
 function openBook(book){window.open(BOOK_URLS[book]||'https://www.google.com/search?q='+encodeURIComponent(book+' sportsbook'),'_blank');}
 
