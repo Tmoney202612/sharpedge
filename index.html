@@ -830,7 +830,10 @@ function renderEVRows(){
 }
 
 function buildPicksFromEV(){
-  const topPicks=allEVResults.slice(0,20);
+  const now=Date.now();
+  const todayCutoff=now+86400000;
+  const todayPicks=allEVResults.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=todayCutoff);
+  const topPicks=todayPicks.slice(0,20);
   allPicksResults=topPicks;
   const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
   allPicksResults.forEach(p=>{if(counts[p.sport]!==undefined)counts[p.sport]++;});
@@ -847,7 +850,7 @@ function filterPicksSport(el,sport){document.querySelectorAll('#picks-sport-filt
 
 function renderPicksRows(){
   const filtered=picksFilter==='all'?allPicksResults:allPicksResults.filter(p=>p.sport===picksFilter);
-  if(!filtered.length){document.getElementById('picks-container').innerHTML='<div class="info-box">ℹ️ No picks available right now. Picks load from live +EV data — check back shortly.</div>';return;}
+  if(!filtered.length){document.getElementById('picks-container').innerHTML='<div class="info-box">ℹ️ No +EV picks for today\'s games right now. Picks update automatically when today\'s odds go live — check back closer to game time.</div>';return;}
   const analyses=[
     'Strong +EV opportunity. True probability significantly better than implied odds at this book.',
     'Book has mispriced this line vs. the consensus market. Bet before it corrects.',
