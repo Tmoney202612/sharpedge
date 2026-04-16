@@ -356,14 +356,14 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Sportsbooks</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ DraftKings</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ FanDuel</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetMGM</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Caesars</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetRivers</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Pinnacle</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ Unibet</div>
-        <div class="sidebar-item" style="cursor:default;font-size:11px;color:var(--muted);">✓ BetOnline</div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#53D337;font-weight:700;">✓ DraftKings</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#1493FF;font-weight:700;">✓ FanDuel</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#C9A84C;font-weight:700;">✓ BetMGM</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#C5A028;font-weight:700;">✓ Caesars</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#E4002B;font-weight:700;">✓ BetRivers</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#FFD700;font-weight:700;">✓ Pinnacle</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#007B5E;font-weight:700;">✓ Unibet</span></div>
+        <div class="sidebar-item" style="cursor:default;font-size:11px;"><span style="color:#FF6600;font-weight:700;">✓ BetOnline</span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Account</div>
@@ -627,6 +627,10 @@ function validOdds(o){return typeof o==='number'&&!isNaN(o)&&isFinite(o)&&o!==0&
 function fmtT(iso){const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
 function ss(msg){const el=document.getElementById('api-status');if(el)el.textContent=msg;}
 
+
+const BOOK_COLORS={'DraftKings':'#53D337','FanDuel':'#1493FF','BetMGM':'#C9A84C','Caesars':'#C5A028','BetRivers':'#E4002B','Pinnacle':'#FFD700','Unibet':'#007B5E','BetOnline':'#FF6600','PointsBet':'#E4002B','Bovada':'#B22222'};
+function bookColor(b){return BOOK_COLORS[b]||'#00e5a0';}
+function bookBadge(b){const c=BOOK_COLORS[b]||'#00e5a0';return '<span style="font-size:11px;font-weight:800;color:'+c+';background:'+c+'18;border:1px solid '+c+'35;padding:2px 7px;border-radius:5px;font-family:var(--fm);">'+b+'</span>';}
 const BOOK_URLS={
   'DraftKings':'https://www.draftkings.com','FanDuel':'https://www.fanduel.com/sports',
   'BetMGM':'https://www.betmgm.com','Caesars':'https://www.caesars.com/sportsbook-and-casino',
@@ -754,14 +758,14 @@ function renderArbRows(){
       <div style="display:grid;grid-template-columns:1fr 1fr;">
         <div style="padding:16px;border-right:1px solid var(--border);">
           <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg1.name}</div>
-          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px;">${leg1.book}</div>
+          '+bookBadge(leg1.book)+'
           <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px;">${fmt(leg1.odds)}</div>
           ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s1+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
           <button onclick="openBook('${leg1.book}')" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
         </div>
         <div style="padding:16px;">
           <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
-          <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px;">${leg2.book}</div>
+          '+bookBadge(leg2.book)+'
           <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px;">${fmt(leg2.odds)}</div>
           ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
           <button onclick="openBook('${leg2.book}')" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
@@ -824,7 +828,7 @@ function renderEVRows(){
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
       <div><div class="arb-sport-badge" style="background:${r.sportBg};color:${r.sportColor};border:1px solid ${r.sportColor}40;font-size:8px;">${r.sportEmoji} ${r.sport}</div></div>
       <div><div class="game-teams">${r.name}</div><div class="game-meta">${r.game} · ${fmtT(r.time)}</div></div>
-      <div class="col-c"><div class="col-l">Book</div><div class="book-tag">${r.bestBook}</div></div>
+      <div class="col-c"><div class="col-l">Book</div>'+bookBadge(r.bestBook)+'</div>
       <div class="col-c"><div class="col-l">Best Odds</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(r.bestOdds)}</div></div>
       <div class="col-c"><div class="col-l">Fair Odds</div><div style="font-family:var(--fm);font-size:14px;color:var(--muted)">${fmt(r.fair)}</div></div>
       <div class="col-c"><div class="col-l">EV %</div><div class="ev-badge ev-pos">+${r.ev}%</div></div>
@@ -880,7 +884,7 @@ function renderPicksRows(){
       <div class="pick-game">${p.name}</div>
       <div class="pick-odds-row">
         <div class="pick-odds-badge">${fmt(p.bestOdds)}</div>
-        <div class="pick-book">@ ${p.bestBook}</div>
+        <div class="pick-book">@ '+bookBadge(p.bestBook)+'</div>
         <div class="ev-badge ev-pos" style="margin-left:8px;">+${p.ev}% EV</div>
         <button class="bet-btn" style="margin-left:auto" onclick="openBook('${p.bestBook}')">BET →</button>
       </div>
@@ -941,7 +945,7 @@ function renderLiveRows(){
         <div><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET →</button></div>
       </div>
       <div style="display:flex;gap:8px;padding:0 20px 16px;overflow-x:auto;flex-wrap:wrap;">
-        ${outcomes.map(([name,data])=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:140px;cursor:pointer;" onclick="openBook('${data.book}')"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">${name}</div><div style="font-size:20px;font-weight:900;color:var(--accent);font-family:var(--fm);">${fmt(data.odds)}</div><div style="font-size:10px;color:var(--accent);font-weight:600;margin-top:3px;">${data.book}</div></div>`).join('')}
+        ${outcomes.map(([name,data])=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:140px;cursor:pointer;" onclick="openBook('${data.book}')"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">${name}</div><div style="font-size:20px;font-weight:900;color:var(--accent);font-family:var(--fm);">${fmt(data.odds)}</div>'+bookBadge(data.book)+'</div>`).join('')}
       </div>
     </div>`;
   }).join('');
@@ -1042,7 +1046,7 @@ function renderOdds(data,isDemo){
     const bo=books.map(bm=>{const mk=bm.markets?.[0];if(!mk)return null;const hO=mk.outcomes.find(o=>o.name===h);const aO=mk.outcomes.find(o=>o.name===a);if(!hO||!aO||!validOdds(hO.price)||!validOdds(aO.price))return null;return{book:bm.title,h:hO.price,a:aO.price};}).filter(Boolean);
     if(!bo.length)return'';
     const bH=Math.max(...bo.map(b=>b.h)),bA=Math.max(...bo.map(b=>b.a));
-    return`<div class="odds-compare-row"><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px"><div><div style="font-size:14px;font-weight:700;color:#fff">${h} vs ${a}</div><div style="font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--fm)">${fmtT(g.commence_time)}</div></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm)">Best: <span style="color:var(--green);font-weight:700">${fmt(bH)}</span> / <span style="color:var(--green);font-weight:700">${fmt(bA)}</span></div></div><div style="display:flex;gap:8px;padding:0 18px 16px;overflow-x:auto">${bo.map(b=>`<div style="flex-shrink:0;text-align:center;min-width:88px"><div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">${b.book.substring(0,9)}</div><div class="book-oc ${b.h===bH?'best':''}" style="margin-bottom:4px;cursor:pointer" onclick="openBook('${b.book}')"><div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:3px">${h.split(' ').slice(-1)[0]}</div><div class="book-on ${b.h===bH?'best-o':''}">${fmt(b.h)}</div></div><div class="book-oc ${b.a===bA?'best':''}" style="cursor:pointer" onclick="openBook('${b.book}')"><div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:3px">${a.split(' ').slice(-1)[0]}</div><div class="book-on ${b.a===bA?'best-o':''}">${fmt(b.a)}</div></div></div>`).join('')}</div></div>`;
+    return`<div class="odds-compare-row"><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px"><div><div style="font-size:14px;font-weight:700;color:#fff">${h} vs ${a}</div><div style="font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--fm)">${fmtT(g.commence_time)}</div></div><div style="font-size:11px;color:var(--muted);font-family:var(--fm)">Best: <span style="color:var(--green);font-weight:700">${fmt(bH)}</span> / <span style="color:var(--green);font-weight:700">${fmt(bA)}</span></div></div><div style="display:flex;gap:8px;padding:0 18px 16px;overflow-x:auto">${bo.map(b=>`<div style="flex-shrink:0;text-align:center;min-width:88px">'+'<div style="font-size:9px;font-weight:800;margin-bottom:6px;color:'+bookColor(b.book)+'">'+b.book.substring(0,9)+'</div>'+'<div class="book-oc ${b.h===bH?'best':''}" style="margin-bottom:4px;cursor:pointer" onclick="openBook('${b.book}')"><div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:3px">${h.split(' ').slice(-1)[0]}</div><div class="book-on ${b.h===bH?'best-o':''}">${fmt(b.h)}</div></div><div class="book-oc ${b.a===bA?'best':''}" style="cursor:pointer" onclick="openBook('${b.book}')"><div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:3px">${a.split(' ').slice(-1)[0]}</div><div class="book-on ${b.a===bA?'best-o':''}">${fmt(b.a)}</div></div></div>`).join('')}</div></div>`;
   }).join('');
 }
 
@@ -1057,7 +1061,7 @@ function renderTracker(){
   let pl=0;trackerBets.forEach(b=>{const d=atod(parseFloat(b.odds));if(b.status==='WIN')pl+=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl-=parseFloat(b.stake);});
   const roi=stk?(pl/stk*100).toFixed(1):0;
   document.getElementById('tracker-stats').innerHTML=`<div class="tracker-card"><div class="tv">${trackerBets.length}</div><div class="tl">Total Bets</div></div><div class="tracker-card"><div class="tv" style="color:var(--green)">${w}</div><div class="tl">Wins</div></div><div class="tracker-card"><div class="tv" style="color:var(--red)">${l}</div><div class="tl">Losses</div></div><div class="tracker-card"><div class="tv" style="color:${pl>=0?'var(--green)':'var(--red)'}">${pl>=0?'+':''}$${pl.toFixed(0)}</div><div class="tl">P/L</div></div><div class="tracker-card"><div class="tv" style="color:${roi>=0?'var(--green)':'var(--red)'}">${roi}%</div><div class="tl">ROI</div></div>`;
-  document.getElementById('tracker-rows').innerHTML=trackerBets.map(b=>{const d=atod(parseFloat(b.odds));let pl=0;if(b.status==='WIN')pl=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl=-parseFloat(b.stake);return`<div class="btr"><div><div style="font-size:13px;font-weight:700;color:#fff">${b.game}</div><div style="font-size:11px;color:var(--muted)">${b.market} · <span style="color:var(--accent2)">${b.type}</span></div></div><div style="font-family:var(--fm);font-size:12px;color:var(--muted)">${b.book}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700">${b.odds}</div><div style="font-family:var(--fm);font-size:13px">$${b.stake}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700;color:${b.status==='WIN'?'var(--green)':b.status==='LOSS'?'var(--red)':'var(--yellow)'}">${b.status==='PENDING'?'—':(pl>=0?'+':'')+`$${pl.toFixed(0)}`}</div><div class="${b.status==='WIN'?'sw':b.status==='LOSS'?'sl':'sp'}">${b.status}</div></div>`;}).join('');
+  document.getElementById('tracker-rows').innerHTML=trackerBets.map(b=>{const d=atod(parseFloat(b.odds));let pl=0;if(b.status==='WIN')pl=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl=-parseFloat(b.stake);return`<div class="btr"><div><div style="font-size:13px;font-weight:700;color:#fff">${b.game}</div><div style="font-size:11px;color:var(--muted)">${b.market} · <span style="color:var(--accent2)">${b.type}</span></div></div>'+bookBadge(b.book)+'<div style="font-family:var(--fm);font-size:13px;font-weight:700">${b.odds}</div><div style="font-family:var(--fm);font-size:13px">$${b.stake}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700;color:${b.status==='WIN'?'var(--green)':b.status==='LOSS'?'var(--red)':'var(--yellow)'}">${b.status==='PENDING'?'—':(pl>=0?'+':'')+`$${pl.toFixed(0)}`}</div><div class="${b.status==='WIN'?'sw':b.status==='LOSS'?'sl':'sp'}">${b.status}</div></div>`;}).join('');
 }
 
 function addBet(){
@@ -1085,7 +1089,7 @@ function renderLowHold(data,isDemo){
   document.getElementById('lh-count').textContent=rows.length;document.getElementById('lh-games').textContent=data.length;
   if(rows.length){document.getElementById('lh-avg').textContent=(rows.reduce((s,r)=>s+parseFloat(r.hold),0)/rows.length).toFixed(2)+'%';document.getElementById('lh-best').textContent=rows[0].hold+'%';}else{document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';}
   if(!rows.length){document.getElementById('lh-rows').innerHTML='<div class="info-box">ℹ️ No low hold markets found.</div>';return;}
-  document.getElementById('lh-rows').innerHTML=rows.map(r=>`<div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr"><div><div class="game-teams">${r.game}</div><div class="game-meta">${fmtT(r.time)}</div></div><div class="col-c"><div class="col-l">Book</div><div class="book-tag">${r.book}</div></div><div class="col-c"><div class="col-l">${r.sideA}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsA)}</div></div><div class="col-c"><div class="col-l">${r.sideB}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsB)}</div></div><div class="col-c"><div class="col-l">Hold</div><div style="font-family:var(--fm);font-size:14px;font-weight:700;color:${parseFloat(r.hold)<2?'var(--green)':'var(--yellow)'}">${r.hold}%</div></div><div class="col-c"><button class="bet-btn" onclick="openBook('${r.book}')">BET →</button></div></div></div>`).join('');
+  document.getElementById('lh-rows').innerHTML=rows.map(r=>`<div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr"><div><div class="game-teams">${r.game}</div><div class="game-meta">${fmtT(r.time)}</div></div><div class="col-c"><div class="col-l">Book</div>'+bookBadge(r.book)+'</div><div class="col-c"><div class="col-l">${r.sideA}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsA)}</div></div><div class="col-c"><div class="col-l">${r.sideB}</div><div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--accent)">${fmt(r.oddsB)}</div></div><div class="col-c"><div class="col-l">Hold</div><div style="font-family:var(--fm);font-size:14px;font-weight:700;color:${parseFloat(r.hold)<2?'var(--green)':'var(--yellow)'}">${r.hold}%</div></div><div class="col-c"><button class="bet-btn" onclick="openBook('${r.book}')">BET →</button></div></div></div>`).join('');
 }
 
 function renderMiddles(data,isDemo){
