@@ -673,7 +673,9 @@ async function fetchSport(key,market='h2h'){
     const r=await fetch(`${API_ENDPOINT}?sport=${key}&market=${market}`);
     if(!r.ok)return[];
     const data=await r.json();
-    return Array.isArray(data)?data:[];
+    if(!Array.isArray(data))return[];
+    const now=Date.now();
+    return data.filter(g=>!g.commence_time||new Date(g.commence_time).getTime()>now-7200000);
   }catch(e){return[];}
 }
 
