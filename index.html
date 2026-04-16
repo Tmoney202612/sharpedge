@@ -235,9 +235,54 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   .chat-window{width:300px;}
   .arb-card-top{grid-template-columns:auto 1fr auto;}
   .arb-dollar-block{display:none;}
+  .landing-nav{display:none;}
+  .hero-scanner{max-width:100%;margin-top:30px;}
+  .value-grid{grid-template-columns:1fr!important;}
 }
 
 #landing > div:not(.hero):not(.pricing-section) { background: var(--bg); }
+
+/* LANDING NAV */
+.landing-nav{display:flex;gap:6px;align-items:center;}
+.landing-nav a{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:6px;transition:all 0.15s;}
+.landing-nav a:hover{color:var(--accent);background:rgba(0,229,160,0.06);}
+
+/* BIGGER CTAs */
+.hero-btn-primary{padding:18px 38px!important;font-size:17px!important;border-radius:12px!important;box-shadow:0 0 30px rgba(0,229,160,0.2);letter-spacing:0.3px;}
+.hero-btn-secondary{padding:18px 38px!important;font-size:17px!important;border-radius:12px!important;}
+
+/* ANIMATED SCANNER */
+.hero-scanner{max-width:680px;margin:50px auto 0;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.scanner-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--border);}
+.scanner-tabs{display:flex;gap:4px;}
+.scanner-tab{font-size:10px;font-weight:700;color:var(--muted);padding:4px 10px;border-radius:5px;font-family:var(--fm);}
+.scanner-tab.active{color:var(--accent);background:rgba(0,229,160,0.1);}
+.scanner-body{padding:14px;}
+.scanner-row{display:grid;grid-template-columns:auto 2fr 1fr 1fr 1fr;gap:12px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;opacity:0;animation:scannerFadeIn 0.5s ease forwards;}
+.scanner-row:nth-child(1){animation-delay:0.3s;}
+.scanner-row:nth-child(2){animation-delay:0.8s;}
+.scanner-row:nth-child(3){animation-delay:1.3s;}
+.scanner-row:nth-child(4){animation-delay:1.8s;}
+@keyframes scannerFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.scanner-sport{font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:4px;text-transform:uppercase;}
+.scanner-game{font-size:12px;font-weight:700;color:#fff;}
+.scanner-meta{font-size:10px;color:var(--muted);font-family:var(--fm);}
+.scanner-odds{font-size:16px;font-weight:800;color:var(--accent);font-family:var(--fm);}
+.scanner-ev{font-size:11px;font-weight:700;color:var(--green);background:rgba(0,229,160,0.1);padding:3px 8px;border-radius:4px;font-family:var(--fm);}
+.scanner-book{font-size:10px;font-weight:700;font-family:var(--fm);}
+.scanner-pulse{animation:scannerPulse 3s ease-in-out infinite;}
+@keyframes scannerPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,0);}50%{box-shadow:0 0 20px 4px rgba(0,229,160,0.15);}}
+
+/* VALUE COMPARISON */
+.value-section{position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;}
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px;}
+.value-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;position:relative;overflow:hidden;}
+.value-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.value-card.cost::before{background:var(--red);}
+.value-card.profit::before{background:var(--green);}
+.value-amount{font-size:42px;font-weight:900;font-family:var(--fm);letter-spacing:-2px;line-height:1;margin:14px 0 8px;}
+.value-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.value-detail{font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px;}
 </style>
 </head>
 <body>
@@ -248,9 +293,16 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     <div class="logo-text">Prime Edge <span>Picks</span></div>
   </a>
   <div class="header-right">
+    <nav class="landing-nav" id="landing-nav">
+      <a href="#" onclick="enterApp();return false;">Today's Picks</a>
+      <a href="#" onclick="enterApp();return false;">+EV Scanner</a>
+      <a href="#" onclick="enterApp();return false;">Arbitrage</a>
+      <a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;">Pricing</a>
+      <a href="https://discord.gg/2VVwzNrp8W" target="_blank">Discord</a>
+    </nav>
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
-    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Start Free Trial →</button>
+    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Start Free Trial →</button>
     <button class="btn-ghost" id="header-demo" onclick="enterApp()">View Live Demo</button>
   </div>
 </header>
@@ -265,6 +317,57 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     <div class="hero-btns">
       <button class="hero-btn-primary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🟢 Start Free Trial — 7 Days Free →</button>
       <button class="hero-btn-secondary" onclick="enterApp()">View Live Demo</button>
+    </div>
+
+    <!-- ANIMATED SCANNER MOCKUP -->
+    <div class="hero-scanner scanner-pulse">
+      <div class="scanner-header">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;"></div>
+          <span style="font-size:11px;font-weight:700;color:var(--accent);font-family:var(--fm);">LIVE SCANNER</span>
+        </div>
+        <div class="scanner-tabs">
+          <div class="scanner-tab active">+EV</div>
+          <div class="scanner-tab">ARB</div>
+          <div class="scanner-tab">PICKS</div>
+          <div class="scanner-tab">ODDS</div>
+        </div>
+        <span style="font-size:10px;color:var(--muted);font-family:var(--fm);">9 books · auto 90s</span>
+      </div>
+      <div class="scanner-body">
+        <div class="scanner-row">
+          <div class="scanner-sport" style="background:rgba(79,138,255,0.1);color:#4f8aff;border:1px solid rgba(79,138,255,0.3);">🏀 NBA</div>
+          <div><div class="scanner-game">Celtics ML</div><div class="scanner-meta">Celtics vs Bucks · Today 7:30 PM</div></div>
+          <div class="scanner-odds">-145</div>
+          <div><div class="scanner-ev">+5.2% EV</div></div>
+          <div><div class="scanner-book" style="color:#53D337;">DraftKings</div></div>
+        </div>
+        <div class="scanner-row">
+          <div class="scanner-sport" style="background:rgba(245,200,66,0.1);color:#f5c842;border:1px solid rgba(245,200,66,0.3);">⚾ MLB</div>
+          <div><div class="scanner-game">Dodgers -1.5</div><div class="scanner-meta">Dodgers vs Padres · Today 9:10 PM</div></div>
+          <div class="scanner-odds">+135</div>
+          <div><div class="scanner-ev">+4.8% EV</div></div>
+          <div><div class="scanner-book" style="color:#1493FF;">FanDuel</div></div>
+        </div>
+        <div class="scanner-row">
+          <div class="scanner-sport" style="background:rgba(0,229,160,0.1);color:#00e5a0;border:1px solid rgba(0,229,160,0.3);">🏒 NHL</div>
+          <div><div class="scanner-game">Rangers ML</div><div class="scanner-meta">Rangers vs Hurricanes · Today 7:00 PM</div></div>
+          <div class="scanner-odds">+120</div>
+          <div><div class="scanner-ev">+3.9% EV</div></div>
+          <div><div class="scanner-book" style="color:#C9A84C;">BetMGM</div></div>
+        </div>
+        <div class="scanner-row">
+          <div class="scanner-sport" style="background:rgba(255,71,87,0.1);color:#ff4757;border:1px solid rgba(255,71,87,0.3);">🥊 UFC</div>
+          <div><div class="scanner-game">Burns ML</div><div class="scanner-meta">Burns vs Malott · Sat 6:40 PM</div></div>
+          <div class="scanner-odds">-160</div>
+          <div><div class="scanner-ev">+3.1% EV</div></div>
+          <div><div class="scanner-book" style="color:#E4002B;">BetRivers</div></div>
+        </div>
+      </div>
+      <div style="padding:8px 18px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:10px;color:var(--muted);font-family:var(--fm);">234 +EV bets found across all sports</span>
+        <span style="font-size:10px;color:var(--accent);font-weight:700;cursor:pointer;" onclick="enterApp()">Open Full Scanner →</span>
+      </div>
     </div>
     <div class="hero-features">
       <div class="hero-feat"><div class="hero-feat-icon">📈</div><div class="hero-feat-title">Bets the Books Got Wrong</div><div class="hero-feat-desc">We scan 9+ live books and surface every line where the math is in your favor.</div></div>
@@ -286,6 +389,27 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   </div>
   <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:32px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Recent Picks — Verified Results</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Real Picks. Real Math. Real Results.</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Every pick includes the bet, the book, the odds, and exactly why we backed it.</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid rgba(0,229,160,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">NBA · Apr 14</span><span style="background:rgba(0,229,160,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">OKC Thunder ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Thunder vs Pelicans</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-135</span><span style="font-size:11px;color:var(--muted);">@ DraftKings</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+4.1% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Pinnacle sharp line opened -148. DK lagging at -135 creating a 4.1% edge. OKC covering 71% at home vs lottery teams this season.</div></div><div style="background:var(--card);border:1px solid rgba(0,229,160,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">MLB · Apr 13</span><span style="background:rgba(0,229,160,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Yankees -1.5 RL</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Yankees vs Red Sox</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">+165</span><span style="font-size:11px;color:var(--muted);">@ FanDuel</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+6.8% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Market implied ~38% but our model gives NYY 44% to cover -1.5. Gerrit Cole vs struggling Sox lineup — significant +EV on the run line.</div></div><div style="background:var(--card);border:1px solid rgba(255,71,87,0.2);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">UFC · Apr 12</span><span style="background:rgba(255,71,87,0.1);color:var(--red);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✗ LOSS</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Paddy Pimblett ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pimblett vs Chandler</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-115</span><span style="font-size:11px;color:var(--muted);">@ BetMGM</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+3.2% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">+EV bet was correct process — sharp line gave Paddy 53% win prob at -115. Losses happen. Long-term EV is what matters.</div></div></div><div style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted);">We show wins <em>and</em> losses. That's the difference between a tipster and a math-based edge. <span style="color:var(--accent);font-weight:700;">68% hit rate over 847 tracked picks in 2025.</span></div></div>
 <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:28px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Member Reviews</div><div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;">What Sharp Bettors Are Saying</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★★</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Up $2,400 in my first 30 days. The arb finder alone pays for the sub 10x over. The only service with actual math behind it."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">J.M. · Pro Member since Jan 2025 · 📍 Las Vegas</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★★</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Went from losing $200/month to +$800/month consistently. Picks, +EV, arb, and live odds all in one tab — nothing else comes close."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">D.R. · Pro Member since Feb 2025 · 📍 Phoenix</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★☆</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Finding 3-5 edges every morning before work. Hit 71% last month. The Discord is super active and the analyst responses are fast."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">T.K. · Starter Member since Mar 2025 · 📍 Chicago</div></div></div></div>
+<div class="value-section">
+  <div style="text-align:center;margin-bottom:8px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">The Math Speaks for Itself</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Your Membership Pays for Itself in Days</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Average Pro member results vs. subscription cost — based on $100/bet unit size.</div></div>
+  <div class="value-grid">
+    <div class="value-card cost">
+      <div class="value-label">Monthly Subscription</div>
+      <div class="value-amount" style="color:var(--red);">$99</div>
+      <div class="value-detail">Pro plan · Cancel anytime<br>Less than $3.30/day for full access</div>
+    </div>
+    <div class="value-card profit">
+      <div class="value-label">Avg Monthly Profit</div>
+      <div class="value-amount" style="color:var(--green);">+$880</div>
+      <div class="value-detail">Based on 68% hit rate · +22% ROI<br>$100 unit size · 40 bets/month</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;"><div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Net ROI After Sub</div><div style="font-size:28px;font-weight:900;color:var(--green);font-family:var(--fm);">+$781</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">per month average</div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;"><div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Pays for Itself In</div><div style="font-size:28px;font-weight:900;color:var(--accent2);font-family:var(--fm);">4.5</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">days on average</div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;"><div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Annual Value</div><div style="font-size:28px;font-weight:900;color:var(--yellow);font-family:var(--fm);">+$9.4K</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">projected at current rate</div></div>
+  </div>
+  <div style="text-align:center;margin-top:16px;font-size:11px;color:var(--muted);">Results vary. Based on 2025 tracked record with flat 1-unit bets. Past performance does not guarantee future results.</div>
+</div>
 <div class="pricing-section" id="pricing">
     <div class="pricing-title">The Membership That Pays for Itself</div>
     <div class="pricing-sub">7-day free trial · Cancel anytime · No credit card required<br><span style="color:var(--yellow);font-weight:700;">⚡ Only 31 Pro spots at $99/mo — price increases to $149 when full</span></div>
@@ -653,6 +777,7 @@ function showLanding(){
   document.getElementById('header-cta').style.display='block';
   document.getElementById('header-demo').style.display='block';
   document.getElementById('live-pill').style.display='none';
+  document.getElementById('landing-nav').style.display='flex';
   document.getElementById('sticky-bar').style.transform='translateY(100%)';
   inApp=false;
   window.onscroll=function(){const bar=document.getElementById('sticky-bar');if(bar&&window.scrollY>400)bar.style.transform='translateY(0)';else if(bar)bar.style.transform='translateY(100%)';};
@@ -664,6 +789,7 @@ function enterApp(){
   document.getElementById('header-cta').style.display='none';
   document.getElementById('header-demo').style.display='none';
   document.getElementById('live-pill').style.display='flex';
+  document.getElementById('landing-nav').style.display='none';
   document.getElementById('sticky-bar').style.transform='translateY(100%)';
   window.onscroll=null;
   inApp=true;
