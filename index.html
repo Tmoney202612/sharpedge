@@ -825,71 +825,152 @@ async function fetchSport(key,market='h2h'){
 
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
-  if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning for arbitrage & best lines...</div>';
+  if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets for arbitrage (moneyline, spreads, totals)...</div>';
   window.allArbOpps=[];
-  const sports=['basketball_nba','baseball_mlb','icehockey_nhl','soccer_epl','soccer_usa_mls','mma_mixed_martial_arts'];
+  const sports=['basketball_nba','baseball_mlb','icehockey_nhl','soccer_epl','soccer_usa_mls','mma_mixed_martial_arts','americanfootball_nfl'];
+  const markets=['h2h','spreads','totals'];
+  let totalJobs=sports.length*markets.length;
   let done=0;
   sports.forEach(sport=>{
-    fetchSportArbs(sport).then(opps=>{
-      window.allArbOpps=[...window.allArbOpps,...opps];
-      window.allArbOpps.sort((a,b)=>a.margin-b.margin);
-      done++;
-      if(done===sports.length||window.allArbOpps.length>0){
-        renderArbRows();
-        const el=document.getElementById('arb-count');if(el)el.textContent=window.allArbOpps.length;
-        const arbs=window.allArbOpps.filter(o=>o.isArb);
-        const bp=document.getElementById('arb-best-profit');
-        if(bp&&arbs.length)bp.textContent='+'+( Math.max(...arbs.map(o=>o.profit*100)).toFixed(2))+'%';
-      }
+    markets.forEach(market=>{
+      // Skip spreads/totals for MMA — only h2h exists
+      if(sport==='mma_mixed_martial_arts'&&market!=='h2h'){done++;return;}
+      fetchSportArbs(sport,market).then(opps=>{
+        window.allArbOpps=[...window.allArbOpps,...opps];
+        window.allArbOpps.sort((a,b)=>a.margin-b.margin);
+        done++;
+        if(done>=totalJobs||window.allArbOpps.length>0){
+          renderArbRows();
+          const el=document.getElementById('arb-count');if(el)el.textContent=window.allArbOpps.length;
+          const arbs=window.allArbOpps.filter(o=>o.isArb);
+          const bestEl=document.getElementById('arb-best');
+          if(bestEl&&arbs.length)bestEl.textContent='+'+(Math.max(...arbs.map(o=>o.profit*100)).toFixed(2))+'%';
+          const avgEl=document.getElementById('arb-avg');
+          if(avgEl&&window.allArbOpps.length)avgEl.textContent=(window.allArbOpps.reduce((s,o)=>s+o.margin,0)/window.allArbOpps.length).toFixed(2)+'%';
+          const sportsEl=document.getElementById('arb-sports-count');
+          if(sportsEl)sportsEl.textContent=new Set(window.allArbOpps.map(o=>o.sportLabel)).size;
+        }
+      });
     });
   });
 }
 
-async function fetchSportArbs(sport){
+async function fetchSportArbs(sport,market='h2h'){
   try{
-    const data=await fetchSport(sport,'h2h');
+    const data=await fetchSport(sport,market);
     if(!data||!data.length)return[];
     const labels={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL','soccer_usa_mls':'MLS','mma_mixed_martial_arts':'UFC'};
+    const marketLabels={'h2h':'ML','spreads':'Spread','totals':'Total'};
     const isSoccer=sport.startsWith('soccer_');
     const opps=[];
     data.forEach(g=>{
       const books=g.bookmakers||[];if(books.length<3)return;
-      const om={};
-      books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{
-        if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});
-      })));
-      const entries=Object.entries(om);
 
-      if(isSoccer){
-        // Soccer: need 3 outcomes (home, draw, away) for a real arb
-        if(entries.length<3)return;
-        const drawEntry=entries.find(([name])=>name.toLowerCase()==='draw'||name.toLowerCase()==='tie');
-        const nonDraw=entries.filter(([name])=>name.toLowerCase()!=='draw'&&name.toLowerCase()!=='tie');
-        if(!drawEntry||nonDraw.length<2)return;
-        const [n1,o1]=nonDraw[0],[n2,o2]=nonDraw[1],[nD,oD]=[drawEntry[0],drawEntry[1]];
-        const best1=o1.reduce((a,b)=>a.odds>b.odds?a:b);
-        const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
-        const bestD=oD.reduce((a,b)=>a.odds>b.odds?a:b);
-        const d1=atod(best1.odds),d2=atod(best2.odds),dD=atod(bestD.odds);
-        const margin=(1/d1+1/d2+1/dD-1)*100;
-        if(margin>3)return;
-        opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,
-          leg1:{name:n1,book:best1.book,odds:best1.odds},
-          leg2:{name:n2,book:best2.book,odds:best2.odds},
-          leg3:{name:'Draw',book:bestD.book,odds:bestD.odds},
-          threeWay:true,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
-      } else {
-        // Two-way sports (NBA, NFL, NHL, MLB, UFC)
-        if(entries.length<2)return;
-        const [n1,o1]=entries[0],[n2,o2]=entries[1];
-        const best1=o1.reduce((a,b)=>a.odds>b.odds?a:b);
-        const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
-        const d1=atod(best1.odds),d2=atod(best2.odds);
-        const margin=(1/d1+1/d2-1)*100;
-        if(margin>3)return;
-        opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,
-          leg1:{name:n1,book:best1.book,odds:best1.odds},leg2:{name:n2,book:best2.book,odds:best2.odds},
-          threeWay:false,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
+      if(market==='h2h'){
+        // Moneyline arbs
+        const om={};
+        books.forEach(bm=>(bm.markets||[]).forEach(mk=>{
+          if(mk.key!=='h2h')return;
+          mk.outcomes.forEach(o=>{
+            if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});
+          });
+        }));
+        const entries=Object.entries(om);
+
+        if(isSoccer){
+          if(entries.length<3)return;
+          const drawEntry=entries.find(([name])=>name.toLowerCase()==='draw'||name.toLowerCase()==='tie');
+          const nonDraw=entries.filter(([name])=>name.toLowerCase()!=='draw'&&name.toLowerCase()!=='tie');
+          if(!drawEntry||nonDraw.length<2)return;
+          const [n1,o1]=nonDraw[0],[n2,o2]=nonDraw[1],[nD,oD]=[drawEntry[0],drawEntry[1]];
+          const best1=o1.reduce((a,b)=>a.odds>b.odds?a:b);
+          const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
+          const bestD=oD.reduce((a,b)=>a.odds>b.odds?a:b);
+          const d1=atod(best1.odds),d2=atod(best2.odds),dD=atod(bestD.odds);
+          const margin=(1/d1+1/d2+1/dD-1)*100;
+          if(margin>3)return;
+          opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,marketType:'ML',
+            leg1:{name:n1,book:best1.book,odds:best1.odds},leg2:{name:n2,book:best2.book,odds:best2.odds},
+            leg3:{name:'Draw',book:bestD.book,odds:bestD.odds},
+            threeWay:true,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
+        } else {
+          if(entries.length<2)return;
+          const [n1,o1]=entries[0],[n2,o2]=entries[1];
+          const best1=o1.reduce((a,b)=>a.odds>b.odds?a:b);
+          const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
+          const d1=atod(best1.odds),d2=atod(best2.odds);
+          const margin=(1/d1+1/d2-1)*100;
+          if(margin>3)return;
+          opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,marketType:'ML',
+            leg1:{name:n1,book:best1.book,odds:best1.odds},leg2:{name:n2,book:best2.book,odds:best2.odds},
+            threeWay:false,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
+        }
+      } else if(market==='spreads'){
+        // Spread arbs — group by point value
+        const spreadsByPoint={};
+        books.forEach(bm=>(bm.markets||[]).forEach(mk=>{
+          if(mk.key!=='spreads')return;
+          mk.outcomes.forEach(o=>{
+            if(!validOdds(o.price)||o.point===undefined)return;
+            const key=o.name+'|'+o.point;
+            if(!spreadsByPoint[key])spreadsByPoint[key]=[];
+            spreadsByPoint[key].push({book:bm.title,odds:o.price,name:o.name,point:o.point});
+          });
+        }));
+        // Find opposing sides at same or close points
+        const outcomes=Object.values(spreadsByPoint);
+        const teams=[...new Set(outcomes.flat().map(o=>o.name))];
+        if(teams.length<2)return;
+        const t1=teams[0],t2=teams[1];
+        const t1Offers=outcomes.flat().filter(o=>o.name===t1);
+        const t2Offers=outcomes.flat().filter(o=>o.name===t2);
+        t1Offers.forEach(a=>{
+          t2Offers.forEach(b=>{
+            if(a.point!==-(b.point))return; // Must be opposing spreads
+            if(!validOdds(a.odds)||!validOdds(b.odds))return;
+            const d1=atod(a.odds),d2=atod(b.odds);
+            const margin=(1/d1+1/d2-1)*100;
+            if(margin>3)return;
+            // Avoid duplicates
+            const key=g.home_team+a.point+b.point;
+            if(opps.find(o=>o._key===key))return;
+            opps.push({_key:key,game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,
+              marketType:'Spread',
+              leg1:{name:a.name+' '+((a.point>0?'+':'')+a.point),book:a.book,odds:a.odds},
+              leg2:{name:b.name+' '+((b.point>0?'+':'')+b.point),book:b.book,odds:b.odds},
+              threeWay:false,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
+          });
+        });
+      } else if(market==='totals'){
+        // Totals arbs — Over/Under at same point
+        const totalsByPoint={};
+        books.forEach(bm=>(bm.markets||[]).forEach(mk=>{
+          if(mk.key!=='totals')return;
+          mk.outcomes.forEach(o=>{
+            if(!validOdds(o.price)||o.point===undefined)return;
+            const key=o.name+'|'+o.point;
+            if(!totalsByPoint[key])totalsByPoint[key]=[];
+            totalsByPoint[key].push({book:bm.title,odds:o.price,name:o.name,point:o.point});
+          });
+        }));
+        const overs=Object.values(totalsByPoint).flat().filter(o=>o.name==='Over');
+        const unders=Object.values(totalsByPoint).flat().filter(o=>o.name==='Under');
+        overs.forEach(ov=>{
+          unders.forEach(un=>{
+            if(ov.point!==un.point)return; // Same total line
+            if(!validOdds(ov.odds)||!validOdds(un.odds))return;
+            const d1=atod(ov.odds),d2=atod(un.odds);
+            const margin=(1/d1+1/d2-1)*100;
+            if(margin>3)return;
+            const key=g.home_team+'O/U'+ov.point+ov.book+un.book;
+            if(opps.find(o=>o._key===key))return;
+            opps.push({_key:key,game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,
+              marketType:'O/U '+ov.point,
+              leg1:{name:'Over '+ov.point,book:ov.book,odds:ov.odds},
+              leg2:{name:'Under '+un.point,book:un.book,odds:un.odds},
+              threeWay:false,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
+          });
+        });
       }
     });
     return opps.sort((a,b)=>a.margin-b.margin);
@@ -954,7 +1035,7 @@ function renderArbRows(){
       const s1=(STAKE*d2/(d1+d2)).toFixed(2),s2=(STAKE*d1/(d1+d2)).toFixed(2);
       return `<div style="background:var(--card);border:1px solid ${o.isArb?'rgba(0,229,160,0.4)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span><span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span>${o.marketType&&o.marketType!=='ML'?'<span style="font-size:10px;background:rgba(79,138,255,0.1);color:#4f8aff;padding:2px 8px;border-radius:4px;font-weight:700;">'+o.marketType+'</span>':''}<span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span></div>
           <div style="display:flex;align-items:center;gap:16px;">${profitStr}</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;">
