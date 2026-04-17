@@ -1168,7 +1168,7 @@ function renderArbRows(){
             <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};margin-bottom:2px;">${fmt(leg1.odds)}</div>
             ${leg1.centPrice?'<div style="font-size:11px;color:#818cf8;font-family:var(--fm);margin-bottom:4px;">'+Math.round(leg1.centPrice*100)+'¢'+(leg1.liquidity?' · Liq $'+formatLiq(leg1.liquidity):'')+'</div>':''}
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s1+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
-            <button onclick="${leg1.book==='Polymarket'?'window.open(\\'https://polymarket.com/sports\\',\\'_blank\\')':'openBook(\\''+leg1.book+'\\')'}" style="background:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg1.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+            <button onclick="${leg1.book==='Polymarket'?'window.open(&quot;https://polymarket.com/sports&quot;,&quot;_blank&quot;)':'openBook(&quot;'+leg1.book+'&quot;)'}" style="background:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg1.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
           </div>
           <div style="padding:16px;">
             <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
@@ -1176,7 +1176,7 @@ function renderArbRows(){
             <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};margin-bottom:2px;">${fmt(leg2.odds)}</div>
             ${leg2.centPrice?'<div style="font-size:11px;color:#818cf8;font-family:var(--fm);margin-bottom:4px;">'+Math.round(leg2.centPrice*100)+'¢'+(leg2.liquidity?' · Liq $'+formatLiq(leg2.liquidity):'')+'</div>':''}
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
-            <button onclick="${leg2.book==='Polymarket'?'window.open(\\'https://polymarket.com/sports\\',\\'_blank\\')':'openBook(\\''+leg2.book+'\\')'}" style="background:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg2.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+            <button onclick="${leg2.book==='Polymarket'?'window.open(&quot;https://polymarket.com/sports&quot;,&quot;_blank&quot;)':'openBook(&quot;'+leg2.book+'&quot;)'}" style="background:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg2.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
           </div>
         </div>
       </div>`;
