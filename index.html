@@ -1099,9 +1099,10 @@ async function fetchPolymarketArbs(){
 
             if(!matchedSbTeam)return;
 
-            // Find the opposite side on the sportsbook
+            // Find the opposite side on the sportsbook (skip Draw for combat sports)
+            const isCombat=sport==='mma_mixed_martial_arts'||sport==='boxing_boxing';
             Object.entries(sbOdds).forEach(([sbName,sbData])=>{
-              if(sbName!==matchedSbTeam.name){
+              if(sbName!==matchedSbTeam.name){const isCombat2=sport==='mma_mixed_martial_arts'||sport==='boxing_boxing';if(isCombat2&&(sbName.toLowerCase()==='draw'||sbName.toLowerCase()==='tie'))return;
                 oppositeSbTeam={name:sbName,...sbData};
               }
             });
@@ -1184,8 +1185,8 @@ async function fetchSportArbs(sport,market='h2h'){
             leg3:{name:'Draw',book:bestD.book,odds:bestD.odds},
             threeWay:true,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
         } else {
-          if(entries.length<2)return;
-          const [n1,o1]=entries[0],[n2,o2]=entries[1];
+          const isCombat3=sport==='mma_mixed_martial_arts'||sport==='boxing_boxing';const filtered=isCombat3?entries.filter(([name])=>name.toLowerCase()!=='draw'&&name.toLowerCase()!=='tie'):entries;if(filtered.length<2)return;
+          const [n1,o1]=filtered[0],[n2,o2]=filtered[1];
           const best1=o1.reduce((a,b)=>a.odds>b.odds?a:b);
           const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
           const d1=atod(best1.odds),d2=atod(best2.odds);
