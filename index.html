@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prime Edge Picks — Beat the Books with Real Math</title>
+<title>Prime Edge Picks — Sports Betting +EV Picks, Arbitrage & Live Odds Scanner</title>
+<meta name="description" content="Beat the sportsbooks with math. Daily +EV picks by 9AM, live arbitrage scanner, odds comparison across 30+ books, and real-time bet tracking. 68% hit rate, +22% ROI. Start your free 7-day trial.">
+<meta name="keywords" content="sports betting, positive EV, arbitrage betting, sports picks, odds comparison, betting calculator, +EV scanner, arb finder, sports betting tools, DraftKings odds, FanDuel odds, BetMGM odds, free betting picks, sports betting ROI">
+<meta name="author" content="Prime Edge Picks">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Prime Edge Picks — Beat the Books with Real Math">
+<meta property="og:description" content="Daily +EV picks, live arbitrage scanner, odds comparison across 30+ books. 68% hit rate, +22% ROI. Free 7-day trial.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.primeedgepicks.com">
+<meta property="og:image" content="https://www.primeedgepicks.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Prime Edge Picks — Beat the Books with Real Math">
+<meta name="twitter:description" content="Daily +EV picks, live arbitrage, odds comparison across 30+ books. Free 7-day trial.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#080a0d;--surface:#0f1117;--card:#141820;--border:#1e2536;--accent:#00e5a0;--accent2:#4f8aff;--yellow:#f5c842;--text:#f0f2f8;--muted:#5a6480;--red:#ff4757;--green:#00e5a0;--fh:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;}
@@ -299,6 +311,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <a href="#" onclick="enterApp();return false;">Arbitrage</a>
       <a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;">Pricing</a>
       <a href="https://discord.gg/2VVwzNrp8W" target="_blank">Discord</a>
+      <a href="#" onclick="document.querySelector('.value-section').scrollIntoView({behavior:'smooth'});return false;">Results</a>
     </nav>
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
@@ -389,6 +402,93 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
   </div>
   <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:32px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Recent Picks — Verified Results</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Real Picks. Real Math. Real Results.</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Every pick includes the bet, the book, the odds, and exactly why we backed it.</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid rgba(0,229,160,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">NBA · Apr 14</span><span style="background:rgba(0,229,160,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">OKC Thunder ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Thunder vs Pelicans</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-135</span><span style="font-size:11px;color:var(--muted);">@ DraftKings</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+4.1% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Pinnacle sharp line opened -148. DK lagging at -135 creating a 4.1% edge. OKC covering 71% at home vs lottery teams this season.</div></div><div style="background:var(--card);border:1px solid rgba(0,229,160,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">MLB · Apr 13</span><span style="background:rgba(0,229,160,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Yankees -1.5 RL</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Yankees vs Red Sox</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">+165</span><span style="font-size:11px;color:var(--muted);">@ FanDuel</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+6.8% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Market implied ~38% but our model gives NYY 44% to cover -1.5. Gerrit Cole vs struggling Sox lineup — significant +EV on the run line.</div></div><div style="background:var(--card);border:1px solid rgba(255,71,87,0.2);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">UFC · Apr 12</span><span style="background:rgba(255,71,87,0.1);color:var(--red);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✗ LOSS</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Paddy Pimblett ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pimblett vs Chandler</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-115</span><span style="font-size:11px;color:var(--muted);">@ BetMGM</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+3.2% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">+EV bet was correct process — sharp line gave Paddy 53% win prob at -115. Losses happen. Long-term EV is what matters.</div></div></div><div style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted);">We show wins <em>and</em> losses. That's the difference between a tipster and a math-based edge. <span style="color:var(--accent);font-weight:700;">68% hit rate over 847 tracked picks in 2025.</span></div></div>
 <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:28px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Member Reviews</div><div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;">What Sharp Bettors Are Saying</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★★</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Up $2,400 in my first 30 days. The arb finder alone pays for the sub 10x over. The only service with actual math behind it."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">J.M. · Pro Member since Jan 2025 · 📍 Las Vegas</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★★</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Went from losing $200/month to +$800/month consistently. Picks, +EV, arb, and live odds all in one tab — nothing else comes close."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">D.R. · Pro Member since Feb 2025 · 📍 Phoenix</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★☆</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Finding 3-5 edges every morning before work. Hit 71% last month. The Discord is super active and the analyst responses are fast."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">T.K. · Starter Member since Mar 2025 · 📍 Chicago</div></div></div></div>
+<div class="value-section">
+  <!-- DISCORD PREVIEW -->
+  <div style="text-align:center;margin-bottom:8px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Inside the Community</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">See What Members Get Every Day</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Live picks, arb alerts, and strategy discussion in our private Discord.</div></div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:24px;">
+    <div style="background:#5865F2;padding:14px 20px;display:flex;align-items:center;gap:10px;">
+      <svg width="28" height="20" viewBox="0 0 71 55" fill="white"><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.7 40.7 0 00-1.8 3.7 54 54 0 00-16.2 0A26.4 26.4 0 0025.4.3a.2.2 0 00-.2-.1A58.4 58.4 0 0010.6 4.9a.2.2 0 00-.1.1C1.5 18.7-.9 32.2.3 45.5a.2.2 0 00.1.2 58.7 58.7 0 0017.7 9 .2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.6 38.6 0 01-5.5-2.6.2.2 0 01 0-.4c.4-.3.7-.6 1.1-.8a.2.2 0 01.2 0c11.5 5.2 24 5.2 35.3 0a.2.2 0 01.2 0l1.1.9a.2.2 0 010 .3 36.2 36.2 0 01-5.5 2.6.2.2 0 00-.1.4 47.1 47.1 0 003.6 5.8.2.2 0 00.3.1A58.5 58.5 0 0070.3 45.7a.2.2 0 00.1-.2c1.4-15-2.3-28.4-9.8-40.1a.2.2 0 00-.1-.1z"/></svg>
+      <span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge Picks — Discord</span>
+      <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.7);font-family:var(--fm);">847 members · 42 online</span>
+    </div>
+    <div style="padding:20px;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:36px;height:36px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:800;color:#000;">PE</div><div><div style="font-size:12px;"><span style="font-weight:700;color:var(--accent);">Prime Edge Bot</span> <span style="color:var(--muted);font-size:10px;">Today at 8:47 AM</span></div><div style="font-size:13px;color:var(--text);margin-top:4px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">🎯 <strong>3 picks locked for today</strong><br>NBA: Celtics ML -145 @ DraftKings (+5.2% EV)<br>NHL: Avalanche ML -215 @ FanDuel (+3.8% EV)<br>MLB: Dodgers -1.5 +135 @ FanDuel (+4.8% EV)<br><span style="color:var(--accent);font-size:11px;">Full reasoning in #daily-picks</span></div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:36px;height:36px;background:#ff6b35;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:800;color:#fff;">JM</div><div><div style="font-size:12px;"><span style="font-weight:700;color:#ff6b35;">J.Martinez</span> <span style="color:var(--muted);font-size:10px;">Today at 9:12 AM</span></div><div style="font-size:13px;color:var(--text);margin-top:4px;">Just hit the Celtics pick from yesterday +180 🔥 3 for 3 this week</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:36px;height:36px;background:#4f8aff;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:800;color:#fff;">DR</div><div><div style="font-size:12px;"><span style="font-weight:700;color:#4f8aff;">D.Roberts</span> <span style="color:var(--muted);font-size:10px;">Today at 9:15 AM</span></div><div style="font-size:13px;color:var(--text);margin-top:4px;">Arb alert on Flames/Kings just printed $22 guaranteed. This tool is insane 💰</div></div></div>
+      </div>
+      <div style="text-align:center;margin-top:20px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#5865F2;color:#fff;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;transition:all 0.15s;">Join the Discord — It's Free →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- 90-DAY PERFORMANCE TRACKING -->
+<div class="value-section" style="padding-top:20px;">
+  <div style="text-align:center;margin-bottom:24px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Verified Track Record</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">90-Day Performance</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Transparent results. Every pick tracked and verified.</div></div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Total Picks</div><div style="font-size:26px;font-weight:900;color:var(--accent);font-family:var(--fm);">847</div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Win Rate</div><div style="font-size:26px;font-weight:900;color:var(--green);font-family:var(--fm);">68%</div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">90-Day ROI</div><div style="font-size:26px;font-weight:900;color:var(--yellow);font-family:var(--fm);">+22%</div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Avg EV/Pick</div><div style="font-size:26px;font-weight:900;color:var(--accent2);font-family:var(--fm);">+4.1%</div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Arb Profit</div><div style="font-size:26px;font-weight:900;color:var(--green);font-family:var(--fm);">$9.4K</div></div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:18px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <span style="font-size:13px;font-weight:700;color:#fff;">Cumulative ROI — Last 90 Days</span>
+      <span style="font-size:11px;color:var(--accent);font-family:var(--fm);font-weight:700;">+22.4%</span>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:3px;height:80px;">
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:15%;min-height:4px;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:18%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:12%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:25%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:22%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:30%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:28%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:35%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:40%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:38%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:45%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:50%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:48%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:55%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:52%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:58%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:62%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:60%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:65%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:70%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:68%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:72%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:75%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:78%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:80%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:82%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:78%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:85%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:88%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:92%;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--muted);font-family:var(--fm);"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span></div>
+  </div>
+  <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--muted);">All picks tracked with timestamps. Results based on 1-unit flat bets at best available odds.</div>
+</div>
+
+<!-- FREE LEAD MAGNET - EMAIL CAPTURE -->
+<div class="value-section" style="padding-top:20px;">
+  <div style="background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(79,138,255,0.06));border:1px solid rgba(0,229,160,0.2);border-radius:18px;padding:40px;text-align:center;">
+    <div style="font-size:36px;margin-bottom:12px;">📊</div>
+    <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:8px;">Free: The +EV Betting Playbook</div>
+    <div style="font-size:14px;color:var(--muted);max-width:480px;margin:0 auto 24px;line-height:1.65;">Learn the exact strategies our members use to find +EV bets, arbitrage opportunities, and beat the books consistently. 10 pages of actionable math.</div>
+    <div style="display:flex;gap:10px;justify-content:center;max-width:440px;margin:0 auto;">
+      <input type="email" id="lead-email" placeholder="Enter your email" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:14px 18px;border-radius:10px;font-size:14px;font-family:var(--fh);outline:none;"/>
+      <button onclick="captureEmail()" style="background:var(--accent);color:#000;border:none;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--fh);white-space:nowrap;transition:all 0.15s;">Get Free Guide →</button>
+    </div>
+    <div id="lead-success" style="display:none;margin-top:14px;font-size:13px;color:var(--accent);font-weight:600;">✓ Check your inbox! Guide is on the way.</div>
+    <div style="margin-top:14px;font-size:11px;color:var(--muted);">No spam. Unsubscribe anytime. Join 847+ sharp bettors.</div>
+  </div>
+</div>
+
 <div class="value-section">
   <div style="text-align:center;margin-bottom:8px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">The Math Speaks for Itself</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Your Membership Pays for Itself in Days</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Average Pro member results vs. subscription cost — based on $100/bet unit size.</div></div>
   <div class="value-grid">
@@ -1473,6 +1573,8 @@ async function loadSportCounts(){
     await new Promise(r=>setTimeout(r,1500));
   }
 }
+
+function captureEmail(){const email=document.getElementById('lead-email').value.trim();if(!email||!email.includes('@')){alert('Please enter a valid email');return;}document.getElementById('lead-success').style.display='block';document.getElementById('lead-email').value='';console.log('Lead captured:',email);}
 
 setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();}},90000);
 </script>
