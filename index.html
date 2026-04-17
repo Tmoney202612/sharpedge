@@ -943,10 +943,23 @@ async function loadAllArbSports(){
     const arbs=window.allArbOpps.filter(o=>o.isArb);
     const bestEl=document.getElementById('arb-best');
     if(bestEl&&arbs.length)bestEl.textContent='+'+(Math.max(...arbs.map(o=>o.profit*100)).toFixed(2))+'%';
+    if(bestEl&&!arbs.length)bestEl.textContent='—';
     const avgEl=document.getElementById('arb-avg');
     if(avgEl&&window.allArbOpps.length)avgEl.textContent=(window.allArbOpps.reduce((s,o)=>s+o.margin,0)/window.allArbOpps.length).toFixed(2)+'%';
     const sportsEl=document.getElementById('arb-sports-count');
     if(sportsEl)sportsEl.textContent=new Set(window.allArbOpps.map(o=>o.sportLabel)).size;
+    // Update sport chip counts and hide empty ones
+    const sportCounts={};
+    window.allArbOpps.forEach(o=>{if(o.sportLabel)sportCounts[o.sportLabel]=(sportCounts[o.sportLabel]||0)+1;});
+    const polyCount=window.allArbOpps.filter(o=>o.isPolymarket).length;
+    ['NBA','MLB','NHL','NFL','EPL','MLS','UFC'].forEach(s=>{
+      const chip=document.getElementById('chip-count-'+s);
+      if(chip){chip.textContent=sportCounts[s]||0;chip.parentElement.style.display=(sportCounts[s]||0)>0?'':'none';}
+    });
+    const polyChip=document.getElementById('chip-count-polymarket');
+    if(polyChip){polyChip.textContent=polyCount;polyChip.parentElement.style.display=polyCount>0?'':'none';}
+    const allChip=document.getElementById('chip-count-all');
+    if(allChip)allChip.textContent=window.allArbOpps.length;
   }
 
   // Standard sportsbook arbs
@@ -1098,7 +1111,11 @@ async function fetchSportArbs(sport,market='h2h'){
     const marketLabels={'h2h':'ML','spreads':'Spread','totals':'Total'};
     const isSoccer=sport.startsWith('soccer_');
     const opps=[];
+    const now=new Date();
+    const cutoff=new Date(now.getTime()+48*60*60*1000); // 48 hours from now
     data.forEach(g=>{
+      // Skip games more than 48 hours away
+      if(g.commence_time&&new Date(g.commence_time)>cutoff)return;
       const books=g.bookmakers||[];if(books.length<3)return;
 
       if(market==='h2h'){
