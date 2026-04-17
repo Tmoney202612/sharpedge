@@ -1709,7 +1709,7 @@ function isBookAllowed(bookName){
   return userBooks.some(ub=>bn.includes(ub.toLowerCase())||ub.toLowerCase().includes(bn));
 }
 
-function captureEmail(){const email=document.getElementById('lead-email').value.trim();if(!email||!email.includes('@')){alert('Please enter a valid email');return;}const btn=document.querySelector('[onclick="captureEmail()"]');btn.textContent='Sending...';btn.disabled=true;fetch('/api/manychat-subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,tag:'ev-playbook'})}).then(r=>r.json()).then(d=>{document.getElementById('lead-success').style.display='block';document.getElementById('lead-email').value='';btn.textContent='Get Free Guide →';btn.disabled=false;}).catch(e=>{document.getElementById('lead-success').style.display='block';document.getElementById('lead-email').value='';btn.textContent='Get Free Guide →';btn.disabled=false;console.log('Lead captured:',email);});}
+function captureEmail(){const email=document.getElementById('lead-email').value.trim();if(!email||!email.includes('@')){alert('Please enter a valid email');return;}fetch('/api/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'ev-playbook',timestamp:new Date().toISOString()})}).catch(()=>{});document.getElementById('lead-success').style.display='block';document.getElementById('lead-email').value='';window.open('/Prime_Edge_EV_Betting_Playbook.pdf','_blank');}
 
 setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();}},90000);
 </script>
