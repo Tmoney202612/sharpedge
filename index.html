@@ -18,18 +18,18 @@
 <meta name="twitter:description" content="Daily +EV picks, live arbitrage, odds comparison across 30+ books. Free 7-day trial.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080a0d;--surface:#0f1117;--card:#141820;--border:#1e2536;--accent:#34d399;--accent2:#4f8aff;--yellow:#f5c842;--text:#f0f2f8;--muted:#5a6480;--red:#ff4757;--green:#2ecc71;--fh:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;}
+:root{--bg:#080a0d;--surface:#0f1117;--card:#141820;--border:#1e2536;--accent:#3b82f6;--accent2:#4f8aff;--yellow:#f5c842;--text:#f0f2f8;--muted:#5a6480;--red:#ff4757;--green:#2ecc71;--fh:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
 body{background:var(--bg);color:var(--text);font-family:var(--fh);min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.5;}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,160,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
 header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#00e5a0,#00b87a);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 15px rgba(0,229,160,0.15);}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 15px rgba(59,130,246,0.15);}
 .logo-mark svg{width:20px;height:20px;fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 .logo-text{font-size:17px;font-weight:800;letter-spacing:-0.4px;color:var(--text);}
 .logo-text span{color:var(--accent);}
 .header-right{display:flex;align-items:center;gap:10px;}
-.live-pill{display:flex;align-items:center;gap:5px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--accent);font-family:var(--fm);letter-spacing:1px;}
+.live-pill{display:flex;align-items:center;gap:5px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--accent);font-family:var(--fm);letter-spacing:1px;}
 .live-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.3;transform:scale(0.7)}}
 #api-status{font-size:10px;color:var(--muted);font-family:var(--fm);}
@@ -38,18 +38,18 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .btn-ghost{padding:8px 16px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fh);transition:all 0.15s;}
 .btn-ghost:hover{color:var(--text);border-color:var(--text);}
 .hero{position:relative;z-index:1;padding:90px 40px 60px;text-align:center;max-width:820px;margin:0 auto;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.18);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;color:var(--accent);margin-bottom:28px;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;color:var(--accent);margin-bottom:28px;}
 .hero h1{font-size:clamp(38px,5.5vw,68px);font-weight:900;line-height:1.05;margin-bottom:22px;letter-spacing:-2px;color:#fff;}
 .hero h1 span{color:var(--accent);}
 .hero p{font-size:17px;color:var(--muted);line-height:1.65;margin-bottom:36px;max-width:520px;margin-left:auto;margin-right:auto;}
 .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
 .hero-btn-primary{padding:14px 30px;background:var(--accent);color:#000;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--fh);transition:all 0.2s;}
-.hero-btn-primary:hover{background:#00c98a;transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,229,160,0.25);}
+.hero-btn-primary:hover{background:#00c98a;transform:translateY(-2px);box-shadow:0 12px 40px rgba(59,130,246,0.25);}
 .hero-btn-secondary{padding:14px 30px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fh);transition:all 0.2s;}
 .hero-btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
 .hero-features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:70px;text-align:left;}
 .hero-feat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border 0.2s;}
-.hero-feat:hover{border-color:rgba(0,229,160,0.25);}
+.hero-feat:hover{border-color:rgba(59,130,246,0.25);}
 .hero-feat-icon{font-size:22px;margin-bottom:12px;}
 .hero-feat-title{font-size:14px;font-weight:700;margin-bottom:6px;color:#fff;}
 .hero-feat-desc{font-size:12px;color:var(--muted);line-height:1.6;}
@@ -58,7 +58,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .pricing-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:44px;}
 .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .price-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:34px;position:relative;}
-.price-card.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(0,229,160,0.04),var(--card));}
+.price-card.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(59,130,246,0.04),var(--card));}
 .price-card.featured::before{content:'MOST POPULAR';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1.5px;}
 .price-name{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px;}
 .price-amount{font-size:52px;font-weight:900;color:#fff;font-family:var(--fm);line-height:1;letter-spacing:-2px;}
@@ -84,7 +84,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .sidebar-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);padding:0 16px 8px;text-transform:uppercase;}
 .sidebar-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all 0.12s;}
 .sidebar-item:hover{background:rgba(255,255,255,0.03);color:var(--text);}
-.sidebar-item.active{background:rgba(0,229,160,0.05);color:var(--accent);border-left-color:var(--accent);}
+.sidebar-item.active{background:rgba(59,130,246,0.05);color:var(--accent);border-left-color:var(--accent);}
 .content{flex:1;padding:28px;overflow:hidden;}
 .panel{display:none;}.panel.active{display:block;}
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
@@ -97,22 +97,22 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .section-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
 .table-header{display:grid;padding:8px 16px;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
 .bet-row{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;transition:all 0.15s;overflow:hidden;}
-.bet-row:hover{border-color:rgba(0,229,160,0.25);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+.bet-row:hover{border-color:rgba(59,130,246,0.25);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
 .bet-row-inner{display:grid;padding:14px 18px;align-items:center;gap:12px;}
 .game-teams{font-size:14px;font-weight:700;margin-bottom:3px;color:#fff;}
 .game-meta{font-size:11px;color:var(--muted);font-family:var(--fm);}
 .odds-pill{display:inline-flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:var(--fm);font-size:13px;font-weight:600;gap:5px;}
 .book-tag{font-size:9px;background:var(--border);padding:2px 6px;border-radius:4px;color:var(--muted);font-weight:700;font-family:var(--fm);}
 .ev-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-family:var(--fm);font-size:13px;font-weight:700;}
-.ev-pos{background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.25);}
-.profit-badge{padding:4px 10px;border-radius:6px;font-family:var(--fm);font-size:13px;font-weight:700;background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.25);}
+.ev-pos{background:rgba(59,130,246,0.1);color:var(--green);border:1px solid rgba(59,130,246,0.25);}
+.profit-badge{padding:4px 10px;border-radius:6px;font-family:var(--fm);font-size:13px;font-weight:700;background:rgba(59,130,246,0.1);color:var(--green);border:1px solid rgba(59,130,246,0.25);}
 .bet-btn{padding:7px 16px;background:var(--accent);color:#000;border:none;border-radius:7px;font-size:11px;font-weight:800;cursor:pointer;transition:all 0.15s;font-family:var(--fh);white-space:nowrap;}
 .bet-btn:hover{background:#00c98a;transform:scale(1.03);}
 .col-c{text-align:center;}
 .col-l{font-size:9px;color:var(--muted);margin-bottom:4px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
 .odds-compare-row{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;}
 .book-oc{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-align:center;transition:all 0.15s;}
-.book-oc.best{border-color:var(--accent);background:rgba(0,229,160,0.06);}
+.book-oc.best{border-color:var(--accent);background:rgba(59,130,246,0.06);}
 .book-on{font-family:var(--fm);font-size:15px;font-weight:700;color:var(--text);}
 .book-on.best-o{color:var(--accent);}
 .tracker-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
@@ -131,7 +131,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
 .add-bet-btn{padding:10px 22px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fh);}
 .pick-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:12px;transition:border 0.15s;}
-.pick-card:hover{border-color:rgba(0,229,160,0.25);}
+.pick-card:hover{border-color:rgba(59,130,246,0.25);}
 .pick-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .pick-sport{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;}
 .pick-confidence{display:flex;align-items:center;gap:8px;}
@@ -144,7 +144,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .pick-book{font-size:11px;color:var(--muted);}
 .pick-analysis{font-size:12px;color:var(--muted);line-height:1.65;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
 .pick-result{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--fm);}
-.pick-win{background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.25);}
+.pick-win{background:rgba(59,130,246,0.1);color:var(--green);border:1px solid rgba(59,130,246,0.25);}
 .pick-pending{background:rgba(245,200,66,0.1);color:var(--yellow);border:1px solid rgba(245,200,66,0.25);}
 .calc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
 .calc-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;}
@@ -167,15 +167,15 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 @keyframes spin{to{transform:rotate(360deg)}}
 .info-box{background:rgba(79,138,255,0.06);border:1px solid rgba(79,138,255,0.2);border-radius:10px;padding:16px;color:var(--accent2);font-size:13px;margin-bottom:16px;}
 .promo-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:8px;display:flex;align-items:center;gap:16px;transition:border 0.15s;}
-.promo-card:hover{border-color:rgba(0,229,160,0.25);}
+.promo-card:hover{border-color:rgba(59,130,246,0.25);}
 .book-av{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
 .chat-bubble{position:fixed;bottom:24px;right:24px;z-index:999;}
-.chat-toggle{width:52px;height:52px;background:linear-gradient(135deg,#00e5a0,#00b87a);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,229,160,0.2);transition:all 0.2s;font-size:22px;}
+.chat-toggle{width:52px;height:52px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(59,130,246,0.2);transition:all 0.2s;font-size:22px;}
 .chat-toggle:hover{transform:scale(1.08);}
 .chat-window{position:absolute;bottom:64px;right:0;width:340px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);display:none;flex-direction:column;}
 .chat-window.open{display:flex;}
-.chat-header{background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,229,160,0.05));padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.chat-avatar{width:34px;height:34px;background:linear-gradient(135deg,#00e5a0,#00b87a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.chat-header{background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(59,130,246,0.05));padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.chat-avatar{width:34px;height:34px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .chat-header-info{flex:1;}
 .chat-header-name{font-size:13px;font-weight:700;color:#fff;}
 .chat-header-status{font-size:11px;color:var(--accent);display:flex;align-items:center;gap:4px;}
@@ -183,7 +183,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .chat-messages{height:280px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
 .msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;}
 .msg-bot{background:var(--surface);border:1px solid var(--border);color:var(--text);align-self:flex-start;border-radius:4px 12px 12px 12px;}
-.msg-user{background:linear-gradient(135deg,#00e5a0,#00b87a);color:#000;font-weight:600;align-self:flex-end;border-radius:12px 4px 12px 12px;}
+.msg-user{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#000;font-weight:600;align-self:flex-end;border-radius:12px 4px 12px 12px;}
 .chat-suggestions{padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);}
 .chat-suggestion{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:11px;padding:5px 10px;border-radius:20px;cursor:pointer;transition:all 0.15s;font-family:var(--fh);}
 .chat-suggestion:hover{border-color:var(--accent);color:var(--accent);}
@@ -201,16 +201,16 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 .sport-count{display:inline-flex;align-items:center;justify-content:center;background:var(--border);color:var(--muted);font-size:10px;font-weight:700;font-family:var(--fm);padding:1px 6px;border-radius:10px;margin-left:auto;min-width:18px;}
-.sidebar-item.active .sport-count{background:rgba(0,229,160,0.15);color:var(--accent);}
+.sidebar-item.active .sport-count{background:rgba(59,130,246,0.15);color:var(--accent);}
 .live-dot-red{width:5px;height:5px;background:var(--red);border-radius:50%;animation:pulse 1s ease-in-out infinite;}
 .sport-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .sport-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all 0.15s;font-family:var(--fh);}
 .sport-chip:hover{border-color:var(--accent);color:var(--accent);}
-.sport-chip.active{background:rgba(0,229,160,0.1);border-color:var(--accent);color:var(--accent);}
+.sport-chip.active{background:rgba(59,130,246,0.1);border-color:var(--accent);color:var(--accent);}
 .sport-chip .chip-count{background:var(--border);padding:1px 5px;border-radius:8px;font-size:9px;}
-.sport-chip.active .chip-count{background:rgba(0,229,160,0.2);}
+.sport-chip.active .chip-count{background:rgba(59,130,246,0.2);}
 .arb-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:all 0.15s;}
-.arb-card:hover{border-color:rgba(0,229,160,0.3);box-shadow:0 4px 24px rgba(0,0,0,0.3);}
+.arb-card:hover{border-color:rgba(59,130,246,0.3);box-shadow:0 4px 24px rgba(0,0,0,0.3);}
 .arb-card-top{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:14px;padding:16px 20px;align-items:center;}
 .arb-sport-badge{font-size:9px;font-weight:800;letter-spacing:1.5px;padding:4px 8px;border-radius:6px;text-transform:uppercase;white-space:nowrap;}
 .arb-game-info{min-width:0;}
@@ -235,7 +235,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .parlay-leg-num{width:24px;height:24px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
 .parlay-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0;flex-shrink:0;}
 .parlay-remove:hover{color:var(--red);}
-.parlay-result-card{background:linear-gradient(135deg,rgba(0,229,160,0.08),var(--card));border:1px solid var(--accent);border-radius:14px;padding:24px;margin-top:20px;}
+.parlay-result-card{background:linear-gradient(135deg,rgba(59,130,246,0.08),var(--card));border:1px solid var(--accent);border-radius:14px;padding:24px;margin-top:20px;}
 @media(max-width:900px){
   .sidebar{display:none}
   .stats-bar{grid-template-columns:repeat(2,1fr)}
@@ -257,10 +257,10 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 /* LANDING NAV */
 .landing-nav{display:flex;gap:6px;align-items:center;}
 .landing-nav a{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:6px;transition:all 0.15s;}
-.landing-nav a:hover{color:var(--accent);background:rgba(0,229,160,0.06);}
+.landing-nav a:hover{color:var(--accent);background:rgba(59,130,246,0.06);}
 
 /* BIGGER CTAs */
-.hero-btn-primary{padding:18px 38px!important;font-size:17px!important;border-radius:12px!important;box-shadow:0 0 30px rgba(0,229,160,0.2);letter-spacing:0.3px;}
+.hero-btn-primary{padding:18px 38px!important;font-size:17px!important;border-radius:12px!important;box-shadow:0 0 30px rgba(59,130,246,0.2);letter-spacing:0.3px;}
 .hero-btn-secondary{padding:18px 38px!important;font-size:17px!important;border-radius:12px!important;}
 
 /* ANIMATED SCANNER */
@@ -268,7 +268,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .scanner-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--border);}
 .scanner-tabs{display:flex;gap:4px;}
 .scanner-tab{font-size:10px;font-weight:700;color:var(--muted);padding:4px 10px;border-radius:5px;font-family:var(--fm);}
-.scanner-tab.active{color:var(--accent);background:rgba(0,229,160,0.1);}
+.scanner-tab.active{color:var(--accent);background:rgba(59,130,246,0.1);}
 .scanner-body{padding:14px;}
 .scanner-row{display:grid;grid-template-columns:auto 2fr 1fr 1fr 1fr;gap:12px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;opacity:0;animation:scannerFadeIn 0.5s ease forwards;}
 .scanner-row:nth-child(1){animation-delay:0.3s;}
@@ -280,10 +280,10 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .scanner-game{font-size:12px;font-weight:700;color:#fff;}
 .scanner-meta{font-size:10px;color:var(--muted);font-family:var(--fm);}
 .scanner-odds{font-size:16px;font-weight:800;color:var(--accent);font-family:var(--fm);}
-.scanner-ev{font-size:11px;font-weight:700;color:var(--green);background:rgba(0,229,160,0.1);padding:3px 8px;border-radius:4px;font-family:var(--fm);}
+.scanner-ev{font-size:11px;font-weight:700;color:var(--green);background:rgba(59,130,246,0.1);padding:3px 8px;border-radius:4px;font-family:var(--fm);}
 .scanner-book{font-size:10px;font-weight:700;font-family:var(--fm);}
 .scanner-pulse{animation:scannerPulse 3s ease-in-out infinite;}
-@keyframes scannerPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,0);}50%{box-shadow:0 0 20px 4px rgba(0,229,160,0.15);}}
+@keyframes scannerPulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0);}50%{box-shadow:0 0 20px 4px rgba(59,130,246,0.15);}}
 
 /* VALUE COMPARISON */
 .value-section{position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;}
@@ -387,7 +387,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <div class="hero-feat"><div class="hero-feat-icon">🔄</div><div class="hero-feat-title">Lock In Profit Before Tip-Off</div><div class="hero-feat-desc">Bet both sides at different books. Win regardless of the result. Zero risk. Updated live, 24/7.</div></div>
       <div class="hero-feat"><div class="hero-feat-icon">🎯</div><div class="hero-feat-title">Sharp Picks. Full Reasoning.</div><div class="hero-feat-desc">Every pick delivered by 9AM with the bet, the book, the odds, and exactly why we're backing it.</div></div>
     </div>
-    <div style="margin-top:32px;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:12px 20px;font-size:12px;font-family:var(--fm);color:var(--accent);display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;">
+    <div style="margin-top:32px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:10px;padding:12px 20px;font-size:12px;font-family:var(--fm);color:var(--accent);display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;">
       <span>📈 Today: 3-1</span><span style="color:var(--border)">·</span><span>+2.3 units</span><span style="color:var(--border)">·</span><span>7-Day Hit Rate: 68%</span><span style="color:var(--border)">·</span><span>30-Day ROI: +22%</span>
     </div>
   </div>
@@ -400,7 +400,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
     </div>
     <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;"><div style="font-size:18px;color:var(--text);line-height:1.6;margin-bottom:16px;font-style:italic;">"Prime Edge is the only tool where I can see picks, +EV, arb, and live odds all in one tab."</div><div style="font-size:12px;color:var(--muted);font-weight:600;">— Member since 2024</div></div>
   </div>
-  <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:32px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Recent Picks — Verified Results</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Real Picks. Real Math. Real Results.</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Every pick includes the bet, the book, the odds, and exactly why we backed it.</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid rgba(0,229,160,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">NBA · Apr 14</span><span style="background:rgba(0,229,160,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">OKC Thunder ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Thunder vs Pelicans</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-135</span><span style="font-size:11px;color:var(--muted);">@ DraftKings</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+4.1% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Pinnacle sharp line opened -148. DK lagging at -135 creating a 4.1% edge. OKC covering 71% at home vs lottery teams this season.</div></div><div style="background:var(--card);border:1px solid rgba(0,229,160,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">MLB · Apr 13</span><span style="background:rgba(0,229,160,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Yankees -1.5 RL</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Yankees vs Red Sox</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">+165</span><span style="font-size:11px;color:var(--muted);">@ FanDuel</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+6.8% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Market implied ~38% but our model gives NYY 44% to cover -1.5. Gerrit Cole vs struggling Sox lineup — significant +EV on the run line.</div></div><div style="background:var(--card);border:1px solid rgba(255,71,87,0.2);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">UFC · Apr 12</span><span style="background:rgba(255,71,87,0.1);color:var(--red);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✗ LOSS</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Paddy Pimblett ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pimblett vs Chandler</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-115</span><span style="font-size:11px;color:var(--muted);">@ BetMGM</span><span style="background:rgba(0,229,160,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+3.2% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">+EV bet was correct process — sharp line gave Paddy 53% win prob at -115. Losses happen. Long-term EV is what matters.</div></div></div><div style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted);">We show wins <em>and</em> losses. That's the difference between a tipster and a math-based edge. <span style="color:var(--accent);font-weight:700;">68% hit rate over 847 tracked picks in 2025.</span></div></div>
+  <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:32px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Recent Picks — Verified Results</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Real Picks. Real Math. Real Results.</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Every pick includes the bet, the book, the odds, and exactly why we backed it.</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid rgba(59,130,246,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">NBA · Apr 14</span><span style="background:rgba(59,130,246,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">OKC Thunder ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Thunder vs Pelicans</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-135</span><span style="font-size:11px;color:var(--muted);">@ DraftKings</span><span style="background:rgba(59,130,246,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+4.1% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Pinnacle sharp line opened -148. DK lagging at -135 creating a 4.1% edge. OKC covering 71% at home vs lottery teams this season.</div></div><div style="background:var(--card);border:1px solid rgba(59,130,246,0.3);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">MLB · Apr 13</span><span style="background:rgba(59,130,246,0.15);color:var(--green);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✓ WIN</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Yankees -1.5 RL</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Yankees vs Red Sox</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">+165</span><span style="font-size:11px;color:var(--muted);">@ FanDuel</span><span style="background:rgba(59,130,246,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+6.8% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">Market implied ~38% but our model gives NYY 44% to cover -1.5. Gerrit Cole vs struggling Sox lineup — significant +EV on the run line.</div></div><div style="background:var(--card);border:1px solid rgba(255,71,87,0.2);border-radius:14px;padding:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);"></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">UFC · Apr 12</span><span style="background:rgba(255,71,87,0.1);color:var(--red);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:var(--fm);">✗ LOSS</span></div><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Paddy Pimblett ML</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pimblett vs Chandler</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="font-family:var(--fm);font-size:22px;font-weight:900;color:var(--accent);">-115</span><span style="font-size:11px;color:var(--muted);">@ BetMGM</span><span style="background:rgba(59,130,246,0.1);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;font-family:var(--fm);">+3.2% EV</span></div><div style="font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;">+EV bet was correct process — sharp line gave Paddy 53% win prob at -115. Losses happen. Long-term EV is what matters.</div></div></div><div style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted);">We show wins <em>and</em> losses. That's the difference between a tipster and a math-based edge. <span style="color:var(--accent);font-weight:700;">68% hit rate over 847 tracked picks in 2025.</span></div></div>
 <div style="position:relative;z-index:2;padding:0 40px 60px;max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:28px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Member Reviews</div><div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;">What Sharp Bettors Are Saying</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★★</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Up $2,400 in my first 30 days. The arb finder alone pays for the sub 10x over. The only service with actual math behind it."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">J.M. · Pro Member since Jan 2025 · 📍 Las Vegas</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★★</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Went from losing $200/month to +$800/month consistently. Picks, +EV, arb, and live odds all in one tab — nothing else comes close."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">D.R. · Pro Member since Feb 2025 · 📍 Phoenix</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;"><div style="color:var(--yellow);font-size:14px;margin-bottom:10px;">★★★★☆</div><div style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px;font-style:italic;">"Finding 3-5 edges every morning before work. Hit 71% last month. The Discord is super active and the analyst responses are fast."</div><div style="font-size:11px;color:var(--muted);font-weight:600;">T.K. · Starter Member since Mar 2025 · 📍 Chicago</div></div></div></div>
 <div class="value-section">
   <!-- DISCORD PREVIEW -->
@@ -438,36 +438,36 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <span style="font-size:11px;color:var(--accent);font-family:var(--fm);font-weight:700;">$18,634</span>
     </div>
     <div style="display:flex;align-items:flex-end;gap:3px;height:80px;">
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:15%;min-height:4px;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:18%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:12%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:25%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:22%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:30%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:28%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:35%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:40%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:38%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:45%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:50%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:48%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:55%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:52%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:58%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:62%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:60%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:65%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:70%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:68%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:72%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:75%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:78%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:80%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:82%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:78%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:85%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:88%;"></div>
-      <div style="flex:1;background:linear-gradient(to top,rgba(0,229,160,0.3),var(--accent));border-radius:3px 3px 0 0;height:92%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:15%;min-height:4px;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:18%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:12%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:25%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:22%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:30%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:28%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:35%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:40%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:38%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:45%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:50%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:48%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:55%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:52%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:58%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:62%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:60%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:65%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:70%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:68%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:72%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:75%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:78%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:80%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:82%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:78%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:85%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:88%;"></div>
+      <div style="flex:1;background:linear-gradient(to top,rgba(59,130,246,0.3),var(--accent));border-radius:3px 3px 0 0;height:92%;"></div>
     </div>
     <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--muted);font-family:var(--fm);"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span></div>
   </div>
@@ -477,7 +477,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 <!-- ODDSPEDIA SUREBETS --> <div class="value-section" style="padding-top:20px;">   <div style="text-align:center;margin-bottom:24px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">Powered by 120+ Bookmakers</div><div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;">Live Sure Bets</div><div style="font-size:14px;color:var(--muted);margin-top:8px;">Real-time guaranteed profit opportunities from 120+ sportsbooks worldwide.</div></div>   <div id="oddspedia-widget-sure-bets-limit-20-odds-type-0-width-0"><script>window.oddspediaSureBetsWidgetLimit20OddsType0Width0={api_token:"027d38e6ac467dee6c9fb262a93bd0b2b2ba57bb18a1811fbc8b14c6a49b",type:"sure-bets",domain:"www.primeedgepicks.com",selector:"oddspedia-widget-sure-bets-limit-20-odds-type-0-width-0",width:"0",theme:"1",odds_type:"0",language:"en",primary_color:"#0F5D75",accent_color:"#1AB7AC",font:"Roboto",limit:"20"};</script><script src="https://widgets.oddspedia.com/js/widget/init.js?widgetId=oddspediaSureBetsWidgetLimit20OddsType0Width0" async></script></div> </div>
   <!-- FREE LEAD MAGNET - EMAIL CAPTURE -->
 <div class="value-section" style="padding-top:20px;">
-  <div style="background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(79,138,255,0.06));border:1px solid rgba(0,229,160,0.2);border-radius:18px;padding:40px;text-align:center;">
+  <div style="background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(79,138,255,0.06));border:1px solid rgba(59,130,246,0.2);border-radius:18px;padding:40px;text-align:center;">
     <div style="font-size:36px;margin-bottom:12px;">📊</div>
     <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:8px;">Free: The +EV Betting Playbook</div>
     <div style="font-size:14px;color:var(--muted);max-width:480px;margin:0 auto 24px;line-height:1.65;">Learn the exact strategies our members use to find +EV bets, arbitrage opportunities, and beat the books consistently. 10 pages of actionable math.</div>
@@ -1304,7 +1304,7 @@ function renderArbRows(){
       const d1=atod(leg1.odds),d2=atod(leg2.odds),dD=atod(leg3.odds);
       const totalInv=1/d1+1/d2+1/dD;
       const s1=(STAKE*(1/d1)/totalInv).toFixed(2),s2=(STAKE*(1/d2)/totalInv).toFixed(2),sD=(STAKE*(1/dD)/totalInv).toFixed(2);
-      return `<div style="background:var(--card);border:1px solid ${o.isArb?'rgba(0,229,160,0.2)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
+      return `<div style="background:var(--card);border:1px solid ${o.isArb?'rgba(59,130,246,0.2)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:10px;background:rgba(139,92,246,0.1);color:#8b5cf6;padding:2px 8px;border-radius:4px;font-weight:700;">3-WAY</span><span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span><span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span>${liveBadge}</div>
           <div style="display:flex;align-items:center;gap:16px;">${profitStr}</div>
@@ -1338,7 +1338,7 @@ function renderArbRows(){
       const d1=atod(leg1.odds),d2=atod(leg2.odds);
       const s1=(STAKE*d2/(d1+d2)).toFixed(2),s2=(STAKE*d1/(d1+d2)).toFixed(2);
       const polyBadge=o.isPolymarket?'<span style="font-size:10px;background:rgba(99,102,241,0.15);color:#818cf8;padding:2px 8px;border-radius:4px;font-weight:700;border:1px solid rgba(99,102,241,0.3);">⚡ POLYMARKET</span>':'';
-      return `<div style="background:var(--card);border:1px solid ${o.isPolymarket?'rgba(99,102,241,0.4)':o.isArb?'rgba(0,229,160,0.2)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
+      return `<div style="background:var(--card);border:1px solid ${o.isPolymarket?'rgba(99,102,241,0.4)':o.isArb?'rgba(59,130,246,0.2)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}${polyBadge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span>${o.marketType&&o.marketType!=='ML'?'<span style="font-size:10px;background:rgba(79,138,255,0.1);color:#4f8aff;padding:2px 8px;border-radius:4px;font-weight:700;">'+o.marketType+'</span>':''}<span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span>${liveBadge}</div>
           <div style="display:flex;align-items:center;gap:16px;">${profitStr}</div>
@@ -1659,20 +1659,20 @@ function renderBookGrid(containerId,books){
   const c=document.getElementById(containerId);if(!c)return;
   c.innerHTML=books.map(b=>{
     const sel=!userBooks||userBooks.includes(b);
-    return `<div onclick="toggleBook(this,'${b.replace(/'/g,"\\'")}')" style="background:${sel?'rgba(0,229,160,0.1)':'var(--surface)'};border:1px solid ${sel?'rgba(0,229,160,0.2)':'var(--border)'};border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:all 0.15s;" data-book="${b}" data-selected="${sel}"><div style="font-size:11px;font-weight:700;color:${sel?'var(--accent)':'var(--muted)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sel?'✓ ':''}${b}</div></div>`;
+    return `<div onclick="toggleBook(this,'${b.replace(/'/g,"\\'")}')" style="background:${sel?'rgba(59,130,246,0.1)':'var(--surface)'};border:1px solid ${sel?'rgba(59,130,246,0.2)':'var(--border)'};border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:all 0.15s;" data-book="${b}" data-selected="${sel}"><div style="font-size:11px;font-weight:700;color:${sel?'var(--accent)':'var(--muted)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sel?'✓ ':''}${b}</div></div>`;
   }).join('');
 }
 function toggleBook(el,book){
   const sel=el.dataset.selected==='true';
   el.dataset.selected=sel?'false':'true';
-  el.style.background=sel?'var(--surface)':'rgba(0,229,160,0.1)';
-  el.style.borderColor=sel?'var(--border)':'rgba(0,229,160,0.2)';
+  el.style.background=sel?'var(--surface)':'rgba(59,130,246,0.1)';
+  el.style.borderColor=sel?'var(--border)':'rgba(59,130,246,0.2)';
   el.querySelector('div').style.color=sel?'var(--muted)':'var(--accent)';
   el.querySelector('div').textContent=sel?book:'✓ '+book;
 }
 function selectAllBooks(){
   document.querySelectorAll('#us-books-grid>div,#intl-books-grid>div,#pred-books-grid>div').forEach(el=>{
-    el.dataset.selected='true';el.style.background='rgba(0,229,160,0.1)';el.style.borderColor='rgba(0,229,160,0.2)';
+    el.dataset.selected='true';el.style.background='rgba(59,130,246,0.1)';el.style.borderColor='rgba(59,130,246,0.2)';
     el.querySelector('div').style.color='var(--accent)';
     const b=el.dataset.book;el.querySelector('div').textContent='✓ '+b;
   });
@@ -1790,10 +1790,10 @@ async function buildBestParlay(sport,btn){
   const totalProb=_parlayLegs.reduce((p,l)=>p*ip(l.odds),1);
   const parlayOdds=totalDec>=2?Math.round((totalDec-1)*100):Math.round(-100/(totalDec-1));
   const sportName={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL'}[sport]||sport;
-  const bc=BOOK_COLORS[bestBook]||'#00e5a0';
+  const bc=BOOK_COLORS[bestBook]||'#3b82f6';
 
   if(slip)slip.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
-    <div style="background:linear-gradient(135deg,rgba(0,229,160,0.12),rgba(0,229,160,0.04));padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+    <div style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.04));padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
       <div><div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;">${_parlayLegs.length}-Leg Bet Slip · ${sportName}</div><div style="font-size:26px;font-weight:800;color:var(--accent);font-family:var(--fm);">${fmt(parlayOdds)}</div></div>
       <div style="text-align:right;"><div style="font-size:11px;color:var(--muted);">Best Book</div><div style="font-size:16px;font-weight:800;color:${bc};">${bestBook}</div></div>
     </div>
@@ -1849,7 +1849,7 @@ function showLegalModal(t){
 function closeLegalModal(){document.getElementById('legal-modal-overlay').style.display='none';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLegalModal();});
 </script>
-<footer style="background:var(--surface);border-top:1px solid var(--border);padding:40px 40px 24px;position:relative;z-index:1;"><div style="max-width:900px;margin:0 auto;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px;"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,#00e5a0,#00b87a);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge <span style="color:var(--accent)">Picks</span></span></div><div style="font-size:12px;color:var(--muted);line-height:1.7;max-width:260px;">Math-based sports betting analytics. We provide data, odds comparisons, and statistical analysis — not gambling advice.</div><div style="margin-top:14px;display:flex;gap:10px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" style="background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);color:#8b9eff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">💬 Discord</a><a href="https://whop.com/prime-edge-picks/" target="_blank" style="background:rgba(79,138,255,0.08);border:1px solid rgba(79,138,255,0.25);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">⚡ Whop</a><a href="https://oddspedia.com" target="_blank" rel="nofollow" style="background:rgba(15,93,117,0.15);border:1px solid rgba(26,183,172,0.3);color:#1AB7AC;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">📊 <img src="https://widgets.oddspedia.com/images/logo-oddspedia-light.svg" alt="Oddspedia" style="height:18px;vertical-align:middle;margin-right:4px;"> Data powered by Oddspedia</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Product</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Daily Picks</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">+EV Scanner</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Arbitrage</a><a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Pricing</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Community</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" style="font-size:13px;color:var(--muted);text-decoration:none;">Discord</a><a href="https://whop.com/prime-edge-picks/" target="_blank" style="font-size:13px;color:var(--muted);text-decoration:none;">Membership</a><a href="mailto:timhendryaz@gmail.com" style="font-size:13px;color:var(--muted);text-decoration:none;">Contact Us</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLegalModal('privacy');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Privacy Policy</a><a href="#" onclick="showLegalModal('terms');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Terms of Service</a><a href="#" onclick="showLegalModal('responsible');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Responsible Gambling</a></div></div></div><div style="border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="font-size:11px;color:var(--muted);">© 2025 Prime Edge Picks. All rights reserved.</div><div style="font-size:11px;color:var(--muted);max-width:600px;line-height:1.6;text-align:right;"><strong style="color:var(--red);">18+ only.</strong> Gambling involves risk. Past results do not guarantee future outcomes. Prime Edge Picks provides statistical analysis only — not financial or gambling advice. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.</div></div></div></footer><div id="legal-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLegalModal()"><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;position:relative;"><button onclick="closeLegalModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;">×</button><div id="legal-modal-body"></div></div></div>
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:40px 40px 24px;position:relative;z-index:1;"><div style="max-width:900px;margin:0 auto;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px;"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge <span style="color:var(--accent)">Picks</span></span></div><div style="font-size:12px;color:var(--muted);line-height:1.7;max-width:260px;">Math-based sports betting analytics. We provide data, odds comparisons, and statistical analysis — not gambling advice.</div><div style="margin-top:14px;display:flex;gap:10px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" style="background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);color:#8b9eff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">💬 Discord</a><a href="https://whop.com/prime-edge-picks/" target="_blank" style="background:rgba(79,138,255,0.08);border:1px solid rgba(79,138,255,0.25);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">⚡ Whop</a><a href="https://oddspedia.com" target="_blank" rel="nofollow" style="background:rgba(15,93,117,0.15);border:1px solid rgba(26,183,172,0.3);color:#1AB7AC;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">📊 <img src="https://widgets.oddspedia.com/images/logo-oddspedia-light.svg" alt="Oddspedia" style="height:18px;vertical-align:middle;margin-right:4px;"> Data powered by Oddspedia</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Product</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Daily Picks</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">+EV Scanner</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Arbitrage</a><a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Pricing</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Community</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" style="font-size:13px;color:var(--muted);text-decoration:none;">Discord</a><a href="https://whop.com/prime-edge-picks/" target="_blank" style="font-size:13px;color:var(--muted);text-decoration:none;">Membership</a><a href="mailto:timhendryaz@gmail.com" style="font-size:13px;color:var(--muted);text-decoration:none;">Contact Us</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLegalModal('privacy');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Privacy Policy</a><a href="#" onclick="showLegalModal('terms');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Terms of Service</a><a href="#" onclick="showLegalModal('responsible');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Responsible Gambling</a></div></div></div><div style="border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="font-size:11px;color:var(--muted);">© 2025 Prime Edge Picks. All rights reserved.</div><div style="font-size:11px;color:var(--muted);max-width:600px;line-height:1.6;text-align:right;"><strong style="color:var(--red);">18+ only.</strong> Gambling involves risk. Past results do not guarantee future outcomes. Prime Edge Picks provides statistical analysis only — not financial or gambling advice. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.</div></div></div></footer><div id="legal-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLegalModal()"><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;position:relative;"><button onclick="closeLegalModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;">×</button><div id="legal-modal-body"></div></div></div>
 <!-- BOOK SELECTOR MODAL -->
 <div id="book-selector-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2001;align-items:center;justify-content:center;" onclick="if(event.target===this)closeBookSelector()">
 <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:600px;width:92%;max-height:85vh;overflow-y:auto;position:relative;">
