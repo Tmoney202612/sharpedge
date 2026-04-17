@@ -1,91 +1,67 @@
-// /api/polymarket.js - Vercel serverless function v4
-// Fetches game-level sports odds from Polymarket
-// Deep-parses Next.js dehydrated React Query state
+// /api/polymarket.js - Vercel serverless function v5
+// Uses Polymarket's public-search API to find game-level odds
+// Searches by team names from our Odds API to find matching markets
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Cache-Control', 's-maxage=45, stale-while-revalidate=30');
+  res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=20');
 
+  // Accept either a sport key or specific team search
   const sport = req.query.sport || 'all';
-
-  const leagueMap = {
-    'basketball_nba': 'nba',
-    'baseball_mlb': 'mlb',
-    'icehockey_nhl': 'nhl',
-    'mma_mixed_martial_arts': 'ufc',
-    'soccer_epl': 'epl',
-    'soccer_usa_mls': 'mls',
-  };
-
-  const sportLabels = {
-    'nba': 'NBA', 'mlb': 'MLB', 'nhl': 'NHL',
-    'ufc': 'UFC', 'epl': 'EPL', 'mls': 'MLS',
-  };
+  const oddsGames = req.query.games; // JSON array of {home, away} from frontend
 
   try {
-    // Step 1: Get buildId
-    const buildId = await getBuildId();
-    if (!buildId) {
-      return res.status(502).json({ error: 'Could not get Polymarket buildId' });
-    }
+    let allMarkets = [];
 
-    // Step 2: Determine leagues
-    let leagues = [];
-    if (sport === 'all') {
-      leagues = Object.values(leagueMap);
-    } else if (leagueMap[sport]) {
-      leagues = [leagueMap[sport]];
-    } else {
-      return res.status(200).json({ count: 0, source: 'polymarket', markets: [] });
-    }
-
-    // Step 3: Fetch and parse games for each league
-    const allMarkets = [];
-
-    for (const league of leagues) {
-      try {
-        const url = `https://polymarket.com/_next/data/${buildId}/en/sports/${league}/games.json?league=${league}`;
-        const resp = await fetch(url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json',
-            'Referer': 'https://polymarket.com/sports/live'
-          }
-        });
-
-        if (!resp.ok) continue;
-
-        const json = await resp.json();
-        const text = JSON.stringify(json);
-
-        // Deep extraction: find all objects that look like game/market data
-        // Strategy: recursively search for objects with conditionId, outcomePrices, or outcomes
-        const markets = extractMarkets(json, league);
+    if (oddsGames) {
+      // Mode 1: Frontend passes specific games to search for
+      const games = JSON.parse(oddsGames);
+      for (const game of games.slice(0, 15)) { // Limit to 15 games to avoid rate limits
+        const markets = await searchGame(game.home, game.away, game.sport);
         allMarkets.push(...markets);
+      }
+    } else {
+      // Mode 2: Search by sport using key team names
+      const sportSearches = {
+        'basketball_nba': ['NBA'],
+        'baseball_mlb': ['MLB'],
+        'icehockey_nhl': ['NHL'],
+        'mma_mixed_martial_arts': ['UFC'],
+        'soccer_epl': ['Premier League'],
+        'soccer_usa_mls': ['MLS'],
+      };
 
-      } catch(e) {
-        console.error(`Error fetching ${league}:`, e.message);
+      let searches = [];
+      if (sport === 'all') {
+        searches = Object.values(sportSearches).flat();
+      } else if (sportSearches[sport]) {
+        searches = sportSearches[sport];
+      }
+
+      for (const query of searches) {
+        const markets = await searchPolymarket(query, 20);
+        allMarkets.push(...markets);
+        // Small delay to avoid rate limiting
+        await new Promise(r => setTimeout(r, 200));
       }
     }
 
-    // Remove duplicates by conditionId or slug
+    // Deduplicate by conditionId
     const seen = new Set();
     const unique = allMarkets.filter(m => {
-      const key = m.id || m.game_slug || m.question;
+      const key = m.id || m.question;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
 
-    // Sort by commence_time
-    unique.sort((a, b) => new Date(a.commence_time || 0) - new Date(b.commence_time || 0));
+    // Sort by volume
+    unique.sort((a, b) => b.volume - a.volume);
 
     return res.status(200).json({
       count: unique.length,
       source: 'polymarket',
-      buildId,
-      leagues,
       markets: unique
     });
 
@@ -95,62 +71,58 @@ export default async function handler(req, res) {
   }
 }
 
-// Recursively extract market data from deeply nested JSON
-function extractMarkets(obj, league) {
-  const results = [];
-  const sportLabel = { 'nba': 'NBA', 'mlb': 'MLB', 'nhl': 'NHL', 'ufc': 'UFC', 'epl': 'EPL', 'mls': 'MLS' }[league] || league;
-
-  function walk(node, depth) {
-    if (depth > 15 || !node) return;
-
-    if (Array.isArray(node)) {
-      node.forEach(item => walk(item, depth + 1));
-      return;
-    }
-
-    if (typeof node !== 'object') return;
-
-    // Check if this object looks like a game/market
-    const hasCondition = node.conditionId || node.condition_id;
-    const hasOutcomePrices = node.outcomePrices;
-    const hasTicker = node.ticker || node.slug;
-    const hasQuestion = node.question;
-    const isGame = node.homeTeam || node.home_team || node.homeTeamName;
-    const hasMarkets = Array.isArray(node.markets) && node.markets.length > 0;
-
-    // Found a game with nested markets
-    if (hasMarkets && (isGame || hasTicker)) {
-      const homeTeam = node.homeTeam?.name || node.homeTeamName || node.home_team || '';
-      const awayTeam = node.awayTeam?.name || node.awayTeamName || node.away_team || '';
-      const startDate = node.startDate || node.startsAt || node.startTime || '';
-      const gameSlug = node.slug || node.ticker || '';
-      const gameTitle = node.title || `${awayTeam} vs ${homeTeam}`;
-
-      node.markets.forEach(market => {
-        const parsed = parseMarket(market, league, sportLabel, homeTeam, awayTeam, startDate, gameSlug, gameTitle);
-        if (parsed) results.push(parsed);
-      });
-      return; // Don't recurse into children we already processed
-    }
-
-    // Found an individual market with prices
-    if ((hasCondition || hasOutcomePrices) && (hasTicker || hasQuestion)) {
-      const parsed = parseMarket(node, league, sportLabel, '', '', '', node.ticker || node.slug || '', node.question || node.title || '');
-      if (parsed) results.push(parsed);
-    }
-
-    // Recurse into all child properties
-    for (const key of Object.keys(node)) {
-      walk(node[key], depth + 1);
-    }
-  }
-
-  walk(obj, 0);
-  return results;
+// Search for a specific game matchup
+async function searchGame(homeTeam, awayTeam, sport) {
+  // Extract last word of team name (e.g., "Los Angeles Lakers" -> "Lakers")
+  const home = homeTeam.split(' ').pop();
+  const away = awayTeam.split(' ').pop();
+  const query = `${away} ${home}`;
+  return searchPolymarket(query, 5, sport);
 }
 
-// Parse a single market object into normalized format
-function parseMarket(market, league, sportLabel, homeTeam, awayTeam, startDate, gameSlug, gameTitle) {
+// Search Polymarket's public search endpoint
+async function searchPolymarket(query, limit, sport) {
+  try {
+    const url = `https://gamma-api.polymarket.com/public-search?q=${encodeURIComponent(query)}&limit=${limit || 10}`;
+    const resp = await fetch(url, {
+      headers: { 'User-Agent': 'PrimeEdgePicks/1.0' }
+    });
+
+    if (!resp.ok) return [];
+
+    const data = await resp.json();
+
+    // Response has events array
+    const events = data.events || data || [];
+    if (!Array.isArray(events)) return [];
+
+    const results = [];
+
+    events.forEach(event => {
+      const markets = event.markets || [];
+      const eventTitle = event.title || '';
+
+      markets.forEach(market => {
+        const parsed = parseMarket(market, eventTitle, sport);
+        if (parsed) results.push(parsed);
+      });
+
+      // If no nested markets, try parsing the event itself as a market
+      if (markets.length === 0) {
+        const parsed = parseMarket(event, eventTitle, sport);
+        if (parsed) results.push(parsed);
+      }
+    });
+
+    return results;
+  } catch(e) {
+    console.error('Search error:', e.message);
+    return [];
+  }
+}
+
+// Parse a market object into normalized format
+function parseMarket(market, eventTitle, sport) {
   try {
     // Get outcomes
     let outcomes = market.outcomes || [];
@@ -164,34 +136,49 @@ function parseMarket(market, league, sportLabel, homeTeam, awayTeam, startDate, 
       try { prices = JSON.parse(prices); } catch(e) { return null; }
     }
 
-    // Need at least 2 outcomes and prices
     if (outcomes.length < 2 || prices.length < 2) return null;
 
     const p1 = parseFloat(prices[0]);
     const p2 = parseFloat(prices[1]);
 
-    // Filter out extreme prices (not real game odds)
-    if (isNaN(p1) || isNaN(p2) || p1 <= 0.02 || p1 >= 0.98 || p2 <= 0.02 || p2 >= 0.98) return null;
+    // Filter extremes (futures/championship markets)
+    if (isNaN(p1) || isNaN(p2) || p1 <= 0.03 || p1 >= 0.97 || p2 <= 0.03 || p2 >= 0.97) return null;
 
     const odds1 = centToAmerican(p1);
     const odds2 = centToAmerican(p2);
     if (odds1 === 0 || odds2 === 0) return null;
 
-    // Get team/outcome names
-    const name1 = typeof outcomes[0] === 'string' ? outcomes[0] : (outcomes[0]?.name || outcomes[0]?.title || homeTeam || 'Home');
-    const name2 = typeof outcomes[1] === 'string' ? outcomes[1] : (outcomes[1]?.name || outcomes[1]?.title || awayTeam || 'Away');
+    // Get outcome names
+    const name1 = typeof outcomes[0] === 'string' ? outcomes[0] : (outcomes[0]?.name || 'Yes');
+    const name2 = typeof outcomes[1] === 'string' ? outcomes[1] : (outcomes[1]?.name || 'No');
 
-    // Determine market type from question or groupItemTitle
-    const q = (market.question || market.groupItemTitle || gameTitle || '').toLowerCase();
+    // Determine market type
+    const question = (market.question || market.groupItemTitle || eventTitle || '').toLowerCase();
     let marketType = 'h2h';
-    if (q.includes('spread') || q.includes('handicap') || q.includes('+') || q.includes('-')) marketType = 'spreads';
-    if (q.includes('total') || q.includes('over') || q.includes('under')) marketType = 'totals';
+    if (question.includes('spread') || question.includes('+') && question.includes('-')) marketType = 'spreads';
+    if (question.includes('o/u') || question.includes('over') || question.includes('under') || question.includes('total')) marketType = 'totals';
+    if (question.includes('points') || question.includes('rebounds') || question.includes('assists') || question.includes('strikeouts') || question.includes('goals')) marketType = 'props';
+
+    // Detect sport from slug or question
+    const slug = market.slug || '';
+    let detectedSport = sport || 'unknown';
+    if (slug.startsWith('nba-') || question.includes('nba')) detectedSport = 'basketball_nba';
+    else if (slug.startsWith('mlb-') || question.includes('mlb')) detectedSport = 'baseball_mlb';
+    else if (slug.startsWith('nhl-') || question.includes('nhl')) detectedSport = 'icehockey_nhl';
+    else if (slug.startsWith('ufc-') || question.includes('ufc')) detectedSport = 'mma_mixed_martial_arts';
+    else if (slug.startsWith('epl-') || question.includes('premier league')) detectedSport = 'soccer_epl';
+    else if (slug.startsWith('mls-') || question.includes('mls')) detectedSport = 'soccer_usa_mls';
+
+    const sportLabels = {
+      'basketball_nba': 'NBA', 'baseball_mlb': 'MLB', 'icehockey_nhl': 'NHL',
+      'mma_mixed_martial_arts': 'UFC', 'soccer_epl': 'EPL', 'soccer_usa_mls': 'MLS'
+    };
 
     const volume = parseFloat(market.volume) || 0;
     const liquidity = parseFloat(market.liquidity) || 0;
 
     // Skip very low liquidity
-    if (liquidity < 50 && volume < 1000) return null;
+    if (liquidity < 100 && volume < 500) return null;
 
     // Get clobTokenIds
     let tokenIds = market.clobTokenIds || [];
@@ -199,15 +186,19 @@ function parseMarket(market, league, sportLabel, homeTeam, awayTeam, startDate, 
       try { tokenIds = JSON.parse(tokenIds); } catch(e) { tokenIds = []; }
     }
 
+    const gameSlug = market.slug || slug;
+    const gameDate = market.startDate || market.gameStartDate || '';
+    const league = gameSlug.split('-')[0] || '';
+
     return {
       id: market.conditionId || market.id || gameSlug,
-      sport: league,
-      sportLabel,
-      event_title: gameTitle,
-      question: market.question || gameTitle,
+      sport: detectedSport,
+      sportLabel: sportLabels[detectedSport] || detectedSport,
+      event_title: eventTitle || market.question || '',
+      question: market.question || eventTitle || '',
       home_team: name1,
       away_team: name2,
-      commence_time: market.startDate || startDate || market.endDate || '',
+      commence_time: gameDate,
       bookmaker: 'Polymarket',
       market_type: marketType,
       outcomes: [
@@ -219,27 +210,6 @@ function parseMarket(market, league, sportLabel, homeTeam, awayTeam, startDate, 
       polymarket_url: `https://polymarket.com/sports/${league}/${gameSlug}`,
       game_slug: gameSlug
     };
-  } catch(e) {
-    return null;
-  }
-}
-
-// Get current Polymarket buildId
-async function getBuildId() {
-  try {
-    const res = await fetch('https://polymarket.com/sports/live', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'text/html'
-      }
-    });
-    if (!res.ok) return null;
-    const html = await res.text();
-    const match = html.match(/"buildId":"([^"]+)"/);
-    if (match && match[1]) return match[1];
-    const scriptMatch = html.match(/_next\/data\/([^/]+)\//);
-    if (scriptMatch && scriptMatch[1]) return scriptMatch[1];
-    return null;
   } catch(e) {
     return null;
   }
