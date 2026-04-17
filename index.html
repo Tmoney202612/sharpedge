@@ -966,37 +966,7 @@ async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
   window.allArbOpps=[];
-  const sports=[
-    // US Sports
-    'basketball_nba','basketball_ncaab','basketball_wnba',
-    'baseball_mlb',
-    'icehockey_nhl',
-    'americanfootball_nfl','americanfootball_ncaaf',
-    'mma_mixed_martial_arts',
-    // Soccer - Global
-    'soccer_epl','soccer_usa_mls','soccer_germany_bundesliga','soccer_spain_la_liga',
-    'soccer_italy_serie_a','soccer_france_ligue_one','soccer_uefa_champs_league',
-    'soccer_uefa_europa_league','soccer_brazil_campeonato','soccer_mexico_ligamx',
-    'soccer_netherlands_eredivisie','soccer_portugal_primeira_liga','soccer_turkey_super_league',
-    'soccer_australia_aleague','soccer_japan_j_league','soccer_korea_kleague1',
-    'soccer_england_efl_champ','soccer_scotland_premiership','soccer_belgium_first_div',
-    'soccer_switzerland_superleague','soccer_denmark_superliga','soccer_sweden_allsvenskan',
-    'soccer_norway_eliteserien','soccer_finland_veikkausliiga','soccer_austria_bundesliga',
-    'soccer_poland_ekstraklasa','soccer_czech_czech_liga','soccer_greece_super_league',
-    'soccer_conmebol_copa_libertadores','soccer_fifa_world_cup',
-    // Tennis
-    'tennis_atp_french_open','tennis_wta_french_open',
-    // Rugby & Aussie
-    'rugbyleague_nrl','aussierules_afl',
-    // Cricket
-    'cricket_ipl','cricket_test_match','cricket_odi',
-    // Boxing
-    'boxing_boxing',
-    // Golf
-    'golf_pga',
-    // Other
-    'handball_euro','darts_pdc','snooker_world_championship','table_tennis_wtt'
-  ];
+  const sports=['basketball_nba','basketball_ncaab','basketball_wnba','baseball_mlb','icehockey_nhl','americanfootball_nfl','americanfootball_ncaaf','mma_mixed_martial_arts','soccer_epl','soccer_usa_mls','soccer_germany_bundesliga','soccer_spain_la_liga','soccer_italy_serie_a','soccer_france_ligue_one','soccer_uefa_champs_league','soccer_uefa_europa_league','soccer_brazil_campeonato','soccer_mexico_ligamx','soccer_netherlands_eredivisie','soccer_portugal_primeira_liga','soccer_turkey_super_league','soccer_australia_aleague','soccer_japan_j_league','soccer_korea_kleague1','soccer_england_efl_champ','soccer_scotland_premiership','soccer_belgium_first_div','soccer_switzerland_superleague','soccer_denmark_superliga','soccer_sweden_allsvenskan','soccer_norway_eliteserien','soccer_finland_veikkausliiga','soccer_austria_bundesliga','soccer_poland_ekstraklasa','soccer_czech_czech_liga','soccer_greece_super_league','soccer_conmebol_copa_libertadores','soccer_fifa_world_cup','tennis_atp_french_open','tennis_wta_french_open','rugbyleague_nrl','aussierules_afl','cricket_ipl','cricket_test_match','cricket_odi','boxing_boxing','golf_pga','handball_euro','darts_pdc','snooker_world_championship','table_tennis_wtt'];
   const markets=['h2h','spreads','totals'];
   let totalJobs=sports.length*markets.length+1; // +1 for Polymarket
   let done=0;
