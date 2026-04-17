@@ -1871,5 +1871,41 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLegalModal();})
 <button onclick="saveBookSelection()" style="width:100%;background:var(--accent);color:#000;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--fh);">Save & Filter Arbs →</button>
 </div>
 </div>
+<!-- LIVE SCORES -->
+<section id="live-scores" style="padding:48px 20px;background:var(--bg);border-top:1px solid var(--border);">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <h2 style="font-size:24px;font-weight:800;color:#fff;margin:0;">&#x1F534; Live Scores</h2>
+      <button id="scores-refresh" onclick="loadScores()" style="background:var(--accent);color:#000;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;">Refresh</button>
+    </div>
+    <div id="scores-status" style="font-size:12px;color:var(--muted);margin-bottom:12px;">Loading...</div>
+    <div id="scores-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;"></div>
+  </div>
+</section>
+<script>
+function loadScores(){
+  var c=document.getElementById('scores-container');
+  var s=document.getElementById('scores-status');
+  s.textContent='Loading...';
+  fetch('/api/scores').then(function(r){return r.json();}).then(function(d){
+    var g=Array.isArray(d)?d:(d.games||d.data||[]);
+    if(!g.length){c.innerHTML='<div style="color:var(--muted);grid-column:1/-1;padding:24px;text-align:center;">No live games right now.</div>';s.textContent='No games';return;}
+    c.innerHTML=g.map(function(x){
+      var home=x.home_team||'Home',away=x.away_team||'Away',hs='--',as='--';
+      if(x.scores){x.scores.forEach(function(sc){if(sc.name===home)hs=sc.score;if(sc.name===away)as=sc.score;});}
+      var st=x.completed?'FINAL':(x.last_update?'LIVE':'UPCOMING');
+      var col=st==='LIVE'?'#ef4444':st==='FINAL'?'var(--muted)':'var(--accent)';
+      var league=x.sport_title||x.sport_key||'';
+      return '<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid '+col+';border-radius:10px;padding:14px;">'
+        +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase;"><span>'+league+'</span><span style="color:'+col+';font-weight:700;">'+st+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;color:#fff;"><span style="font-size:14px;">'+away+'</span><strong style="font-size:18px;">'+as+'</strong></div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--border);color:#fff;"><span style="font-size:14px;">'+home+'</span><strong style="font-size:18px;">'+hs+'</strong></div>'
+        +'</div>';
+    }).join('');
+    s.textContent='Updated '+new Date().toLocaleTimeString();
+  }).catch(function(e){c.innerHTML='<div style="color:#ef4444;grid-column:1/-1;padding:24px;text-align:center;">Scores unavailable.</div>';s.textContent='Error';});
+}
+loadScores();
+<\/script>
 </body>
 </html>
