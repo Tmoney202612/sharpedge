@@ -1689,9 +1689,9 @@ function saveBookSelection(){
   document.querySelectorAll('#us-books-grid>div,#intl-books-grid>div,#pred-books-grid>div').forEach(el=>{
     if(el.dataset.selected==='true')selected.push(el.dataset.book);
   });
-  if(selected.length===0){alert('Select at least one book');return;}
+  if(selected.length===0){alert('Select at least one book');retur'soccer_usa_mls','mma_mixed_martial_arts'];n;}
   userBooks=selected;
-  localStorage.setItem('userBooks',JSON.stringify(selected));
+  localStorage.setItem('userBooks',JSON.stringify(selected));'soccer_usa_mls','soccer_germany_bundesliga','soccer_spain_la_liga','soccer_italy_serie_a','soccer_france_ligue_one','soccer_uefa_champs_league','soccer_brazil_campeonato','soccer_mexico_ligamx','soccer_netherlands_eredivisie','soccer_portugal_primeira_liga','soccer_turkey_super_league','soccer_australia_aleague','soccer_japan_j_league','soccer_korea_kleague1','soccer_england_efl_champ','soccer_belgium_first_div','soccer_denmark_superliga','soccer_sweden_allsvenskan','soccer_norway_eliteserien','soccer_austria_bundesliga','soccer_poland_ekstraklasa','mma_mixed_martial_arts','boxing_boxing','tennis_atp_barcelona_open','tennis_wta_stuttgart_open','rugbyleague_nrl','aussierules_afl','cricket_ipl','cricket_international_t20','americanfootball_ncaaf','basketball_ncaab','baseball_ncaa'];
   updateBookCount();
   closeBookSelector();
   renderArbRows();
