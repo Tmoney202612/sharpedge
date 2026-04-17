@@ -138,6 +138,16 @@ function parseMarket(market, eventTitle, sport) {
 
     if (outcomes.length < 2 || prices.length < 2) return null;
 
+    // Get outcome names
+    const name1 = typeof outcomes[0] === 'string' ? outcomes[0] : (outcomes[0]?.name || '');
+    const name2 = typeof outcomes[1] === 'string' ? outcomes[1] : (outcomes[1]?.name || '');
+
+    // CRITICAL: Skip Yes/No markets — these are futures/props, not game moneylines
+    // Game markets use team names as outcomes (e.g., "Celtics", "Heat")
+    const lowerNames = [name1.toLowerCase(), name2.toLowerCase()];
+    if (lowerNames.includes('yes') || lowerNames.includes('no') || 
+        lowerNames.includes('over') || lowerNames.includes('under')) return null;
+
     const p1 = parseFloat(prices[0]);
     const p2 = parseFloat(prices[1]);
 
@@ -147,10 +157,6 @@ function parseMarket(market, eventTitle, sport) {
     const odds1 = centToAmerican(p1);
     const odds2 = centToAmerican(p2);
     if (odds1 === 0 || odds2 === 0) return null;
-
-    // Get outcome names
-    const name1 = typeof outcomes[0] === 'string' ? outcomes[0] : (outcomes[0]?.name || 'Yes');
-    const name2 = typeof outcomes[1] === 'string' ? outcomes[1] : (outcomes[1]?.name || 'No');
 
     // Determine market type
     const question = (market.question || market.groupItemTitle || eventTitle || '').toLowerCase();
