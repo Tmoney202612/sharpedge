@@ -922,50 +922,63 @@ async function fetchPolymarketArbs(){
           }));
 
           // Cross-reference Polymarket outcomes with sportsbook outcomes
+          // Strategy: match Polymarket team name to sportsbook team name on SAME side
+          // Then pair with the OPPOSITE sportsbook side for the arb
           pm.outcomes.forEach(polyOutcome=>{
             const polyName=polyOutcome.name.toLowerCase();
             const polyOdds=polyOutcome.price;
             const polyCent=polyOutcome.cent_price;
             if(!validOdds(polyOdds))return;
+            // Skip Yes/No outcomes — only use team-named outcomes
+            if(polyName==='yes'||polyName==='no'||polyName==='over'||polyName==='under')return;
 
-            // Find the OPPOSITE side on sportsbooks
+            // Find which sportsbook team this Polymarket outcome matches
+            let matchedSbTeam=null;
+            let oppositeSbTeam=null;
             Object.entries(sbOdds).forEach(([sbName,sbData])=>{
-              const sbNameLower=sbName.toLowerCase();
-              // Polymarket outcome should match one team, sportsbook the other
-              const polyMatchesHome=polyName.includes(ghome.split(' ').pop())||ghome.includes(polyName.split(' ').pop());
-              const sbMatchesAway=sbNameLower.includes(gaway.split(' ').pop())||gaway.includes(sbNameLower.split(' ').pop());
-              const polyMatchesAway=polyName.includes(gaway.split(' ').pop())||gaway.includes(polyName.split(' ').pop());
-              const sbMatchesHome=sbNameLower.includes(ghome.split(' ').pop())||ghome.includes(sbNameLower.split(' ').pop());
-
-              // They need to be on OPPOSITE sides for an arb
-              if((polyMatchesHome&&sbMatchesHome)||(polyMatchesAway&&sbMatchesAway)){
-                // Same side — check if Polymarket has better odds
-                // Not an arb but could be +EV
-                return;
-              }
-
-              // Check both directions for arb
-              // Direction 1: Bet polyOutcome on Polymarket, bet sbData on sportsbook
-              const d1=atod(polyOdds),d2=atod(sbData.odds);
-              const margin1=(1/d1+1/d2-1)*100;
-
-              if(margin1<=5){ // More generous threshold for cross-platform arbs
-                opps.push({
-                  game:game.home_team+' vs '+game.away_team,
-                  commenceTime:game.commence_time,
-                  sport,
-                  sportLabel:sportMap[sport]||sport,
-                  marketType:'ML',
-                  leg1:{name:polyOutcome.name,book:'Polymarket',odds:polyOdds,centPrice:polyCent,liquidity:pm.liquidity},
-                  leg2:{name:sbName,book:sbData.book,odds:sbData.odds},
-                  threeWay:false,
-                  isPolymarket:true,
-                  margin:margin1,
-                  isArb:margin1<0,
-                  profit:margin1<0?(-margin1/100):0
-                });
+              const sbLast=sbName.toLowerCase().split(' ').pop();
+              const polyLast=polyName.split(' ').pop();
+              if(sbLast===polyLast||sbName.toLowerCase().includes(polyName)||polyName.includes(sbLast)){
+                matchedSbTeam={name:sbName,...sbData};
               }
             });
+
+            if(!matchedSbTeam)return;
+
+            // Find the opposite side on the sportsbook
+            Object.entries(sbOdds).forEach(([sbName,sbData])=>{
+              if(sbName!==matchedSbTeam.name){
+                oppositeSbTeam={name:sbName,...sbData};
+              }
+            });
+
+            if(!oppositeSbTeam)return;
+
+            // Now we have: Polymarket team A odds vs Sportsbook team B odds
+            // For an arb: bet team A on Polymarket, bet team B on sportsbook
+            const d1=atod(polyOdds),d2=atod(oppositeSbTeam.odds);
+            const margin=(1/d1+1/d2-1)*100;
+
+            // Also check reverse: is Polymarket odds BETTER than sportsbook for same team?
+            // If Polymarket has better odds on team A than sportsbook, that's a +EV opportunity
+            const sameSideMargin=(1/atod(polyOdds)+1/atod(matchedSbTeam.odds)-1)*100;
+
+            if(margin<=5){
+              opps.push({
+                game:game.home_team+' vs '+game.away_team,
+                commenceTime:game.commence_time,
+                sport,
+                sportLabel:sportMap[sport]||sport,
+                marketType:'ML',
+                leg1:{name:polyOutcome.name,book:'Polymarket',odds:polyOdds,centPrice:polyCent,liquidity:pm.liquidity},
+                leg2:{name:oppositeSbTeam.name,book:oppositeSbTeam.book,odds:oppositeSbTeam.odds},
+                threeWay:false,
+                isPolymarket:true,
+                margin,
+                isArb:margin<0,
+                profit:margin<0?(-margin/100):0
+              });
+            }
           });
         });
       });
