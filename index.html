@@ -595,6 +595,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
           <div class="sport-chip" onclick="filterArbSport(this,'EPL')">⚽ EPL <span class="chip-count" id="chip-count-EPL">0</span></div>
           <div class="sport-chip" onclick="filterArbSport(this,'MLS')">⚽ MLS <span class="chip-count" id="chip-count-MLS">0</span></div>
           <div class="sport-chip" onclick="filterArbSport(this,'UFC')">🥊 UFC <span class="chip-count" id="chip-count-UFC">0</span></div>
+          <div class="sport-chip" onclick="filterArbSport(this,'polymarket')" style="border-color:rgba(99,102,241,0.3);">⚡ Polymarket <span class="chip-count" id="chip-count-polymarket">0</span></div>
         </div>
         <div id="arb-rows"><div class="loading-state"><div class="loading-spinner"></div><div>Scanning all sports for arbitrage...</div></div></div>
       </div>
@@ -758,6 +759,7 @@ function dtoa(d){return d>=2?Math.round((d-1)*100):Math.round(-100/(d-1));}
 function fmt(n){return n>=0?`+${n}`:`${n}`;}
 function validOdds(o){return typeof o==='number'&&!isNaN(o)&&isFinite(o)&&o!==0&&(o>=105||o<=-105);}
 function fmtT(iso){const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
+function formatLiq(n){if(!n||isNaN(n))return'0';if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'K';return n.toFixed(0);}
 function ss(msg){const el=document.getElementById('api-status');if(el)el.textContent=msg;}
 
 const BOOK_COLORS={'DraftKings':'#53D337','FanDuel':'#1493FF','BetMGM':'#C9A84C','Caesars':'#C5A028','BetRivers':'#E4002B','Pinnacle':'#FFD700','Unibet':'#007B5E','BetOnline':'#FF6600','PointsBet':'#E4002B','Bovada':'#B22222'};
@@ -825,34 +827,151 @@ async function fetchSport(key,market='h2h'){
 
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
-  if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets for arbitrage (moneyline, spreads, totals)...</div>';
+  if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
   window.allArbOpps=[];
   const sports=['basketball_nba','baseball_mlb','icehockey_nhl','soccer_epl','soccer_usa_mls','mma_mixed_martial_arts','americanfootball_nfl'];
   const markets=['h2h','spreads','totals'];
-  let totalJobs=sports.length*markets.length;
+  let totalJobs=sports.length*markets.length+1; // +1 for Polymarket
   let done=0;
+
+  function updateArbUI(){
+    renderArbRows();
+    const el=document.getElementById('arb-count');if(el)el.textContent=window.allArbOpps.length;
+    const arbs=window.allArbOpps.filter(o=>o.isArb);
+    const bestEl=document.getElementById('arb-best');
+    if(bestEl&&arbs.length)bestEl.textContent='+'+(Math.max(...arbs.map(o=>o.profit*100)).toFixed(2))+'%';
+    const avgEl=document.getElementById('arb-avg');
+    if(avgEl&&window.allArbOpps.length)avgEl.textContent=(window.allArbOpps.reduce((s,o)=>s+o.margin,0)/window.allArbOpps.length).toFixed(2)+'%';
+    const sportsEl=document.getElementById('arb-sports-count');
+    if(sportsEl)sportsEl.textContent=new Set(window.allArbOpps.map(o=>o.sportLabel)).size;
+  }
+
+  // Standard sportsbook arbs
   sports.forEach(sport=>{
     markets.forEach(market=>{
-      // Skip spreads/totals for MMA — only h2h exists
       if(sport==='mma_mixed_martial_arts'&&market!=='h2h'){done++;return;}
       fetchSportArbs(sport,market).then(opps=>{
         window.allArbOpps=[...window.allArbOpps,...opps];
         window.allArbOpps.sort((a,b)=>a.margin-b.margin);
         done++;
-        if(done>=totalJobs||window.allArbOpps.length>0){
-          renderArbRows();
-          const el=document.getElementById('arb-count');if(el)el.textContent=window.allArbOpps.length;
-          const arbs=window.allArbOpps.filter(o=>o.isArb);
-          const bestEl=document.getElementById('arb-best');
-          if(bestEl&&arbs.length)bestEl.textContent='+'+(Math.max(...arbs.map(o=>o.profit*100)).toFixed(2))+'%';
-          const avgEl=document.getElementById('arb-avg');
-          if(avgEl&&window.allArbOpps.length)avgEl.textContent=(window.allArbOpps.reduce((s,o)=>s+o.margin,0)/window.allArbOpps.length).toFixed(2)+'%';
-          const sportsEl=document.getElementById('arb-sports-count');
-          if(sportsEl)sportsEl.textContent=new Set(window.allArbOpps.map(o=>o.sportLabel)).size;
-        }
+        if(done>=totalJobs||window.allArbOpps.length>0)updateArbUI();
       });
     });
   });
+
+  // Polymarket cross-reference arbs
+  fetchPolymarketArbs().then(opps=>{
+    window.allArbOpps=[...window.allArbOpps,...opps];
+    window.allArbOpps.sort((a,b)=>a.margin-b.margin);
+    done++;
+    updateArbUI();
+  });
+}
+
+// Fetch Polymarket odds and cross-reference with sportsbook odds for arbs
+async function fetchPolymarketArbs(){
+  try{
+    const polyRes=await fetch('/api/polymarket');
+    if(!polyRes.ok)return[];
+    const polyData=await polyRes.json();
+    if(!polyData.markets||!polyData.markets.length)return[];
+
+    const opps=[];
+    const sportMap={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL','soccer_usa_mls':'MLS','mma_mixed_martial_arts':'UFC'};
+
+    // For each Polymarket market, fetch sportsbook odds for that sport and try to match
+    const sportGroups={};
+    polyData.markets.forEach(pm=>{
+      if(!sportGroups[pm.sport])sportGroups[pm.sport]=[];
+      sportGroups[pm.sport].push(pm);
+    });
+
+    for(const[sport,polyMarkets] of Object.entries(sportGroups)){
+      const sbData=await fetchSport(sport,'h2h');
+      if(!sbData||!sbData.length)continue;
+
+      polyMarkets.forEach(pm=>{
+        // Try to match Polymarket event to a sportsbook game
+        const pmTitle=(pm.question||pm.event_title||'').toLowerCase();
+        const pmHome=(pm.home_team||'').toLowerCase();
+        const pmAway=(pm.away_team||'').toLowerCase();
+
+        sbData.forEach(game=>{
+          const ghome=(game.home_team||'').toLowerCase();
+          const gaway=(game.away_team||'').toLowerCase();
+
+          // Match by team names appearing in Polymarket title
+          const homeMatch=pmTitle.includes(ghome)||pmTitle.includes(ghome.split(' ').pop())||pmHome.includes(ghome.split(' ').pop());
+          const awayMatch=pmTitle.includes(gaway)||pmTitle.includes(gaway.split(' ').pop())||pmAway.includes(gaway.split(' ').pop());
+
+          if(!homeMatch&&!awayMatch)return;
+
+          const books=game.bookmakers||[];
+          if(books.length<1)return;
+
+          // Get best sportsbook odds for each outcome
+          const sbOdds={};
+          books.forEach(bm=>(bm.markets||[]).forEach(mk=>{
+            if(mk.key!=='h2h')return;
+            mk.outcomes.forEach(o=>{
+              if(!validOdds(o.price))return;
+              if(!sbOdds[o.name]||o.price>sbOdds[o.name].odds){
+                sbOdds[o.name]={odds:o.price,book:bm.title};
+              }
+            });
+          }));
+
+          // Cross-reference Polymarket outcomes with sportsbook outcomes
+          pm.outcomes.forEach(polyOutcome=>{
+            const polyName=polyOutcome.name.toLowerCase();
+            const polyOdds=polyOutcome.price;
+            const polyCent=polyOutcome.cent_price;
+            if(!validOdds(polyOdds))return;
+
+            // Find the OPPOSITE side on sportsbooks
+            Object.entries(sbOdds).forEach(([sbName,sbData])=>{
+              const sbNameLower=sbName.toLowerCase();
+              // Polymarket outcome should match one team, sportsbook the other
+              const polyMatchesHome=polyName.includes(ghome.split(' ').pop())||ghome.includes(polyName.split(' ').pop());
+              const sbMatchesAway=sbNameLower.includes(gaway.split(' ').pop())||gaway.includes(sbNameLower.split(' ').pop());
+              const polyMatchesAway=polyName.includes(gaway.split(' ').pop())||gaway.includes(polyName.split(' ').pop());
+              const sbMatchesHome=sbNameLower.includes(ghome.split(' ').pop())||ghome.includes(sbNameLower.split(' ').pop());
+
+              // They need to be on OPPOSITE sides for an arb
+              if((polyMatchesHome&&sbMatchesHome)||(polyMatchesAway&&sbMatchesAway)){
+                // Same side — check if Polymarket has better odds
+                // Not an arb but could be +EV
+                return;
+              }
+
+              // Check both directions for arb
+              // Direction 1: Bet polyOutcome on Polymarket, bet sbData on sportsbook
+              const d1=atod(polyOdds),d2=atod(sbData.odds);
+              const margin1=(1/d1+1/d2-1)*100;
+
+              if(margin1<=5){ // More generous threshold for cross-platform arbs
+                opps.push({
+                  game:game.home_team+' vs '+game.away_team,
+                  commenceTime:game.commence_time,
+                  sport,
+                  sportLabel:sportMap[sport]||sport,
+                  marketType:'ML',
+                  leg1:{name:polyOutcome.name,book:'Polymarket',odds:polyOdds,centPrice:polyCent,liquidity:pm.liquidity},
+                  leg2:{name:sbName,book:sbData.book,odds:sbData.odds},
+                  threeWay:false,
+                  isPolymarket:true,
+                  margin:margin1,
+                  isArb:margin1<0,
+                  profit:margin1<0?(-margin1/100):0
+                });
+              }
+            });
+          });
+        });
+      });
+    }
+    return opps.sort((a,b)=>a.margin-b.margin);
+  }catch(e){console.error('Polymarket arb error:',e);return[];}
 }
 
 async function fetchSportArbs(sport,market='h2h'){
@@ -980,7 +1099,10 @@ async function fetchSportArbs(sport,market='h2h'){
 function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');arbFilter=sport;renderArbRows();}
 
 function renderArbRows(){
-  const filtered=arbFilter==='all'?allArbOpps:allArbOpps.filter(o=>o.sport===arbFilter);
+  let filtered;
+  if(arbFilter==='all')filtered=allArbOpps;
+  else if(arbFilter==='polymarket')filtered=allArbOpps.filter(o=>o.isPolymarket);
+  else filtered=allArbOpps.filter(o=>o.sportLabel===arbFilter);
   const container=document.getElementById('arb-rows');
   if(!container)return;
   if(!filtered.length){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';return;}
@@ -1030,28 +1152,31 @@ function renderArbRows(){
         </div>
       </div>`;
     } else {
-      // 2-way arb layout (NBA, NFL, NHL, MLB, UFC)
+      // 2-way arb layout (NBA, NFL, NHL, MLB, UFC + Polymarket)
       const d1=atod(leg1.odds),d2=atod(leg2.odds);
       const s1=(STAKE*d2/(d1+d2)).toFixed(2),s2=(STAKE*d1/(d1+d2)).toFixed(2);
-      return `<div style="background:var(--card);border:1px solid ${o.isArb?'rgba(0,229,160,0.4)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
+      const polyBadge=o.isPolymarket?'<span style="font-size:10px;background:rgba(99,102,241,0.15);color:#818cf8;padding:2px 8px;border-radius:4px;font-weight:700;border:1px solid rgba(99,102,241,0.3);">⚡ POLYMARKET</span>':'';
+      return `<div style="background:var(--card);border:1px solid ${o.isPolymarket?'rgba(99,102,241,0.4)':o.isArb?'rgba(0,229,160,0.4)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span>${o.marketType&&o.marketType!=='ML'?'<span style="font-size:10px;background:rgba(79,138,255,0.1);color:#4f8aff;padding:2px 8px;border-radius:4px;font-weight:700;">'+o.marketType+'</span>':''}<span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}${polyBadge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span>${o.marketType&&o.marketType!=='ML'?'<span style="font-size:10px;background:rgba(79,138,255,0.1);color:#4f8aff;padding:2px 8px;border-radius:4px;font-weight:700;">'+o.marketType+'</span>':''}<span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span></div>
           <div style="display:flex;align-items:center;gap:16px;">${profitStr}</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;">
           <div style="padding:16px;border-right:1px solid var(--border);">
             <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg1.name}</div>
-            ${bookBadge(leg1.book)}
-            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px;">${fmt(leg1.odds)}</div>
+            ${leg1.book==='Polymarket'?'<span style="font-size:11px;font-weight:800;color:#818cf8;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);padding:2px 7px;border-radius:5px;font-family:var(--fm);">Polymarket</span>':bookBadge(leg1.book)}
+            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};margin-bottom:2px;">${fmt(leg1.odds)}</div>
+            ${leg1.centPrice?'<div style="font-size:11px;color:#818cf8;font-family:var(--fm);margin-bottom:4px;">'+Math.round(leg1.centPrice*100)+'¢'+(leg1.liquidity?' · Liq $'+formatLiq(leg1.liquidity):'')+'</div>':''}
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s1+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
-            <button onclick="openBook('${leg1.book}')" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+            <button onclick="${leg1.book==='Polymarket'?'window.open(\\'https://polymarket.com/sports\\',\\'_blank\\')':'openBook(\\''+leg1.book+'\\')'}" style="background:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg1.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
           </div>
           <div style="padding:16px;">
             <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
-            ${bookBadge(leg2.book)}
-            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px;">${fmt(leg2.odds)}</div>
+            ${leg2.book==='Polymarket'?'<span style="font-size:11px;font-weight:800;color:#818cf8;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);padding:2px 7px;border-radius:5px;font-family:var(--fm);">Polymarket</span>':bookBadge(leg2.book)}
+            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};margin-bottom:2px;">${fmt(leg2.odds)}</div>
+            ${leg2.centPrice?'<div style="font-size:11px;color:#818cf8;font-family:var(--fm);margin-bottom:4px;">'+Math.round(leg2.centPrice*100)+'¢'+(leg2.liquidity?' · Liq $'+formatLiq(leg2.liquidity):'')+'</div>':''}
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
-            <button onclick="openBook('${leg2.book}')" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
+            <button onclick="${leg2.book==='Polymarket'?'window.open(\\'https://polymarket.com/sports\\',\\'_blank\\')':'openBook(\\''+leg2.book+'\\')'}" style="background:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg2.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
           </div>
         </div>
       </div>`;
