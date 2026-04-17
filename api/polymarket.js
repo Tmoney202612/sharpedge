@@ -1,99 +1,147 @@
 // /api/polymarket.js - Vercel serverless function
-// Fetches sports markets from Polymarket's Gamma API
+// Fetches SPORTS markets from Polymarket using sports tags
 // Normalizes cent prices to American odds format
-// Returns data compatible with the frontend arb engine
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=30');
 
-  const sport = req.query.sport || 'all';
-
   try {
-    // Fetch active sports events from Polymarket Gamma API
-    const gammaUrl = 'https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&order=volume_24hr&ascending=false';
-    const response = await fetch(gammaUrl, {
+    // Step 1: Get sports metadata to find sport tag IDs
+    const sportsRes = await fetch('https://gamma-api.polymarket.com/sports', {
       headers: { 'User-Agent': 'PrimeEdgePicks/1.0' }
     });
 
-    if (!response.ok) {
-      return res.status(502).json({ error: 'Polymarket API error', status: response.status });
+    let sportTags = [];
+    if (sportsRes.ok) {
+      const sportsData = await sportsRes.json();
+      if (Array.isArray(sportsData)) {
+        sportTags = sportsData.map(s => ({
+          id: s.id || s.tag_id,
+          name: (s.label || s.name || s.sport || '').toLowerCase(),
+          slug: s.slug || ''
+        })).filter(s => s.id);
+      }
     }
 
-    const events = await response.json();
+    // Step 2: Fetch sports events using sports-specific search
+    // Use the Polymarket sports live endpoint data structure
+    const marketsRes = await fetch(
+      'https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&order=volume_24hr&ascending=false',
+      { headers: { 'User-Agent': 'PrimeEdgePicks/1.0' } }
+    );
+
+    if (!marketsRes.ok) {
+      return res.status(502).json({ error: 'Polymarket API error', status: marketsRes.status });
+    }
+
+    const events = await marketsRes.json();
     if (!Array.isArray(events)) {
-      return res.status(502).json({ error: 'Invalid Polymarket response' });
+      return res.status(502).json({ error: 'Invalid response' });
     }
 
-    // Sport keyword mapping
-    const sportKeywords = {
-      'basketball_nba': ['nba', 'basketball', 'lakers', 'celtics', 'warriors', 'knicks', 'heat', 'bucks', 'nuggets', 'suns', 'cavaliers', 'thunder', 'mavericks', 'timberwolves', 'pacers', 'magic', 'hawks', 'nets', 'clippers', 'grizzlies', 'pelicans', 'rockets', 'spurs', 'kings', 'sixers', '76ers', 'raptors', 'bulls', 'pistons', 'hornets', 'wizards', 'blazers', 'jazz'],
-      'baseball_mlb': ['mlb', 'baseball', 'yankees', 'dodgers', 'astros', 'braves', 'phillies', 'padres', 'mets', 'cubs', 'red sox', 'cardinals', 'brewers', 'guardians', 'orioles', 'rangers', 'twins', 'rays', 'mariners', 'diamondbacks', 'reds', 'pirates', 'royals', 'tigers', 'angels', 'athletics', 'rockies', 'marlins', 'nationals', 'white sox', 'giants'],
-      'icehockey_nhl': ['nhl', 'hockey', 'bruins', 'rangers', 'oilers', 'avalanche', 'panthers', 'hurricanes', 'jets', 'stars', 'wild', 'lightning', 'maple leafs', 'penguins', 'capitals', 'devils', 'islanders', 'flames', 'canucks', 'blues', 'predators', 'senators', 'red wings', 'kraken', 'ducks', 'coyotes', 'sabres', 'flyers', 'blue jackets', 'blackhawks', 'canadiens', 'sharks', 'golden knights'],
-      'americanfootball_nfl': ['nfl', 'chiefs', 'eagles', 'cowboys', '49ers', 'bills', 'ravens', 'lions', 'dolphins', 'bengals', 'texans', 'packers', 'steelers', 'jaguars', 'chargers', 'rams', 'bears', 'broncos', 'seahawks', 'saints', 'vikings', 'colts', 'browns', 'falcons', 'commanders', 'panthers', 'titans', 'buccaneers', 'raiders', 'cardinals', 'giants', 'jets'],
-      'mma_mixed_martial_arts': ['ufc', 'mma', 'fight', 'bout', 'knockout', 'submission'],
-      'soccer_epl': ['premier league', 'epl', 'arsenal', 'manchester city', 'manchester united', 'liverpool', 'chelsea', 'tottenham', 'newcastle', 'brighton', 'aston villa', 'west ham', 'crystal palace', 'fulham', 'wolves', 'bournemouth', 'brentford', 'everton', 'nottingham forest', 'burnley', 'luton', 'sheffield'],
-      'soccer_usa_mls': ['mls', 'inter miami', 'la galaxy', 'lafc', 'seattle sounders', 'portland timbers', 'atlanta united', 'columbus crew', 'fc cincinnati', 'new york red bulls', 'nycfc', 'orlando city', 'nashville sc', 'real salt lake', 'sporting kc', 'austin fc', 'chicago fire', 'houston dynamo', 'vancouver whitecaps', 'cf montreal', 'toronto fc', 'new england revolution', 'philadelphia union', 'dc united', 'san jose earthquakes', 'minnesota united', 'colorado rapids', 'fc dallas', 'st louis city'],
+    // Sport detection - STRICT matching to avoid political markets
+    // Only match if event has sports-specific structure
+    const sportPatterns = {
+      'basketball_nba': {
+        teams: ['lakers','celtics','warriors','knicks','heat','bucks','nuggets','suns','cavaliers','thunder','mavericks','timberwolves','pacers','magic','hawks','nets','clippers','grizzlies','pelicans','rockets','spurs','kings','76ers','sixers','raptors','bulls','pistons','hornets','wizards','blazers','jazz'],
+        leagues: ['nba'],
+        mustMatch: ['vs', 'win', 'beat', 'game', 'series', 'playoffs', 'finals', 'champion']
+      },
+      'baseball_mlb': {
+        teams: ['yankees','dodgers','astros','braves','phillies','padres','mets','cubs','red sox','cardinals','brewers','guardians','orioles','rangers','twins','rays','mariners','diamondbacks','reds','pirates','royals','tigers','angels','athletics','rockies','marlins','nationals','white sox','giants'],
+        leagues: ['mlb','baseball'],
+        mustMatch: ['vs', 'win', 'beat', 'game', 'series', 'world series']
+      },
+      'icehockey_nhl': {
+        teams: ['bruins','rangers','oilers','avalanche','panthers','hurricanes','jets','stars','wild','lightning','maple leafs','penguins','capitals','devils','islanders','flames','canucks','blues','predators','senators','red wings','kraken','ducks','sabres','flyers','blue jackets','blackhawks','canadiens','sharks','golden knights'],
+        leagues: ['nhl','hockey','stanley cup'],
+        mustMatch: ['vs', 'win', 'beat', 'game', 'series']
+      },
+      'mma_mixed_martial_arts': {
+        teams: [],
+        leagues: ['ufc','mma'],
+        mustMatch: ['vs', 'win', 'beat', 'fight', 'bout']
+      },
+      'soccer_epl': {
+        teams: ['arsenal','manchester city','manchester united','liverpool','chelsea','tottenham','newcastle','brighton','aston villa','west ham','crystal palace','fulham','wolves','bournemouth','brentford','everton','nottingham forest'],
+        leagues: ['premier league','epl'],
+        mustMatch: ['vs', 'win', 'beat', 'match']
+      },
+      'soccer_usa_mls': {
+        teams: ['inter miami','la galaxy','lafc','seattle sounders','portland timbers','atlanta united','columbus crew','fc cincinnati','orlando city','nashville sc','sporting kc','austin fc'],
+        leagues: ['mls'],
+        mustMatch: ['vs', 'win', 'beat', 'match']
+      }
     };
 
-    // Filter and normalize events
     const normalizedMarkets = [];
 
     events.forEach(event => {
       const title = (event.title || '').toLowerCase();
-      const description = (event.description || '').toLowerCase();
-      const combined = title + ' ' + description;
       const markets = event.markets || [];
 
-      // Determine sport
+      // STRICT sport detection
       let detectedSport = null;
-      if (sport !== 'all') {
-        // Check if this event matches the requested sport
-        const keywords = sportKeywords[sport] || [];
-        if (keywords.some(kw => combined.includes(kw))) {
-          detectedSport = sport;
-        } else {
-          return; // Skip non-matching events
-        }
-      } else {
-        // Auto-detect sport
-        for (const [sportKey, keywords] of Object.entries(sportKeywords)) {
-          if (keywords.some(kw => combined.includes(kw))) {
-            detectedSport = sportKey;
-            break;
-          }
-        }
-        if (!detectedSport) return; // Skip non-sports events
+      for (const [sportKey, patterns] of Object.entries(sportPatterns)) {
+        // Must match a team name or league
+        const hasTeam = patterns.teams.some(t => title.includes(t));
+        const hasLeague = patterns.leagues.some(l => title.includes(l));
+
+        if (!hasTeam && !hasLeague) continue;
+
+        // Must also have a sports-action word to avoid "Will LeBron win the presidency"
+        const hasAction = patterns.mustMatch.some(w => title.includes(w));
+        if (!hasAction && !hasLeague) continue;
+
+        // Extra filter: reject if contains political keywords
+        const politicalWords = ['president', 'democrat', 'republican', 'nominee', 'election', 'congress', 'senate', 'governor', 'political', 'party', 'cabinet', 'secretary', 'minister'];
+        if (politicalWords.some(pw => title.includes(pw))) continue;
+
+        detectedSport = sportKey;
+        break;
       }
 
-      // Process each market (binary outcome)
+      if (!detectedSport) return;
+
       markets.forEach(market => {
         if (!market.active || market.closed) return;
 
         const outcomes = market.outcomes || [];
-        const outcomePrices = market.outcomePrices ? JSON.parse(market.outcomePrices) : [];
-        const clobTokenIds = market.clobTokenIds ? JSON.parse(market.clobTokenIds) : [];
+        let outcomePrices;
+        try {
+          outcomePrices = market.outcomePrices ? JSON.parse(market.outcomePrices) : [];
+        } catch(e) {
+          outcomePrices = [];
+        }
+
+        let clobTokenIds;
+        try {
+          clobTokenIds = market.clobTokenIds ? JSON.parse(market.clobTokenIds) : [];
+        } catch(e) {
+          clobTokenIds = [];
+        }
 
         if (outcomes.length < 2 || outcomePrices.length < 2) return;
 
         const yesPrice = parseFloat(outcomePrices[0]);
         const noPrice = parseFloat(outcomePrices[1]);
 
-        if (isNaN(yesPrice) || isNaN(noPrice) || yesPrice <= 0 || yesPrice >= 1) return;
+        if (isNaN(yesPrice) || isNaN(noPrice) || yesPrice <= 0.01 || yesPrice >= 0.99) return;
 
-        // Convert cent prices to American odds
-        // Yes price: probability = yesPrice, odds = prob > 0.5 ? -(prob/(1-prob))*100 : ((1-prob)/prob)*100
         const yesOdds = centToAmerican(yesPrice);
         const noOdds = centToAmerican(noPrice);
 
-        // Extract team names from outcomes or title
+        if (yesOdds === 0 || noOdds === 0) return;
+
         const outcome1 = outcomes[0] || 'Yes';
         const outcome2 = outcomes[1] || 'No';
+        const volume = parseFloat(market.volume) || 0;
+        const liquidity = parseFloat(market.liquidity) || 0;
 
-        // Get liquidity info
-        const volume = market.volume || 0;
-        const liquidity = market.liquidity || 0;
+        // Skip very low liquidity markets
+        if (liquidity < 100) return;
 
         normalizedMarkets.push({
           id: market.id || event.id,
@@ -106,34 +154,24 @@ export default async function handler(req, res) {
           start_date: market.startDate || event.startDate,
           bookmaker: 'Polymarket',
           outcomes: [
-            {
-              name: outcome1,
-              price: yesOdds,
-              cent_price: yesPrice,
-              token_id: clobTokenIds[0] || null
-            },
-            {
-              name: outcome2,
-              price: noOdds,
-              cent_price: noPrice,
-              token_id: clobTokenIds[1] || null
-            }
+            { name: outcome1, price: yesOdds, cent_price: yesPrice, token_id: clobTokenIds[0] || null },
+            { name: outcome2, price: noOdds, cent_price: noPrice, token_id: clobTokenIds[1] || null }
           ],
           volume: volume,
           liquidity: liquidity,
-          volume_24hr: market.volume24hr || 0,
-          polymarket_url: `https://polymarket.com/event/${event.slug || ''}`,
+          volume_24hr: parseFloat(market.volume24hr) || 0,
+          polymarket_url: 'https://polymarket.com/event/' + (event.slug || ''),
           market_slug: market.slug || ''
         });
       });
     });
 
-    // Sort by volume (most liquid first)
     normalizedMarkets.sort((a, b) => b.volume - a.volume);
 
     return res.status(200).json({
       count: normalizedMarkets.length,
       source: 'polymarket',
+      sport_tags_found: sportTags.length,
       markets: normalizedMarkets
     });
 
@@ -143,14 +181,11 @@ export default async function handler(req, res) {
   }
 }
 
-// Convert Polymarket cent price (0.00-1.00) to American odds
 function centToAmerican(price) {
   if (price <= 0 || price >= 1) return 0;
   if (price >= 0.5) {
-    // Favorite: negative odds
     return Math.round(-(price / (1 - price)) * 100);
   } else {
-    // Underdog: positive odds
     return Math.round(((1 - price) / price) * 100);
   }
 }
