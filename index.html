@@ -2277,10 +2277,23 @@ function renderSharpRows(){
   else if(window._sharpFilter==='reverse')games=games.filter(g=>g.isReverse);
   if(!games.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;">NO SIGNALS FOR THIS FILTER</div>';return;}
   rows.innerHTML=games.slice(0,25).map(g=>{
-    var sig=g.isHeavy?'💰 HEAVY SHARP':g.isReverse?'↩ REVERSE LINE':'📊 LINE GAP';
-    var sc=g.isHeavy?'var(--green)':g.isReverse?'var(--yellow)':'var(--accent)';
+    // Recalculate signal based on correct interpretation
+    var pinAbs2=Math.abs(g.pin), dkAbs2=Math.abs(g.dk);
+    var isRealSharp = (g.pin<0 && g.dk<0 && pinAbs2<dkAbs2) || (g.pin>0 && g.dk>0 && g.pin>g.dk);
+    var sig=isRealSharp?(g.diff>=25?'💰 HEAVY SHARP':'📊 SHARP SIGNAL'):'⚠️ PUBLIC OVERLOAD';
+    var sc=isRealSharp?(g.diff>=25?'var(--green)':'var(--accent)'):'var(--muted)';
     var t=new Date(g.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    var note=g.pin<g.dk?'Pinnacle offering worse price — sharp fading '+g.team:'Pinnacle offering better price — sharp backing '+g.team;
+    var pinAbs=Math.abs(g.pin), dkAbs=Math.abs(g.dk);
+    var note;
+    if(g.pin<0 && g.dk<0){
+      // Both favorites - lower absolute = less juice = sharps have bet this down
+      note = pinAbs < dkAbs ? 'Sharp money on '+g.team+' — Pinnacle has less juice than public books' : 'Public books overpriced on '+g.team+' — fade opportunity or wait for line to move';
+    } else if(g.pin>0 && g.dk>0){
+      // Both underdogs - higher price at Pinnacle = sharps like this dog
+      note = g.pin > g.dk ? 'Sharp money on '+g.team+' — Pinnacle offering better underdog price' : 'Public books giving more on '+g.team+' — Pinnacle sees less value here';
+    } else {
+      note = 'Mixed signals on '+g.team+' — Pinnacle and public books disagree on side';
+    }
     return '<div class="pick-card" style="border-left:3px solid '+sc+';margin-bottom:8px;">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'+
         '<div><span style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-right:6px;">'+g.sport+'</span>'+
