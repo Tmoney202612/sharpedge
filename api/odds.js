@@ -6,23 +6,23 @@ export default async function handler(req, res) {
   const API_KEY = process.env.ODDS_API_KEY;
   const { sport = 'basketball_nba', markets = 'h2h', oddsFormat = 'american' } = req.query;
 
-  // Top 15 sharp + major books - Pinnacle is sharpest, rest are high-volume soft books
+  // Top 15 books - Pinnacle as sharp benchmark + major US books
   const TOP_BOOKS = [
-    'pinnacle',
+    'pinnacle',       // Sharpest book in world - EV/arb benchmark
     'draftkings',
     'fanduel',
     'betmgm',
     'caesars',
     'bet365',
-    'pointsbetus',
     'betrivers',
-    'circasports',
     'fanatics',
     'espnbet',
     'hardrockbet',
-    'betway',
     'unibet_us',
-    'williamhill_us',
+    'superbook',
+    'wynnbet',
+    'betus',
+    'fliff',
   ].join(',');
 
   try {
