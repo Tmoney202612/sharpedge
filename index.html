@@ -2257,7 +2257,7 @@ async function loadSharpMoney(){
           var f=fd?.markets?.[0]?.outcomes?.find(o=>o.name===p.name);
           if(!d)return;
           var diff=Math.abs(p.price-d.price);
-          if(diff>=8){all.push({game:g.home_team+' vs '+g.away_team,sport:s.split('_')[0].substring(0,4).toUpperCase(),team:p.name,pin:p.price,dk:d.price,fd:f?.price,diff,isHeavy:diff>=25,isReverse:diff>=15&&Math.abs(p.price)<Math.abs(d.price),time:g.commence_time});}
+          if(diff>=8 && diff<=500){all.push({game:g.home_team+' vs '+g.away_team,sport:s.split('_')[0].substring(0,4).toUpperCase(),team:p.name,pin:p.price,dk:d.price,fd:f?.price,diff,isHeavy:diff>=25,isReverse:diff>=15&&Math.abs(p.price)<Math.abs(d.price),time:g.commence_time});}
         });
       });
     }catch(e){}
