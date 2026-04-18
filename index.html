@@ -944,9 +944,9 @@ function enterApp(){
   _s('app','display','block');
   _s('header-cta','display','none');
   _s('header-demo','display','none');
-  document.getElementById('live-pill').style.display='flex';
-  document.getElementById('landing-nav').style.display='none';
-  document.getElementById('sticky-bar').style.transform='translateY(100%)';
+  _s('live-pill','display','flex');
+  _s('landing-nav','display','none');
+  _s('sticky-bar','transform','translateY(100%)');
   window.onscroll=null;
   inApp=true;
   renderPromos();renderTracker();
