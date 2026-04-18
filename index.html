@@ -246,6 +246,28 @@ nav{display:flex;align-items:center;gap:2px;}
 
 .btn-secondary{background:transparent;color:var(--accent);border:1px solid rgba(59,130,246,0.3);padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fh);transition:all 0.15s;}
 .btn-secondary:hover{background:var(--accent-glow);border-color:var(--accent);}
+
+/* Landing layout fixes */
+#landing{max-width:100%;overflow-x:hidden;}
+.hero{padding:80px 20px 60px;max-width:860px;margin:0 auto;}
+.hero h1{font-size:clamp(36px,5.5vw,68px);}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:900px;margin:0 auto;padding:0 20px;}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:24px;text-align:center;}
+.feature-card h3{font-size:16px;font-weight:700;color:#fff;margin:12px 0 8px;}
+.feature-card p{font-size:13px;color:var(--text2);line-height:1.6;}
+.section-title{text-align:center;padding:60px 20px 40px;font-family:var(--fd);font-size:36px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
+.section-subtitle{text-align:center;color:var(--text2);font-size:15px;margin-top:-30px;margin-bottom:40px;padding:0 20px;}
+.results-section{max-width:900px;margin:0 auto;padding:0 20px 60px;}
+.hero-live-preview{max-width:860px;margin:0 auto 60px;padding:0 20px;}
+.preview-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.preview-header{background:var(--card2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:1px;}
+.preview-row{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.preview-row:last-child{border-bottom:none;}
+.preview-sport{font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:1px;}
+.preview-game{font-size:13px;font-weight:600;color:#fff;}
+.preview-bet{font-size:12px;color:var(--accent);}
+.preview-ev{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--green);}
+.preview-book{font-size:11px;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -2068,6 +2090,11 @@ var _scoreObs=new MutationObserver(function(mutations){
 _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,subtree:true});
 
 })();
+
+// Admin shortcut: Ctrl+Shift+A to access app
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}
+});
 </script>
 </body>
 </html>
