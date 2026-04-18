@@ -1544,10 +1544,10 @@ async function fetchSportLive(sportConfig){
     const liveIds=new Set((scoresResp||[]).map(g=>g.id));
     // From odds: games starting within 4hrs ahead
     const upcomingGames=oddsData.filter(g=>{const t=new Date(g.commence_time).getTime();return t>=lookback&&t<=cutoff;});
-    // From scores: in-progress games not already in upcoming
-    const liveGames=(scoresResp||[]).filter(g=>!g.completed&&!upcomingGames.find(u=>u.id===g.id)).map(g=>({...g,isLive:true}));
-    // Merge and tag
-    return [...upcomingGames,...liveGames].map(g=>({...g,sportLabel:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg}));
+    // Mark upcoming games as LIVE if they appear in scores API
+    const liveIdSet=new Set((scoresResp||[]).filter(g=>!g.completed).map(g=>g.id));
+    // Only return games that have odds (upcomingGames) - mark live ones with LIVE badge
+    return upcomingGames.map(g=>({...g,isLive:liveIdSet.has(g.id)||new Date(g.commence_time).getTime()<=Date.now(),sportLabel:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg}));
   }catch(e){return[];}
 }
 
