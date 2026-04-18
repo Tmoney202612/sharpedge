@@ -940,7 +940,7 @@ const BOOK_URLS={
   'Karamba':'https://www.karamba.com/','Mr Green':'https://www.mrgreen.com/',
   'Meridianbet':'https://www.meridianbet.com/',
 };
-function openBook(book){window.open(BOOK_URLS[book]||BOOK_URLS[Object.keys(BOOK_URLS).find(k=>book.toLowerCase().includes(k.toLowerCase())||k.toLowerCase().includes(book.toLowerCase()))]||'https://www.google.com/search?q='+encodeURIComponent(book+' sportsbook'),'_blank');}
+function openBook(book){var n=function(s){return s.toLowerCase().replace(/[^a-z0-9]/g,'');};var bn=n(book);var url=BOOK_URLS[book]||BOOK_URLS[Object.keys(BOOK_URLS).find(k=>n(k)===bn||bn.includes(n(k))||n(k).includes(bn))]||'https://www.google.com/search?q='+encodeURIComponent(book+' sportsbook');window.open(url,'_blank');}
 
 function showLanding(){
   document.getElementById('landing').style.display='block';
