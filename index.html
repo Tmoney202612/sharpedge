@@ -954,13 +954,11 @@ function enterApp(){
   loadAllArbSports();
   loadAllEVSports();
   loadAllLiveSports();
-  // Show live panel by default
+  // Show live panel by default using proper tab switching
   setTimeout(function(){
-    var lp=document.getElementById('panel-live');
-    if(lp)lp.style.display='block';
-    document.querySelectorAll('.panel').forEach(function(p){if(p.id!=='panel-live')p.style.display='none';});
-    document.querySelectorAll('.tab-btn').forEach(function(b,i){b.classList.toggle('active',i===0);});
-  },100);
+    var firstBtn=document.querySelector('.tab-btn');
+    if(firstBtn) showTab('live', firstBtn);
+  },200);
   setTimeout(loadSportCounts,3000);
   setTimeout(()=>{
     const sportOrder=['basketball_nba','icehockey_nhl','baseball_mlb','mma_mixed_martial_arts','soccer_usa_mls','soccer_epl'];
