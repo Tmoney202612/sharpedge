@@ -417,6 +417,67 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 
 /* Hero stats bar — slight accent on numbers */
 .hero-stat-num{font-size:24px!important;}
+
+/* === NOTICEABLE LANDING UPGRADES === */
+
+/* Feature cards — thick colored left border, visible glow on hover */
+.feature-card{
+  border-left:3px solid var(--accent)!important;
+  transition:all 0.2s!important;
+}
+.feature-card:hover{
+  border-left-color:var(--accent)!important;
+  box-shadow:0 0 0 1px var(--accent),0 8px 40px rgba(59,130,246,0.2)!important;
+  transform:translateY(-3px)!important;
+}
+.feature-card:nth-child(2){border-left-color:var(--green)!important;}
+.feature-card:nth-child(2):hover{box-shadow:0 0 0 1px var(--green),0 8px 40px rgba(0,230,118,0.2)!important;}
+.feature-card:nth-child(3){border-left-color:var(--yellow)!important;}
+.feature-card:nth-child(3):hover{box-shadow:0 0 0 1px var(--yellow),0 8px 40px rgba(245,200,66,0.2)!important;}
+.feature-card:nth-child(4){border-left-color:#a78bfa!important;}
+.feature-card:nth-child(4):hover{box-shadow:0 0 0 1px #a78bfa,0 8px 40px rgba(167,139,250,0.2)!important;}
+.feature-card:nth-child(5){border-left-color:var(--red)!important;}
+.feature-card:nth-child(5):hover{box-shadow:0 0 0 1px var(--red),0 8px 40px rgba(255,71,87,0.2)!important;}
+.feature-card:nth-child(6){border-left-color:var(--accent2)!important;}
+
+/* Feature card title bigger and colored icon area */
+.feature-card h3{font-size:17px!important;font-weight:700!important;}
+.feature-card .feature-icon{font-size:28px!important;}
+
+/* Results stat cards — MUCH bigger numbers */
+.result-val{font-size:42px!important;font-weight:800!important;letter-spacing:-1px!important;}
+.result-card{padding:24px!important;}
+.result-label{font-size:10px!important;letter-spacing:2px!important;}
+.result-card:nth-child(2) .result-val{color:var(--green)!important;}
+.result-card:nth-child(3) .result-val{color:var(--yellow)!important;}
+.result-card:nth-child(5) .result-val{color:var(--green)!important;}
+
+/* Section eyebrow — make it actually visible */
+.section-eyebrow{
+  display:inline-block!important;
+  background:rgba(59,130,246,0.1)!important;
+  border:1px solid rgba(59,130,246,0.25)!important;
+  border-radius:20px!important;
+  padding:3px 12px!important;
+  font-size:11px!important;
+  letter-spacing:2px!important;
+  margin-bottom:14px!important;
+}
+
+/* Hero stat numbers — bigger */
+.hero-stat-num{font-size:28px!important;font-weight:800!important;}
+.hero-stat-lbl{font-size:11px!important;}
+
+/* Scanner preview — noticeable blue glow */
+.scanner-preview-card{
+  box-shadow:0 0 0 1px rgba(59,130,246,0.2),0 0 60px rgba(59,130,246,0.1),0 20px 60px rgba(0,0,0,0.5)!important;
+}
+
+/* Pricing featured card — strong glow */
+.pricing-card-featured{
+  box-shadow:0 0 0 1px rgba(59,130,246,0.4),0 0 50px rgba(59,130,246,0.12)!important;
+}
+.pricing-price{font-size:60px!important;}
 </style>
 </head>
 <body>
