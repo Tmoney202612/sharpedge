@@ -938,7 +938,7 @@ const BOOK_URLS={
   'Neds':'https://www.neds.com.au/','Codere':'https://www.codere.es/',
   'Betdaq':'https://www.betdaq.com/','Sportingbet':'https://www.sportingbet.com/',
   'Karamba':'https://www.karamba.com/','Mr Green':'https://www.mrgreen.com/',
-  'Meridianbet':'https://www.meridianbet.com/',
+  'Meridianbet':'https://www.meridianbet.com/','SuperBook':'https://www.superbook.com/sports','WynnBET':'https://www.wynnbet.com/sports','BetUS':'https://www.betus.com.pa/sportsbook','Fliff':'https://www.getfliff.com/',
 };
 function openBook(book){var n=function(s){return s.toLowerCase().replace(/[^a-z0-9]/g,'');};var bn=n(book);var url=BOOK_URLS[book]||BOOK_URLS[Object.keys(BOOK_URLS).find(k=>n(k)===bn||bn.includes(n(k))||n(k).includes(bn))]||'https://www.google.com/search?q='+encodeURIComponent(book+' sportsbook');window.open(url,'_blank');}
 
