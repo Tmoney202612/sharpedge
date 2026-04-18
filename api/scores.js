@@ -6,27 +6,29 @@ export default async function handler(req, res) {
   const API_KEY = process.env.ODDS_API_KEY;
   const sport = req.query.sport;
 
-  // Only sports shown on the site - saves ~95% of API calls vs fetching all 30+
-  const ACTIVE_SPORTS = [
-    'basketball_nba',
-    'baseball_mlb',
-    'icehockey_nhl',
-    'soccer_epl',
-    'soccer_spain_la_liga',
-    'soccer_germany_bundesliga',
-    'soccer_italy_serie_a',
-    'soccer_france_ligue_one',
-    'soccer_uefa_champs_league',
-    'soccer_usa_mls',
-    'tennis_atp_french_open',
-    'tennis_wta_french_open',
-    'mma_mixed_martial_arts',
-    'boxing_boxing',
-  ];
-
-  const sportsToFetch = sport ? [sport] : ACTIVE_SPORTS;
-
   try {
+    let sportsToFetch = [];
+
+    if (sport) {
+      // Single sport requested - just fetch that one
+      sportsToFetch = [sport];
+    } else {
+      // Fetch active sports list (FREE - no quota cost)
+      // Filter out futures/outrights which have no scores
+      const sportsRes = await fetch(`https://api.the-odds-api.com/v4/sports/?apiKey=${API_KEY}&all=false`);
+      const sportsData = await sportsRes.json();
+      sportsToFetch = Array.isArray(sportsData)
+        ? sportsData
+            .filter(s => !s.has_outrights && s.active)
+            .map(s => s.key)
+        : [];
+    }
+
+    if (sportsToFetch.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    // Fetch scores for all active sports in parallel
     const results = await Promise.allSettled(
       sportsToFetch.map(s =>
         fetch(`https://api.the-odds-api.com/v4/sports/${s}/scores/?apiKey=${API_KEY}&daysFrom=1`)
@@ -40,16 +42,18 @@ export default async function handler(req, res) {
       .filter(r => r.status === 'fulfilled')
       .flatMap(r => r.value)
       .sort((a, b) => {
-        const aLive = !a.completed && a.scores;
-        const bLive = !b.completed && b.scores;
+        // Live games (has scores, not completed) first
+        const aLive = !a.completed && Array.isArray(a.scores) && a.scores.length > 0;
+        const bLive = !b.completed && Array.isArray(b.scores) && b.scores.length > 0;
         if (aLive && !bLive) return -1;
         if (!aLive && bLive) return 1;
+        // Then upcoming
         if (a.completed && !b.completed) return 1;
         if (!a.completed && b.completed) return -1;
         return new Date(a.commence_time) - new Date(b.commence_time);
       });
 
-    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=60');
+    res.setHeader('Cache-Control', 's-maxage=90, stale-while-revalidate=60');
     res.status(200).json(allGames);
   } catch (e) {
     res.status(500).json({ error: e.message });
