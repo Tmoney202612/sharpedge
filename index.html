@@ -382,6 +382,41 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 .pricing-btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
 
 /* Admin shortcut */
+
+/* === LANDING UPGRADES - appended, no existing styles touched === */
+
+/* Feature cards — colored top accent + hover glow */
+.feature-card{position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),rgba(59,130,246,0));}
+.feature-card:nth-child(2)::before{background:linear-gradient(90deg,var(--green),rgba(0,230,118,0));}
+.feature-card:nth-child(3)::before{background:linear-gradient(90deg,var(--yellow),rgba(245,200,66,0));}
+.feature-card:nth-child(4)::before{background:linear-gradient(90deg,#a78bfa,rgba(167,139,250,0));}
+.feature-card:nth-child(5)::before{background:linear-gradient(90deg,var(--red),rgba(255,71,87,0));}
+.feature-card:nth-child(6)::before{background:linear-gradient(90deg,var(--accent2),rgba(96,165,250,0));}
+.feature-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+
+/* Results stat cards — bigger numbers, accent top border */
+.result-card{position:relative;overflow:hidden;transition:transform 0.15s;}
+.result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),rgba(59,130,246,0));}
+.result-card:nth-child(2) .result-val{color:var(--green)!important;}
+.result-card:nth-child(3) .result-val{color:var(--yellow)!important;}
+.result-card:nth-child(5) .result-val{color:var(--green)!important;}
+.result-val{font-size:32px!important;}
+
+/* Section headers — stronger eyebrow labels */
+.section-eyebrow{font-size:11px!important;letter-spacing:3px!important;font-weight:600!important;}
+.section-header h2{font-size:38px!important;letter-spacing:-0.5px!important;}
+
+/* Scanner preview card shadow */
+.scanner-preview-card{box-shadow:0 0 60px rgba(59,130,246,0.08),0 24px 60px rgba(0,0,0,0.4)!important;}
+
+/* Pricing cards — featured card blue glow */
+.pricing-card-featured{box-shadow:0 0 40px rgba(59,130,246,0.1)!important;}
+.pricing-btn-primary:hover{background:#2563eb!important;transform:translateY(-1px);}
+.pricing-btn-secondary:hover{border-color:var(--accent)!important;color:var(--accent)!important;}
+
+/* Hero stats bar — slight accent on numbers */
+.hero-stat-num{font-size:24px!important;}
 </style>
 </head>
 <body>
