@@ -1,1 +1,6 @@
-{"outputDirectory": "."}
+{
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/demo", "destination": "/demo.html" }
+  ]
+}
