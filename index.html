@@ -938,8 +938,7 @@ function showLanding(){
 }
 
 function enterApp(){
-  var _g=function(id){return document.getElementById(id);};
-  var _s=function(id,prop,val){var el=_g(id);if(el)el.style[prop]=val;};
+  var _s=function(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;};
   _s('landing','display','none');
   _s('app','display','block');
   _s('header-cta','display','none');
@@ -949,11 +948,6 @@ function enterApp(){
   _s('sticky-bar','transform','translateY(100%)');
   window.onscroll=null;
   inApp=true;
-  // Force first panel visible
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  var firstPanel=document.getElementById('panel-live');
-  if(firstPanel)firstPanel.classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>{if(i===0)b.classList.add('active');else b.classList.remove('active');});
   renderPromos();renderTracker();
   loadSingleSport();
   loadAllArbSports();
@@ -2108,10 +2102,9 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 
 })();
 
-// Admin shortcut: Ctrl+Shift+A to access app
-document.addEventListener('keydown',function(e){
-  if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}
-});
+// Admin shortcut Ctrl+Shift+A
+document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}});
 </script>
 </body>
-</html>
+
+</html></html>
