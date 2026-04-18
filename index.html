@@ -1531,9 +1531,20 @@ async function loadAllLiveSports(){
 
 async function fetchSportLive(sportConfig){
   try{
-    const data=await fetchSport(sportConfig.key);
-    const now=Date.now();const cutoff=now+14400000;
-    return data.filter(g=>new Date(g.commence_time).getTime()<=cutoff).map(g=>({...g,sportLabel:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg}));
+    const now=Date.now();const cutoff=now+14400000;const lookback=now-21600000;
+    // Fetch upcoming odds + live scores in parallel
+    const [oddsData,scoresResp]=await Promise.all([
+      fetchSport(sportConfig.key),
+      fetch('/api/scores?sport='+sportConfig.key+'&daysFrom=1').then(r=>r.json()).catch(()=>[])
+    ]);
+    // Build a set of IDs from scores (in-progress games)
+    const liveIds=new Set((scoresResp||[]).map(g=>g.id));
+    // From odds: games starting within 4hrs ahead
+    const upcomingGames=oddsData.filter(g=>{const t=new Date(g.commence_time).getTime();return t>=lookback&&t<=cutoff;});
+    // From scores: in-progress games not already in upcoming
+    const liveGames=(scoresResp||[]).filter(g=>!g.completed&&!upcomingGames.find(u=>u.id===g.id)).map(g=>({...g,isLive:true}));
+    // Merge and tag
+    return [...upcomingGames,...liveGames].map(g=>({...g,sportLabel:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg}));
   }catch(e){return[];}
 }
 
