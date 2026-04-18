@@ -933,13 +933,15 @@ function showLanding(){
 }
 
 function enterApp(){
-  document.getElementById('landing').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('header-cta').style.display='none';
-  document.getElementById('header-demo').style.display='none';
-  document.getElementById('live-pill').style.display='flex';
-  document.getElementById('landing-nav').style.display='none';
-  document.getElementById('sticky-bar').style.transform='translateY(100%)';
+  var _g=function(id){return document.getElementById(id);};
+  var _s=function(id,prop,val){var el=_g(id);if(el)el.style[prop]=val;};
+  _s('landing','display','none');
+  _s('app','display','block');
+  _s('header-cta','display','none');
+  _s('header-demo','display','none');
+  _s('live-pill','display','flex');
+  _s('landing-nav','display','none');
+  _s('sticky-bar','transform','translateY(100%)');
   window.onscroll=null;
   inApp=true;
   renderPromos();renderTracker();
