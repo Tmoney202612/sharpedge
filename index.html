@@ -1527,6 +1527,9 @@ async function loadAllLiveSports(){
   allLiveResults.forEach(g=>{const books=g.bookmakers||[];const om={};books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({odds:o.price});})));Object.values(om).forEach(offers=>{if(offers.length<2)return;const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);if(isFinite(ev)&&ev>bestEV)bestEV=ev;});});
   document.getElementById('live-ev').textContent=bestEV>0?'+'+(bestEV*100).toFixed(1)+'%':'—';
   renderLiveRows();
+  // Ensure panel is visible if live tab is active
+  var lp=document.getElementById('panel-live');
+  if(lp&&lp.style.display==='none'&&document.querySelector('.nav-tab.active[onclick*="live"]')){lp.style.display='block';}
 }
 
 async function fetchSportLive(sportConfig){
