@@ -2230,7 +2230,7 @@ async function loadSharpMoney(){
   var all=[];
   await Promise.all(sports.map(async s=>{
     try{
-      var r=await fetch('/api/odds?sport='+s+'&regions=us,us2&markets=h2h&oddsFormat=american&bookmakers=pinnacle,draftkings,fanduel,betmgm');
+      var r=await fetch('/api/odds?sport='+s+'&markets=h2h&oddsFormat=american');
       var data=await r.json();
       if(!Array.isArray(data))return;
       data.forEach(g=>{
