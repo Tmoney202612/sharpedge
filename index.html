@@ -954,11 +954,6 @@ function enterApp(){
   loadAllArbSports();
   loadAllEVSports();
   loadAllLiveSports();
-  // Show live panel by default using proper tab switching
-  setTimeout(function(){
-    var firstBtn=document.querySelector('.tab-btn');
-    if(firstBtn) showTab('live', firstBtn);
-  },200);
   setTimeout(loadSportCounts,3000);
   setTimeout(()=>{
     const sportOrder=['basketball_nba','icehockey_nhl','baseball_mlb','mma_mixed_martial_arts','soccer_usa_mls','soccer_epl'];
