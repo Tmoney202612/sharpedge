@@ -2220,15 +2220,15 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}});
 
 // ===== SHARP MONEY TRACKER =====
-var _sharpGames=[], _sharpFilter='all';
-function filterSharp(t,btn){_sharpFilter=t;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSharpRows();}
+window._sharpGames=[]; window._sharpFilter='all';
+function filterSharp(t,btn){window._sharpFilter=t;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSharpRows();}
 async function loadSharpMoney(){
   var rows=document.getElementById('sharp-rows');
-  if(!rows)return;
+  if(!rows){console.log('SHARP: rows div not found');return;}
   rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;letter-spacing:1px;">⟳ SCANNING...</div>';
   var sports=['basketball_nba','baseball_mlb','icehockey_nhl','soccer_usa_mls','mma_mixed_martial_arts'];
   var all=[];
-  await Promise.all(sports.map(async s=>{
+  await Promise.all(sports.map(async function(s){
     try{
       var r=await fetch('/api/odds?sport='+s+'&markets=h2h&oddsFormat=american');
       var data=await r.json();
@@ -2251,7 +2251,7 @@ async function loadSharpMoney(){
     }catch(e){}
   }));
   all.sort((a,b)=>b.diff-a.diff);
-  _sharpGames=all;
+  window._sharpGames=all;
   var tot=document.getElementById('sharp-total'),avg=document.getElementById('sharp-avg'),hvy=document.getElementById('sharp-heavy');
   if(tot)tot.textContent=all.length;
   if(avg)avg.textContent=all.length?Math.round(all.reduce((s,g)=>s+g.diff,0)/all.length)+' pts':'—';
@@ -2260,9 +2260,9 @@ async function loadSharpMoney(){
 }
 function renderSharpRows(){
   var rows=document.getElementById('sharp-rows');if(!rows)return;
-  var games=_sharpGames;
-  if(_sharpFilter==='heavy')games=games.filter(g=>g.isHeavy);
-  else if(_sharpFilter==='reverse')games=games.filter(g=>g.isReverse);
+  var games=window._sharpGames;
+  if(window._sharpFilter==='heavy')games=games.filter(g=>g.isHeavy);
+  else if(window._sharpFilter==='reverse')games=games.filter(g=>g.isReverse);
   if(!games.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;">NO SIGNALS FOR THIS FILTER</div>';return;}
   rows.innerHTML=games.slice(0,25).map(g=>{
     var sig=g.isHeavy?'💰 HEAVY SHARP':g.isReverse?'↩ REVERSE LINE':'📊 LINE GAP';
