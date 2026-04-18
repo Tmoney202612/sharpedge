@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Edge Picks — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#04060a;--card:#0c1018;--card2:#080c12;--border:#1a2235;--accent:#3b82f6;--green:#00e676;--yellow:#f5c842;--red:#ff4757;--text:#e8edf5;--muted:#475569;--fm:'JetBrains Mono',monospace;--fh:'DM Sans',sans-serif;--fd:'Syne',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+.header{position:sticky;top:0;z-index:100;background:rgba(4,6,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.logo-name{font-family:var(--fd);font-size:17px;font-weight:800;color:#fff;}
+.logo-name span{color:var(--accent);}
+.header-btn{background:var(--accent);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fh);text-decoration:none;box-shadow:0 0 16px rgba(59,130,246,0.3);}
+.hero{position:relative;z-index:1;text-align:center;padding:72px 20px 52px;max-width:780px;margin:0 auto;}
+.eyebrow-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:20px;padding:4px 14px;font-family:var(--fm);font-size:10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:22px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.hero h1{font-family:var(--fd);font-size:clamp(34px,5vw,58px);font-weight:800;line-height:1.05;letter-spacing:-1px;color:#fff;margin-bottom:14px;}
+.hero h1 span{color:var(--accent);}
+.hero p{font-size:16px;color:#94a3b8;line-height:1.75;max-width:520px;margin:0 auto 32px;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fh);text-decoration:none;display:inline-block;box-shadow:0 0 24px rgba(59,130,246,0.3);}
+.btn-ghost{background:transparent;color:#94a3b8;border:1px solid #243048;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--fh);text-decoration:none;display:inline-block;}
+.stats-bar{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card);max-width:480px;margin:0 auto;}
+.stat{flex:1;padding:14px;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-n{display:block;font-family:var(--fm);font-size:20px;font-weight:700;color:#fff;}
+.stat-l{display:block;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
+/* Feature sections */
+.section{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:72px 40px;}
+.section-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.section-inner.rev{direction:rtl;}
+.section-inner.rev>*{direction:ltr;}
+.section-label{font-family:var(--fm);font-size:10px;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:10px;}
+.green{color:var(--green);}
+.blue{color:var(--accent);}
+.yellow{color:var(--yellow);}
+.red{color:var(--red);}
+.section-text h2{font-family:var(--fd);font-size:34px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:14px;line-height:1.1;}
+.section-text p{font-size:14px;color:#94a3b8;line-height:1.8;margin-bottom:18px;}
+.bullets{list-style:none;}
+.bullets li{display:flex;gap:10px;font-size:13px;color:#94a3b8;padding:5px 0;border-bottom:1px solid rgba(26,34,53,0.5);}
+.bullets li:last-child{border-bottom:none;}
+.bullets li b{color:#fff;font-weight:600;}
+/* App mockup */
+.mockup{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.mockup-header{background:var(--card2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.mockup-title{font-family:var(--fm);font-size:11px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;}
+.live-badge{background:rgba(255,71,87,0.15);border:1px solid rgba(255,71,87,0.3);color:var(--red);font-family:var(--fm);font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:1px;}
+.mockup-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.mstat{background:var(--card);padding:12px 14px;}
+.mstat-l{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.mstat-v{font-family:var(--fm);font-size:20px;font-weight:700;color:#fff;}
+.mstat-v.gn{color:var(--green);}
+.mstat-v.yw{color:var(--yellow);}
+/* Arb card */
+.arb-card{margin:0;border-top:1px solid var(--border);}
+.arb-row{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.arb-row:last-child{border-bottom:none;}
+.arb-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:9px;color:var(--green);background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.15);padding:2px 8px;border-radius:4px;margin-bottom:4px;}
+.arb-game{font-size:13px;font-weight:600;color:#fff;}
+.arb-league{font-size:10px;color:var(--muted);margin-top:2px;}
+.arb-profit{text-align:right;}
+.arb-pct{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--green);}
+.arb-amt{font-family:var(--fm);font-size:11px;color:#94a3b8;}
+.arb-bet-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.arb-bet{background:var(--card2);padding:10px 14px;}
+.arb-bet-team{font-size:11px;color:#94a3b8;margin-bottom:4px;}
+.arb-bet-book{display:inline-block;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:var(--accent);font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:4px;margin-bottom:4px;}
+.arb-bet-book.pinnacle{background:rgba(245,200,66,0.1);border-color:rgba(245,200,66,0.2);color:var(--yellow);}
+.arb-bet-book.fanduel{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.2);color:var(--green);}
+.arb-bet-book.draftkings{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.2);color:var(--accent);}
+.arb-bet-book.betmgm{background:rgba(255,71,87,0.1);border-color:rgba(255,71,87,0.2);color:var(--red);}
+.arb-bet-book.betrivers{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.arb-odd{font-family:var(--fm);font-size:16px;font-weight:700;color:#fff;}
+.arb-stake{font-size:10px;color:var(--muted);}
+.bet-btn{background:var(--accent);color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--fh);margin-top:6px;}
+/* EV table */
+.ev-table{width:100%;}
+.ev-table-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:8px 14px;background:var(--card2);border-bottom:1px solid var(--border);}
+.ev-table-head span{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;}
+.ev-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:12px 14px;border-bottom:1px solid var(--border);align-items:center;}
+.ev-row:last-child{border-bottom:none;}
+.ev-sport{display:inline-block;font-family:var(--fm);font-size:8px;padding:2px 6px;border-radius:3px;margin-bottom:4px;}
+.ev-sport.mls{background:rgba(0,230,118,0.1);color:var(--green);}
+.ev-sport.epl{background:rgba(59,130,246,0.1);color:var(--accent);}
+.ev-sport.mlb{background:rgba(245,200,66,0.1);color:var(--yellow);}
+.ev-sport.nba{background:rgba(255,71,87,0.1);color:var(--red);}
+.ev-outcome{font-size:13px;font-weight:600;color:#fff;}
+.ev-game{font-size:10px;color:var(--muted);}
+.ev-book{display:inline-block;font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:4px;}
+.ev-odds{font-family:var(--fm);font-size:13px;font-weight:700;color:#fff;}
+.ev-fair{font-family:var(--fm);font-size:12px;color:var(--muted);}
+.ev-pct{font-family:var(--fm);font-size:12px;font-weight:700;background:rgba(0,230,118,0.1);color:var(--green);padding:3px 8px;border-radius:5px;}
+/* Picks */
+.pick-card{padding:14px 16px;border-bottom:1px solid var(--border);}
+.pick-card:last-child{border-bottom:none;}
+.pick-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.pick-league{font-family:var(--fm);font-size:9px;letter-spacing:1px;color:var(--muted);}
+.pick-conf{display:flex;align-items:center;gap:6px;}
+.pick-bar{width:60px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.pick-bar-fill{height:100%;border-radius:2px;}
+.pick-conf-n{font-family:var(--fm);font-size:10px;color:#fff;}
+.pick-pend{font-family:var(--fm);font-size:9px;color:var(--yellow);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);padding:2px 7px;border-radius:4px;}
+.pick-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;}
+.pick-odds-row{display:flex;align-items:center;gap:10px;}
+.pick-odds{font-family:var(--fm);font-size:17px;font-weight:700;color:var(--accent);}
+.pick-at{font-size:11px;color:var(--muted);}
+.pick-ev-badge{background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);color:var(--green);font-family:var(--fm);font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;}
+.pick-reason{font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.6;}
+/* Live */
+.live-card{padding:12px 16px;border-bottom:1px solid var(--border);}
+.live-card:last-child{border-bottom:none;}
+.live-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.live-card-game{display:flex;align-items:center;gap:8px;}
+.live-card-league{font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:4px;}
+.live-card-name{font-size:13px;font-weight:600;color:#fff;}
+.live-card-ev{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--green);}
+.live-odds-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.live-odds-cell{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:8px;}
+.live-team{font-size:10px;color:#94a3b8;margin-bottom:3px;}
+.live-odd{font-family:var(--fm);font-size:14px;font-weight:700;color:#fff;}
+.live-book-tag{font-family:var(--fm);font-size:8px;padding:2px 6px;border-radius:3px;margin-top:3px;display:inline-block;}
+/* Divider */
+.divider{height:1px;background:var(--border);max-width:1080px;margin:0 auto;position:relative;}
+.divider::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:100px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+/* CTA */
+.cta{position:relative;z-index:1;text-align:center;padding:72px 20px;max-width:660px;margin:0 auto;}
+.cta h2{font-family:var(--fd);font-size:42px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:14px;}
+.cta p{font-size:15px;color:#94a3b8;margin-bottom:36px;line-height:1.75;}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px;margin:0 auto 24px;}
+.plan{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;text-align:left;}
+.plan.feat{border-color:rgba(59,130,246,0.35);background:linear-gradient(135deg,rgba(59,130,246,0.06),var(--card));position:relative;overflow:hidden;}
+.plan.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.plan-pop{background:var(--accent);color:#fff;font-family:var(--fm);font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:8px;}
+.plan-tier{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.plan-price{font-family:var(--fd);font-size:34px;font-weight:800;color:#fff;margin-bottom:4px;}
+.plan-price span{font-size:13px;color:var(--muted);font-family:var(--fh);font-weight:400;}
+.plan-desc{font-size:11px;color:#94a3b8;margin-bottom:14px;}
+.plan-btn{width:100%;padding:9px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fh);text-decoration:none;display:block;text-align:center;}
+.plan-btn.p{background:var(--accent);color:#fff;border:none;}
+.plan-btn.g{background:transparent;color:#94a3b8;border:1px solid #243048;}
+.scarcity{font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:1px;}
+.scarcity span{color:var(--yellow);}
+.footer{border-top:1px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.footer-txt{font-size:12px;color:var(--muted);}
+@media(max-width:768px){
+  .section-inner,.section-inner.rev{grid-template-columns:1fr;direction:ltr;}
+  .section{padding:48px 20px;}
+  .plans{grid-template-columns:1fr;}
+  .header,.footer{padding:0 20px;}
+  .mockup-stats{grid-template-columns:repeat(2,1fr);}
+  .ev-table-head,.ev-row{grid-template-columns:2fr 1fr 1fr;}
+  .ev-table-head span:nth-child(4),.ev-table-head span:nth-child(5),.ev-row>*:nth-child(4),.ev-row>*:nth-child(5){display:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="https://www.primeedgepicks.com" class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+    <div class="logo-name">Prime Edge <span>Picks</span></div>
+  </a>
+  <a href="https://whop.com/prime-edge-picks/the-edge-28/" target="_blank" class="header-btn">Start Free Trial →</a>
+</header>
+
+<section class="hero">
+  <div class="eyebrow-pill"><div class="dot"></div>Live Platform · Real Data · Updated Now</div>
+  <h1>See What Pro Members<br><span>See Every Day</span></h1>
+  <p>Real numbers from our live scanner right now. Guaranteed arbs, +EV bets, expert picks, and live odds across 15 books.</p>
+  <div class="hero-btns">
+    <a href="https://whop.com/prime-edge-picks/the-edge-28/" target="_blank" class="btn-primary">Start 7-Day Free Trial →</a>
+    <a href="#arb" class="btn-ghost">See the Features ↓</a>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-n" style="color:var(--green)">74+</span><span class="stat-l">Arb Opps</span></div>
+    <div class="stat"><span class="stat-n">147+</span><span class="stat-l">EV Bets</span></div>
+    <div class="stat"><span class="stat-n" style="color:var(--yellow)">+13%</span><span class="stat-l">Best Arb</span></div>
+    <div class="stat"><span class="stat-n">16</span><span class="stat-l">Sports</span></div>
+  </div>
+</section>
+
+<div id="arb"></div>
+<section class="section">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="section-label green">Zero Risk · Guaranteed Profit</span>
+      <h2>Arbitrage Finder</h2>
+      <p>Bet both sides at different books. Lock in guaranteed profit no matter who wins. 74+ live opportunities right now across 9 sports.</p>
+      <ul class="bullets">
+        <li><b>74 arb opportunities</b> live right now</li>
+        <li>Best profit: <b>+13.24% guaranteed</b> on $200</li>
+        <li><b>Exact stakes</b> calculated for every bet</li>
+        <li>MLB, NBA, NHL, MLS, UFC, Boxing, EPL + more</li>
+        <li>One-click <b>BET →</b> links to the right book</li>
+      </ul>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">
+        <span class="mockup-title">⚡ Arbitrage <span class="live-badge">GUARANTEED PROFIT</span></span>
+      </div>
+      <div class="mockup-stats">
+        <div class="mstat"><div class="mstat-l">ARB Opportunities</div><div class="mstat-v">74</div></div>
+        <div class="mstat"><div class="mstat-l">Best Profit</div><div class="mstat-v gn">+13.24%</div></div>
+        <div class="mstat"><div class="mstat-l">Avg Profit</div><div class="mstat-v">1.52%</div></div>
+        <div class="mstat"><div class="mstat-l">Sports Scanned</div><div class="mstat-v">16</div></div>
+      </div>
+      <div class="arb-card">
+        <div class="arb-row">
+          <div>
+            <div class="arb-tag">✓ TRUE ARB · MLB</div>
+            <div class="arb-game">Chicago Cubs vs New York Mets</div>
+            <div class="arb-league">Apr 18, 11:21 AM · LIVE</div>
+          </div>
+          <div class="arb-profit">
+            <div class="arb-pct">+13.24%</div>
+            <div class="arb-amt">+$26.49 on $200</div>
+          </div>
+        </div>
+        <div class="arb-bet-row">
+          <div class="arb-bet">
+            <div class="arb-bet-team">Chicago Cubs</div>
+            <div><span class="arb-bet-book pinnacle">Pinnacle</span></div>
+            <div class="arb-odd">-133</div>
+            <div class="arb-stake">Stake: $180.26 of $200</div>
+            <button class="bet-btn">BET →</button>
+          </div>
+          <div class="arb-bet">
+            <div class="arb-bet-team">New York Mets</div>
+            <div><span class="arb-bet-book" style="background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.2);color:var(--green)">Fanatics</span></div>
+            <div class="arb-odd">+1500</div>
+            <div class="arb-stake">Stake: $19.74 of $200</div>
+            <button class="bet-btn">BET →</button>
+          </div>
+        </div>
+        <div class="arb-row">
+          <div>
+            <div class="arb-tag">✓ TRUE ARB · NHL</div>
+            <div class="arb-game">Carolina Hurricanes vs Ottawa Senators</div>
+            <div class="arb-league">Apr 18, 12:20 PM · LIVE</div>
+          </div>
+          <div class="arb-profit">
+            <div class="arb-pct">+5.42%</div>
+            <div class="arb-amt">+$10.85 on $200</div>
+          </div>
+        </div>
+        <div class="arb-bet-row">
+          <div class="arb-bet">
+            <div class="arb-bet-team">Hurricanes</div>
+            <div><span class="arb-bet-book betmgm">BetMGM</span></div>
+            <div class="arb-odd">-110</div>
+            <div class="arb-stake">Stake: $136.05 of $200</div>
+            <button class="bet-btn">BET →</button>
+          </div>
+          <div class="arb-bet">
+            <div class="arb-bet-team">Ottawa Senators</div>
+            <div><span class="arb-bet-book draftkings">DraftKings</span></div>
+            <div class="arb-odd">+340</div>
+            <div class="arb-stake">Stake: $52.39 of $200</div>
+            <button class="bet-btn">BET →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-inner rev">
+    <div class="section-text">
+      <span class="section-label blue">Math-Backed · Long-Term Edge</span>
+      <h2>Positive EV Scanner</h2>
+      <p>Every line compared to Pinnacle's sharp consensus. If the true probability beats the implied odds — we surface it. 147+ bets found today with avg +4.2% EV.</p>
+      <ul class="bullets">
+        <li><b>147 +EV bets</b> found across all sports today</li>
+        <li>Burnley <b>+609 @ Pinnacle</b> — +7.1% EV</li>
+        <li>D.C. United <b>+417 @ Pinnacle</b> — +8.2% EV</li>
+        <li><b>Fair line shown</b> — see exactly why it's +EV</li>
+        <li>Filter by sport, EV%, time &amp; market type</li>
+      </ul>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">
+        <span class="mockup-title">📊 Positive EV Bets</span>
+        <span style="font-family:var(--fm);font-size:10px;color:var(--accent)">147 bets found</span>
+      </div>
+      <div class="mockup-stats">
+        <div class="mstat"><div class="mstat-l">EV Bets Found</div><div class="mstat-v">147</div></div>
+        <div class="mstat"><div class="mstat-l">Avg EV %</div><div class="mstat-v gn">+4.2%</div></div>
+        <div class="mstat"><div class="mstat-l">Sports Scanned</div><div class="mstat-v">4</div></div>
+        <div class="mstat"><div class="mstat-l">Updated</div><div class="mstat-v" style="font-size:13px">Auto 90s</div></div>
+      </div>
+      <div class="ev-table">
+        <div class="ev-table-head">
+          <span>Outcome / Game</span><span>Best Book</span><span>Best Odds</span><span>Fair Odds</span><span>EV %</span>
+        </div>
+        <div class="ev-row">
+          <div><div class="ev-sport epl">EPL</div><div class="ev-outcome">Burnley</div><div class="ev-game">Nottm Forest vs Burnley · Apr 19</div></div>
+          <div><span class="ev-book" style="background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);color:var(--yellow)">Pinnacle</span></div>
+          <div class="ev-odds">+609</div>
+          <div class="ev-fair">+562</div>
+          <div class="ev-pct">+7.1%</div>
+        </div>
+        <div class="ev-row">
+          <div><div class="ev-sport mls">MLS</div><div class="ev-outcome">D.C. United</div><div class="ev-game">Philadelphia Union vs D.C. United · Today</div></div>
+          <div><span class="ev-book" style="background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);color:var(--yellow)">Pinnacle</span></div>
+          <div class="ev-odds">+417</div>
+          <div class="ev-fair">+378</div>
+          <div class="ev-pct">+8.2%</div>
+        </div>
+        <div class="ev-row">
+          <div><div class="ev-sport mlb">MLB</div><div class="ev-outcome">Colorado Rockies</div><div class="ev-game">Rockies vs Dodgers · Today 5:11 PM</div></div>
+          <div><span class="ev-book" style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);color:var(--green)">Fliff</span></div>
+          <div class="ev-odds">+265</div>
+          <div class="ev-fair">+243</div>
+          <div class="ev-pct">+6.6%</div>
+        </div>
+        <div class="ev-row">
+          <div><div class="ev-sport nba">NBA</div><div class="ev-outcome">Phoenix Suns</div><div class="ev-game">OKC Thunder vs Phoenix Suns · Apr 19</div></div>
+          <div><span class="ev-book" style="background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.2);color:var(--red)">BetMGM</span></div>
+          <div class="ev-odds">+725</div>
+          <div class="ev-fair">+673</div>
+          <div class="ev-pct">+6.7%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="section-label yellow">Delivered Every Morning by 9AM ET</span>
+      <h2>Expert Daily Picks</h2>
+      <p>Top picks with full analysis every morning — the bet, the book, the exact odds, and exactly why we're backing it. 68% win rate over 847 picks.</p>
+      <ul class="bullets">
+        <li><b>20 picks delivered</b> today across 3 sports</li>
+        <li>Average EV: <b>+4.1% per pick</b></li>
+        <li><b>Win probability score</b> on every play</li>
+        <li>Full reasoning — not just a pick, a <b>conviction</b></li>
+        <li>Best book highlighted for every pick</li>
+      </ul>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">
+        <span class="mockup-title">🎯 Today's Expert Picks</span>
+      </div>
+      <div class="mockup-stats">
+        <div class="mstat"><div class="mstat-l">Picks Today</div><div class="mstat-v">20</div></div>
+        <div class="mstat"><div class="mstat-l">Avg EV</div><div class="mstat-v gn">+4.1%</div></div>
+        <div class="mstat"><div class="mstat-l">Sports</div><div class="mstat-v">3</div></div>
+        <div class="mstat"><div class="mstat-l">Updated</div><div class="mstat-v yw" style="font-size:13px">9AM ET</div></div>
+      </div>
+      <div>
+        <div class="pick-card">
+          <div class="pick-meta">
+            <span class="pick-league">EPL · NOTTINGHAM FOREST VS BURNLEY</span>
+            <div class="pick-conf">
+              <div class="pick-bar"><div class="pick-bar-fill" style="width:81%;background:var(--accent)"></div></div>
+              <span class="pick-conf-n">81%</span>
+              <span class="pick-pend">PENDING</span>
+            </div>
+          </div>
+          <div class="pick-name">Burnley <span style="color:var(--muted);font-size:12px;font-weight:400">· LIVE</span></div>
+          <div class="pick-odds-row">
+            <span class="pick-odds">+609</span>
+            <span class="pick-at">@</span>
+            <span style="background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);color:var(--yellow);font-family:var(--fm);font-size:10px;padding:2px 8px;border-radius:4px;">Pinnacle</span>
+            <span class="pick-ev-badge">+7.1% EV</span>
+          </div>
+          <div class="pick-reason">Strong +EV opportunity. True probability significantly better than implied odds. Fair line: +562. Best available: +609 @ Pinnacle.</div>
+        </div>
+        <div class="pick-card">
+          <div class="pick-meta">
+            <span class="pick-league">MLS · PHILADELPHIA UNION VS D.C. UNITED</span>
+            <div class="pick-conf">
+              <div class="pick-bar"><div class="pick-bar-fill" style="width:85%;background:var(--green)"></div></div>
+              <span class="pick-conf-n">85%</span>
+              <span class="pick-pend">PENDING</span>
+            </div>
+          </div>
+          <div class="pick-name">D.C. United</div>
+          <div class="pick-odds-row">
+            <span class="pick-odds">+417</span>
+            <span class="pick-at">@</span>
+            <span style="background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);color:var(--yellow);font-family:var(--fm);font-size:10px;padding:2px 8px;border-radius:4px;">Pinnacle</span>
+            <span class="pick-ev-badge">+8.2% EV</span>
+          </div>
+          <div class="pick-reason">Book has mispriced this line vs. the consensus market. Bet before it corrects. Fair line: +378. Best available: +417 @ Pinnacle.</div>
+        </div>
+        <div class="pick-card">
+          <div class="pick-meta">
+            <span class="pick-league">MLB · ROCKIES VS DODGERS</span>
+            <div class="pick-conf">
+              <div class="pick-bar"><div class="pick-bar-fill" style="width:80%;background:var(--yellow)"></div></div>
+              <span class="pick-conf-n">80%</span>
+              <span class="pick-pend">PENDING</span>
+            </div>
+          </div>
+          <div class="pick-name">Colorado Rockies</div>
+          <div class="pick-odds-row">
+            <span class="pick-odds">+265</span>
+            <span class="pick-at">@</span>
+            <span style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);color:var(--green);font-family:var(--fm);font-size:10px;padding:2px 8px;border-radius:4px;">Fliff</span>
+            <span class="pick-ev-badge">+6.6% EV</span>
+          </div>
+          <div class="pick-reason">Strong +EV opportunity. Fair line: +243. Best available: +265 @ Fliff.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-inner rev">
+    <div class="section-text">
+      <span class="section-label red">Updates Every 90 Seconds</span>
+      <h2>Live Now</h2>
+      <p>Every game happening now across 16 sports — live scores, best EV on active lines, odds from all 15 books side by side. Best EV live: +33% right now.</p>
+      <ul class="bullets">
+        <li><b>22 games</b> live or starting soon</li>
+        <li>Chelsea vs Man Utd: <b>+11.0% best EV live</b></li>
+        <li>NBA Playoffs: <b>Nuggets vs Timberwolves LIVE</b></li>
+        <li>Live scores embedded in every card</li>
+        <li>One-click <b>BET →</b> to the best book</li>
+      </ul>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">
+        <span class="mockup-title">🔴 Live Now <span class="live-badge">LIVE ODDS</span></span>
+      </div>
+      <div class="mockup-stats">
+        <div class="mstat"><div class="mstat-l">Live/Soon</div><div class="mstat-v">22</div></div>
+        <div class="mstat"><div class="mstat-l">Starting Soon</div><div class="mstat-v">2</div></div>
+        <div class="mstat"><div class="mstat-l">Best EV Live</div><div class="mstat-v gn">+33.0%</div></div>
+        <div class="mstat"><div class="mstat-l">Auto Refresh</div><div class="mstat-v" style="font-size:13px">90s</div></div>
+      </div>
+      <div>
+        <div class="live-card">
+          <div class="live-card-header">
+            <div class="live-card-game">
+              <span class="live-card-league" style="background:rgba(0,230,118,0.1);color:var(--green)">MLS</span>
+              <span class="live-card-name">CF Montreal vs New York Red Bulls</span>
+              <span class="live-badge" style="font-size:8px;">LIVE</span>
+            </div>
+            <span class="live-card-ev">+33.0% BEST EV</span>
+          </div>
+          <div class="live-odds-grid">
+            <div class="live-odds-cell">
+              <div class="live-team">CF Montreal</div>
+              <div class="live-odd">-2000</div>
+              <span class="live-book-tag" style="background:rgba(0,230,118,0.1);color:var(--green);">FanDuel</span>
+            </div>
+            <div class="live-odds-cell">
+              <div class="live-team">Draw</div>
+              <div class="live-odd">+8000</div>
+              <span class="live-book-tag" style="background:rgba(0,230,118,0.1);color:var(--green);">Fanatics</span>
+            </div>
+            <div class="live-odds-cell">
+              <div class="live-team">New York Red Bulls</div>
+              <div class="live-odd">+13000</div>
+              <span class="live-book-tag" style="background:rgba(0,230,118,0.1);color:var(--green);">Fanatics</span>
+            </div>
+          </div>
+        </div>
+        <div class="live-card">
+          <div class="live-card-header">
+            <div class="live-card-game">
+              <span class="live-card-league" style="background:rgba(59,130,246,0.1);color:var(--accent)">EPL</span>
+              <span class="live-card-name">Chelsea vs Manchester United</span>
+              <span class="live-badge" style="font-size:8px;">LIVE</span>
+            </div>
+            <span class="live-card-ev">+11.0% BEST EV</span>
+          </div>
+          <div class="live-odds-grid">
+            <div class="live-odds-cell">
+              <div class="live-team">Chelsea</div>
+              <div class="live-odd">+550</div>
+              <span class="live-book-tag" style="background:rgba(59,130,246,0.1);color:var(--accent);">DraftKings</span>
+            </div>
+            <div class="live-odds-cell">
+              <div class="live-team">Man United</div>
+              <div class="live-odd">-127</div>
+              <span class="live-book-tag" style="background:rgba(245,200,66,0.1);color:var(--yellow);">Pinnacle</span>
+            </div>
+            <div class="live-odds-cell">
+              <div class="live-team">Draw</div>
+              <div class="live-odd">+250</div>
+              <span class="live-book-tag" style="background:rgba(139,92,246,0.1);color:#a78bfa;">theScore</span>
+            </div>
+          </div>
+        </div>
+        <div class="live-card">
+          <div class="live-card-header">
+            <div class="live-card-game">
+              <span class="live-card-league" style="background:rgba(255,71,87,0.1);color:var(--red)">NBA</span>
+              <span class="live-card-name">Nuggets vs Timberwolves</span>
+              <span class="live-badge" style="font-size:8px;background:rgba(255,71,87,0.15);border-color:rgba(255,71,87,0.3);color:var(--red)">LIVE 30-23</span>
+            </div>
+            <span class="live-card-ev" style="color:var(--accent)">+8.1% BEST EV</span>
+          </div>
+          <div class="live-odds-grid">
+            <div class="live-odds-cell">
+              <div class="live-team">Denver Nuggets</div>
+              <div class="live-odd">-145</div>
+              <span class="live-book-tag" style="background:rgba(245,200,66,0.1);color:var(--yellow);">Pinnacle</span>
+            </div>
+            <div class="live-odds-cell">
+              <div class="live-team">Minnesota</div>
+              <div class="live-odd">+128</div>
+              <span class="live-book-tag" style="background:rgba(59,130,246,0.1);color:var(--accent);">DraftKings</span>
+            </div>
+            <div class="live-odds-cell" style="opacity:0.4;">
+              <div class="live-team" style="font-size:9px;color:var(--muted)">8 books scanning...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Ready to Start Winning?</h2>
+  <p>Join hundreds of members using math to beat the books. 7-day free trial, cancel anytime, no card required.</p>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-tier">Starter</div>
+      <div class="plan-price">$39<span>/mo</span></div>
+      <div class="plan-desc">Top picks, odds compare, calculators, bet tracker, Discord.</div>
+      <a href="https://whop.com/prime-edge-picks/the-sharp-0c/" target="_blank" class="plan-btn g">Start Free — 7 Days →</a>
+    </div>
+    <div class="plan feat">
+      <div class="plan-pop">Most Popular</div>
+      <div class="plan-tier">Pro</div>
+      <div class="plan-price">$99<span>/mo</span></div>
+      <div class="plan-desc">Everything + full EV scanner, arb finder, live alerts, props.</div>
+      <a href="https://whop.com/prime-edge-picks/the-edge-28/" target="_blank" class="plan-btn p">Go Pro — 7 Days Free →</a>
+    </div>
+  </div>
+  <p class="scarcity">⚡ <span>Only 31 Pro spots at $99/mo</span> — increases to $149 when full</p>
+</section>
+
+<footer class="footer">
+  <span class="footer-txt">© 2026 Prime Edge Picks · Beat the books with real math.</span>
+  <a href="https://www.primeedgepicks.com" style="color:#475569;font-size:12px;text-decoration:none;">← Back to site</a>
+</footer>
+
+</body>
+</html>
