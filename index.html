@@ -1874,12 +1874,206 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLegalModal();})
 
 <script>
 (function(){
-var scoresCache={},scoresLastFetch=0,CACHE_MS=90000;
-function fetchScores(cb){var now=Date.now();if(now-scoresLastFetch<CACHE_MS&&Object.keys(scoresCache).length>0){if(cb)cb();return;}fetch("/api/scores").then(function(r){return r.json()}).then(function(data){var games=Array.isArray(data)?data:(data.games||data.data||[]);scoresCache={};games.forEach(function(g){var k1=(g.home_team||"").toLowerCase()+"|"+(g.away_team||"").toLowerCase();var k2=(g.away_team||"").toLowerCase()+"|"+(g.home_team||"").toLowerCase();scoresCache[k1]=g;scoresCache[k2]=g});scoresLastFetch=now;if(cb)cb();injectScores(games);renderLivePanel(games)}).catch(function(e){console.error("Scores:",e);if(cb)cb()})}
-function gsd(g){if(!g)return{hs:"--",as:"--",st:""};var hs="--",as="--";if(Array.isArray(g.scores))g.scores.forEach(function(s){if(s.name===g.home_team)hs=s.score!=null?s.score:"--";if(s.name===g.away_team)as=s.score!=null?s.score:"--"});return{hs:hs,as:as,st:g.completed?"FINAL":(g.last_update?"LIVE":"")}}
-function injectScores(games){document.querySelectorAll(".live-score-injected").forEach(function(e){e.remove()});var rows=document.querySelectorAll("div[style],tr");rows.forEach(function(row){var txt=row.textContent||"";games.forEach(function(g){if(!g.home_team||!g.away_team)return;if(txt.indexOf(g.home_team)>-1||txt.indexOf(g.away_team)>-1){var sd=gsd(g);if(sd.hs==="--"&&sd.as==="--"&&!sd.st)return;if(row.querySelector(".live-score-injected"))return;var b=document.createElement("span");b.className="live-score-injected";b.style.cssText="display:inline-flex;align-items:center;gap:4px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-left:6px;color:#fff;white-space:nowrap";var col=sd.st==="LIVE"?"#ef4444":sd.st==="FINAL"?"#94a3b8":"#3b82f6";var dot=sd.st==="LIVE"?"<span style=\"width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block\"></span>":"";b.innerHTML=dot+"<span style=\"color:"+col+";font-size:10px\">"+sd.st+"</span> "+sd.as+"-"+sd.hs;var cells=row.querySelectorAll("td,div");for(var i=0;i<cells.length;i++){if((cells[i].textContent||"").indexOf(g.home_team)>-1||(cells[i].textContent||"").indexOf(g.away_team)>-1){cells[i].appendChild(b);break}}}})})}
-function renderLivePanel(games){var p=document.getElementById("panel-live");if(!p)return;var live=games.filter(function(g){return g.last_update&&!g.completed});var upcoming=games.filter(function(g){return!g.last_update&&!g.completed});var done=games.filter(function(g){return g.completed});var all2=live.concat(upcoming);p.querySelectorAll("[id^=count-]").forEach(function(el){var sk=el.id.replace("count-","");var c=0;all2.forEach(function(g){if(g.sport_key===sk)c++});el.textContent=c});var gc=document.getElementById("live-games");if(!gc){var divs=p.querySelectorAll("div");for(var i=0;i<divs.length;i++){if((divs[i].textContent||"").indexOf("Scanning")>-1&&divs[i].children.length<3){gc=document.createElement("div");gc.id="live-games";gc.style.cssText="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:16px 0";divs[i].innerHTML="";divs[i].appendChild(gc);break}}}if(!gc)return;var all=live.concat(upcoming).concat(done);if(!all.length){gc.innerHTML="<div style=\"grid-column:1/-1;text-align:center;padding:40px;color:#5a6480\">No live or upcoming games right now.</div>";return}gc.innerHTML=all.map(function(g){var sd=gsd(g);var sc2=sd.st==="LIVE"?"#ef4444":sd.st==="FINAL"?"#64748b":"var(--accent,#3b82f6)";var bc=sd.st==="LIVE"?"#ef4444":"var(--border,#1e2536)";var lg=g.sport_title||g.sport_key||"";var dot=sd.st==="LIVE"?"<span style=\"width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;margin-right:4px\"></span>":"";var tm="";if(g.commence_time&&!g.completed&&!g.last_update){var d=new Date(g.commence_time);tm=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}return"<div data-sport-key=\""+(g.sport_key||"")+"\" style=\"background:var(--card,#141820);border:1px solid "+bc+";border-left:3px solid "+sc2+";border-radius:10px;padding:14px\"><div style=\"display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#5a6480);margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase\"><span>"+lg+"</span><span style=\"color:"+sc2+";font-weight:700\">"+dot+(sd.st||tm||"UPCOMING")+"</span></div><div style=\"display:flex;justify-content:space-between;align-items:center;padding:6px 0;color:#fff\"><span style=\"font-size:14px\">"+( g.away_team||"TBD")+"</span><strong style=\"font-size:20px\">"+sd.as+"</strong></div><div style=\"display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--border,#1e2536);color:#fff\"><span style=\"font-size:14px\">"+(g.home_team||"TBD")+"</span><strong style=\"font-size:20px\">"+sd.hs+"</strong></div></div>"}).join("");p.querySelectorAll("[id^=sport-]").forEach(function(btn){if(btn._w)return;btn._w=true;btn.addEventListener("click",function(){var sk=this.id.replace("sport-","");gc.querySelectorAll("[data-sport-key]").forEach(function(c){c.style.display=(sk==="all"||!sk||c.getAttribute("data-sport-key").indexOf(sk)>-1)?"":"none"})})})}
-var _o=window.showTab;window.showTab=function(id,btn){if(_o)_o(id,btn);setTimeout(fetchScores,300)};fetchScores();setInterval(fetchScores,CACHE_MS);var obs=new MutationObserver(function(m){var u=false;m.forEach(function(x){if(x.addedNodes.length)u=true});if(u)setTimeout(fetchScores,500)});obs.observe(document.getElementById("app")||document.body,{childList:true,subtree:true})
+// === SCORES SYSTEM ===
+// Makes scores globally accessible so renderLiveRows, renderOdds, etc. can use them
+window._scoresCache={};
+window._scoresGames=[];
+var scoresLastFetch=0,CACHE_MS=90000;
+
+// Lookup score for a game by team names
+window.getGameScore=function(homeTeam,awayTeam){
+  if(!homeTeam||!awayTeam)return null;
+  var k1=homeTeam.toLowerCase()+"|"+awayTeam.toLowerCase();
+  var k2=awayTeam.toLowerCase()+"|"+homeTeam.toLowerCase();
+  return window._scoresCache[k1]||window._scoresCache[k2]||null;
+};
+
+// Get score display data from a scores API game object
+window.getScoreDisplay=function(g){
+  if(!g)return{hs:"--",as:"--",status:"",hasScore:false};
+  var hs="--",as="--";
+  if(Array.isArray(g.scores)){
+    g.scores.forEach(function(s){
+      if(s.name===g.home_team)hs=s.score!=null?s.score:"--";
+      if(s.name===g.away_team)as=s.score!=null?s.score:"--";
+    });
+  }
+  var status=g.completed?"FINAL":(g.last_update?"LIVE":"");
+  var hasScore=(hs!=="--"||as!=="--"||status!=="");
+  return{hs:hs,as:as,status:status,hasScore:hasScore};
+};
+
+// Build an inline score badge HTML string for a game
+window.scoreBadge=function(homeTeam,awayTeam){
+  var g=window.getGameScore(homeTeam,awayTeam);
+  if(!g)return"";
+  var sd=window.getScoreDisplay(g);
+  if(!sd.hasScore)return"";
+  var col=sd.status==="LIVE"?"#ef4444":sd.status==="FINAL"?"#94a3b8":"#3b82f6";
+  var bgCol=sd.status==="LIVE"?"rgba(239,68,68,0.12)":"rgba(59,130,246,0.12)";
+  var borderCol=sd.status==="LIVE"?"rgba(239,68,68,0.35)":"rgba(59,130,246,0.3)";
+  var dot=sd.status==="LIVE"?'<span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;animation:pulse 1.5s infinite"></span>':"";
+  return '<span class="live-score-badge" style="display:inline-flex;align-items:center;gap:5px;background:'+bgCol+';border:1px solid '+borderCol+';border-radius:6px;padding:3px 10px;font-size:12px;font-weight:800;margin-left:8px;color:#fff;white-space:nowrap;font-family:var(--fm);">'+dot+'<span style="color:'+col+';font-size:10px;font-weight:700;">'+sd.status+'</span> <span>'+sd.as+'</span><span style="color:var(--muted);">-</span><span>'+sd.hs+'</span></span>';
+};
+
+// Build a full scoreboard block (for Live Now panel cards)
+window.scoreBlock=function(homeTeam,awayTeam){
+  var g=window.getGameScore(homeTeam,awayTeam);
+  if(!g)return"";
+  var sd=window.getScoreDisplay(g);
+  if(!sd.hasScore)return"";
+  var col=sd.status==="LIVE"?"#ef4444":sd.status==="FINAL"?"#64748b":"var(--accent)";
+  var dot=sd.status==="LIVE"?'<span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;animation:pulse 1.5s infinite;margin-right:4px;"></span>':"";
+  return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin:0 20px 16px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:'+col+';text-transform:uppercase;">'+dot+sd.status+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;"><span style="font-size:13px;color:var(--text);">'+awayTeam+'</span><span style="font-size:22px;font-weight:900;color:#fff;font-family:var(--fm);">'+sd.as+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-top:1px solid var(--border);"><span style="font-size:13px;color:var(--text);">'+homeTeam+'</span><span style="font-size:22px;font-weight:900;color:#fff;font-family:var(--fm);">'+sd.hs+'</span></div>'
+    +'</div>';
+};
+
+function fetchScores(cb){
+  var now=Date.now();
+  if(now-scoresLastFetch<CACHE_MS&&window._scoresGames.length>0){if(cb)cb();return;}
+  fetch("/api/scores").then(function(r){return r.json()}).then(function(data){
+    var games=Array.isArray(data)?data:(data.games||data.data||[]);
+    window._scoresCache={};
+    window._scoresGames=games;
+    games.forEach(function(g){
+      var k1=(g.home_team||"").toLowerCase()+"|"+(g.away_team||"").toLowerCase();
+      var k2=(g.away_team||"").toLowerCase()+"|"+(g.home_team||"").toLowerCase();
+      window._scoresCache[k1]=g;
+      window._scoresCache[k2]=g;
+    });
+    scoresLastFetch=now;
+    if(cb)cb();
+    // Inject scores into existing rendered panels
+    injectScoreBadges();
+  }).catch(function(e){console.error("Scores:",e);if(cb)cb();});
+}
+
+// Inject score badges into already-rendered game cards across all panels
+function injectScoreBadges(){
+  // Remove old badges first
+  document.querySelectorAll(".live-score-badge").forEach(function(e){e.remove()});
+
+  // Target .arb-game-name elements (used in Live Now, Arb cards)
+  document.querySelectorAll(".arb-game-name").forEach(function(el){
+    var txt=el.textContent||"";
+    var parts=txt.split(" vs ");
+    if(parts.length<2)return;
+    var home=parts[0].trim();
+    var away=parts[1].trim();
+    var badge=window.scoreBadge(home,away);
+    if(badge)el.insertAdjacentHTML("beforeend",badge);
+  });
+
+  // Target .game-teams elements (used in EV, Low Hold, Middles panels)
+  document.querySelectorAll(".game-teams").forEach(function(el){
+    var txt=el.textContent||"";
+    var parts=txt.split(" vs ");
+    if(parts.length<2)return;
+    var home=parts[0].trim();
+    var away=parts[1].trim();
+    var badge=window.scoreBadge(home,away);
+    if(badge)el.insertAdjacentHTML("beforeend",badge);
+  });
+
+  // Target odds comparison rows
+  document.querySelectorAll(".odds-compare-row").forEach(function(row){
+    var nameEl=row.querySelector("div[style] > div[style]");
+    if(!nameEl)return;
+    var txt=nameEl.textContent||"";
+    var parts=txt.split(" vs ");
+    if(parts.length<2)return;
+    var home=parts[0].trim();
+    var away=parts[1].trim();
+    if(nameEl.querySelector(".live-score-badge"))return;
+    var badge=window.scoreBadge(home,away);
+    if(badge)nameEl.insertAdjacentHTML("beforeend",badge);
+  });
+
+  // Inject scoreBlock into Live Now arb-cards (below the odds row)
+  document.querySelectorAll("#live-rows .arb-card").forEach(function(card){
+    if(card.querySelector(".live-score-block"))return;
+    var nameEl=card.querySelector(".arb-game-name");
+    if(!nameEl)return;
+    var txt=nameEl.textContent.replace(/LIVE|FINAL|\d+-\d+/g,"").trim();
+    var parts=txt.split(" vs ");
+    if(parts.length<2)return;
+    var home=parts[0].trim();
+    var away=parts[1].trim();
+    var block=window.scoreBlock(home,away);
+    if(block){
+      var wrapper=document.createElement("div");
+      wrapper.className="live-score-block";
+      wrapper.innerHTML=block;
+      // Insert before the odds row
+      var oddsRow=card.querySelector("div[style*='display:flex'][style*='overflow-x']");
+      if(oddsRow)card.insertBefore(wrapper,oddsRow);
+      else card.appendChild(wrapper);
+    }
+  });
+
+  // Target pick cards
+  document.querySelectorAll(".pick-game").forEach(function(el){
+    if(el.querySelector(".live-score-badge"))return;
+    // Pick cards show just the pick name, not "X vs Y" — check parent for game info
+    var card=el.closest(".pick-card");
+    if(!card)return;
+    var sportEl=card.querySelector(".pick-sport");
+    if(!sportEl)return;
+    var gameTxt=sportEl.textContent||"";
+    var parts=gameTxt.split(" vs ");
+    if(parts.length<2)return;
+    var home=parts[0].trim();
+    var away=parts[1].trim();
+    var badge=window.scoreBadge(home,away);
+    if(badge)el.insertAdjacentHTML("beforeend",badge);
+  });
+}
+
+// Re-inject after any panel renders
+var origRenderLiveRows=window.renderLiveRows;
+if(origRenderLiveRows){
+  window.renderLiveRows=function(){origRenderLiveRows();setTimeout(injectScoreBadges,100);};
+}
+var origRenderEVRows=window.renderEVRows;
+if(origRenderEVRows){
+  window.renderEVRows=function(){origRenderEVRows();setTimeout(injectScoreBadges,100);};
+}
+var origRenderPicksRows=window.renderPicksRows;
+if(origRenderPicksRows){
+  window.renderPicksRows=function(){origRenderPicksRows();setTimeout(injectScoreBadges,100);};
+}
+var origRenderOdds=window.renderOdds;
+if(origRenderOdds){
+  window.renderOdds=function(d,demo){origRenderOdds(d,demo);setTimeout(injectScoreBadges,100);};
+}
+var origRenderArbRows=window.renderArbRows;
+if(origRenderArbRows){
+  window.renderArbRows=function(){origRenderArbRows();setTimeout(injectScoreBadges,100);};
+}
+var origRenderLowHold=window.renderLowHold;
+if(origRenderLowHold){
+  window.renderLowHold=function(d,demo){origRenderLowHold(d,demo);setTimeout(injectScoreBadges,100);};
+}
+
+// Hook into tab switching
+var _origShowTab=window.showTab;
+window.showTab=function(id,btn){if(_origShowTab)_origShowTab(id,btn);setTimeout(function(){fetchScores();},300);};
+
+// Start fetching scores
+fetchScores();
+setInterval(fetchScores,CACHE_MS);
+
+// Also re-inject when DOM changes (new data loaded)
+var _scoreObs=new MutationObserver(function(mutations){
+  var dominated=false;
+  mutations.forEach(function(m){if(m.addedNodes.length>2)dominated=true;});
+  if(dominated&&window._scoresGames.length>0)setTimeout(injectScoreBadges,200);
+});
+_scoreObs.observe(document.getElementById("app")||document.body,{childList:true,subtree:true});
+
 })();
 </script>
 </body>
