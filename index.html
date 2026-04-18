@@ -603,7 +603,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
       <!-- LIVE NOW -->
       <div id="panel-live" class="panel">
         <div class="section-title">🔴 Live Now <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);margin-left:8px;"><div class="live-dot-red"></div>LIVE ODDS</div></div>
-        <div class="section-sub">All sports — games live or starting within 4 hours.</div>
+        <div class="section-sub">All sports — games live or starting within 24 hours.</div>
         <div class="stats-bar">
           <div class="stat-card"><div class="stat-label">Live/Soon</div><div class="stat-value" id="live-count" style="color:var(--red)">—</div><div class="stat-sub">all sports</div></div>
           <div class="stat-card"><div class="stat-label">Starting Soon</div><div class="stat-value" id="live-soon" style="color:var(--yellow)">—</div><div class="stat-sub">within 2 hrs</div></div>
@@ -1534,7 +1534,7 @@ async function loadAllLiveSports(){
 
 async function fetchSportLive(sportConfig){
   try{
-    const now=Date.now();const cutoff=now+14400000;const lookback=now-21600000;
+    const now=Date.now();const cutoff=now+86400000;const lookback=now-21600000;
     // Fetch upcoming odds + live scores in parallel
     const [oddsData,scoresResp]=await Promise.all([
       fetchSport(sportConfig.key),
@@ -1556,7 +1556,7 @@ function filterLiveSport(el,sport){document.querySelectorAll('#live-sport-filter
 function renderLiveRows(){
   const now=Date.now();
   const filtered=liveFilter==='all'?allLiveResults:allLiveResults.filter(g=>g.sportLabel===liveFilter);
-  if(!filtered.length){document.getElementById('live-rows').innerHTML=`<div class="info-box">ℹ️ No live or upcoming games${liveFilter!=='all'?' for '+liveFilter:''} in the next 4 hours.</div>`;return;}
+  if(!filtered.length){document.getElementById('live-rows').innerHTML=`<div class="info-box">ℹ️ No live or upcoming games${liveFilter!=='all'?' for '+liveFilter:''} in the next 24 hours.</div>`;return;}
   document.getElementById('live-rows').innerHTML=filtered.map(g=>{
     const t=new Date(g.commence_time).getTime();const isLive=t<=now;const minsUntil=Math.round((t-now)/60000);
     const timeLabel=isLive?'<span style="color:var(--red);font-weight:700;font-family:var(--fm);">● LIVE</span>':minsUntil<60?`<span style="color:var(--yellow);font-family:var(--fm);">⚡ ${minsUntil}m</span>`:`<span style="color:var(--muted);font-family:var(--fm);">${fmtT(g.commence_time)}</span>`;
