@@ -2386,9 +2386,27 @@ async function doSignIn(){
   err.textContent='Signing in...';err.style.color='#94a3b8';
   var r=await _supa.auth.signInWithPassword({email:email,password:pw});
   if(r.error){err.textContent=r.error.message;err.style.color='#ff4757';return;}
-  localStorage.setItem('pep_auth','1');
-  document.getElementById('login-modal').style.display='none';
-  try{enterApp();}catch(e){}
+  var _chkEmail = email;
+  document.getElementById('si-err').style.color='#94a3b8';
+  document.getElementById('si-err').textContent='Checking membership...';
+  fetch('/api/check-membership?email='+encodeURIComponent(_chkEmail))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.active){
+        localStorage.setItem('pep_auth','1');
+        document.getElementById('login-modal').style.display='none';
+        try{enterApp();}catch(e){}
+      } else {
+        document.getElementById('si-err').style.color='#ff4757';
+        document.getElementById('si-err').innerHTML='No active subscription. <a href="https://whop.com/prime-edge-picks/" target="_blank" style="color:#3b82f6;text-decoration:underline;">Subscribe here →</a>';
+        _supa.auth.signOut();
+      }
+    })
+    .catch(function(){
+      localStorage.setItem('pep_auth','1');
+      document.getElementById('login-modal').style.display='none';
+      try{enterApp();}catch(e){}
+    });
 }
 async function doSignUp(){
   var name=document.getElementById('su-name').value.trim();
