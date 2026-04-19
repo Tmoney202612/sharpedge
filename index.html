@@ -2552,9 +2552,17 @@ window.addEventListener('load',function(){
     });
   } else if(hash.includes('type=signup')||hash.includes('type=magiclink')){
     _supa.auth.getSession().then(function(res){
-      if(res.data.session){
-        localStorage.setItem('pep_auth','1');
-        setTimeout(function(){try{enterApp();}catch(e){}},500);
+      if(res.data.session && res.data.session.user){
+        var email=res.data.session.user.email;
+        fetch('/api/check-membership?email='+encodeURIComponent(email)).then(function(r){return r.json();}).then(function(d){
+          if(d.active){
+            localStorage.setItem('pep_auth','1');
+            localStorage.setItem('pep_plan_active',d.plan||'edge');
+            setTimeout(function(){try{enterApp();setTimeout(function(){applyPlanRestrictions(d.plan||'edge');},600);}catch(e){}},500);
+          } else {
+            showLogin();
+          }
+        }).catch(function(){showLogin();});
       }
     });
   }
