@@ -500,11 +500,11 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
     <div id="api-status"></div>
     <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Get Started →</button>
     <button class="btn-ghost" id="header-demo" onclick="showLogin()">🔒 Member Login</button>
-  <button class="btn-ghost" id="header-logout" style="display:none;font-size:12px;" onclick="doLogout()">Sign Out
+  <button class="btn-ghost" id="header-logout" style="display:none;font-size:12px;" onclick="doLogout()">Sign Out</button>
   </div>
 </header>
 
-<div id="urgency-bar" style="background:linear-gradient(90deg,#1a0a00,#2d1200,#1a0a00);border-bottom:1px solid rgba(245,200,66,0.3);padding:8px 24px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:12px;font-family:var(--fm);position:relative;z-index:99;"><span style="color:var(--yellow);font-weight:700;">⚡ LIMITED: Only 31 Pro spots remain at $99/mo — price increases to $149 when full</span><span style="color:var(--border)">|</span><span style="color:var(--muted);">🔒 Join Now · Cancel Anytime</span></div>
+<div id="urgency-bar" style="background:linear-gradient(90deg,#1a0a00,#2d1200,#1a0a00);border-bottom:1px solid rgba(245,200,66,0.3);padding:8px 24px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:12px;font-family:var(--fm);position:relative;z-index:99;"><span style="color:var(--yellow);font-weight:700;">⚡ LIMITED: Only 31 Pro spots remain at $99/mo — price increases to $149 when full</span><span style="color:var(--border)">|</span><span id="urgency-right" style="color:var(--muted);">🔒 Join Now · Cancel Anytime</span></div>
 <!-- LANDING -->
 <div id="landing">
 
@@ -2479,8 +2479,10 @@ function doLogout(){
   _supa.auth.signOut().then(function(){
     document.getElementById('app').style.display='none';
     document.getElementById('landing').style.display='';
-    document.getElementById('header-logout').style.display='none';
-    document.getElementById('header-demo').style.display='';
+    var lo=document.getElementById('header-logout');if(lo)lo.style.display='none';
+    var hd=document.getElementById('header-demo');if(hd)hd.style.display='';
+    // Show urgency bar sign message
+    var ur=document.getElementById('urgency-right');if(ur)ur.textContent='🔒 Join Now · Cancel Anytime';
   });
 }
 document.addEventListener('keydown',function(e){
