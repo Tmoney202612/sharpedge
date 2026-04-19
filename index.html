@@ -976,7 +976,7 @@ function enterApp(){localStorage.setItem('pep_auth','1');
   _s('sticky-bar','transform','translateY(100%)');
   window.onscroll=null;
   inApp=true;
-  renderPromos();renderTracker();
+  try{renderPromos();}catch(e){} try{renderTracker();}catch(e){}
   loadSingleSport();
   loadAllArbSports();
   loadAllEVSports();
