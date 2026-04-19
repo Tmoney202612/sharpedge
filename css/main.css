@@ -494,3 +494,71 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 .tstat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
 .tcard-verified{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--accent);font-weight:600;}
 .tcard-verified-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+
+/* ── 2-column hero layout ────────────────────────────────────── */
+.hero-2col{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:48px;
+  align-items:center;
+  max-width:1200px;
+  margin:0 auto;
+  padding:72px 40px 60px;
+  overflow:hidden;
+}
+
+/* Blue radial glow behind headline */
+.hero-2col::before{
+  content:'';
+  position:absolute;
+  top:-100px;
+  left:-10%;
+  width:600px;
+  height:500px;
+  background:radial-gradient(ellipse at center,rgba(59,130,246,0.12) 0%,transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.hero-left{position:relative;z-index:1;}
+.hero-left h1{font-size:clamp(38px,4.5vw,62px);font-weight:900;line-height:1.02;letter-spacing:-2.5px;color:#fff;margin-bottom:18px;}
+.hero-left p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px;max-width:480px;}
+
+.hero-right{position:relative;z-index:1;}
+
+/* Ambient floating odds numbers */
+.ambient-odds{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.ambient-odds span{
+  position:absolute;
+  font-family:var(--fm);
+  font-size:13px;
+  font-weight:600;
+  color:#3b82f6;
+  opacity:0.07;
+}
+
+/* Enhanced grid lines */
+body::before{
+  background-image:
+    linear-gradient(rgba(59,130,246,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.05) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+
+/* Responsive — stack on mobile */
+@media(max-width:860px){
+  .hero-2col{
+    grid-template-columns:1fr;
+    padding:48px 20px 40px;
+    gap:32px;
+  }
+  .ambient-odds{display:none;}
+}
