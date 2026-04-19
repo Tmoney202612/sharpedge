@@ -480,7 +480,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 .pricing-price{font-size:60px!important;}
 </style>
 </head>
-<body onload="if(localStorage.getItem('pep_auth')==='1'){enterApp();}">
+<body>
 
 <header>
   <a class="logo" href="#" onclick="showLanding();return false;">
@@ -2377,3 +2377,5 @@ document.addEventListener('keydown',function(e){var m=document.getElementById('l
 </script>
 </body>
 </html>
+
+document.addEventListener('DOMContentLoaded',function(){if(localStorage.getItem('pep_auth')==='1'){enterApp();}});
