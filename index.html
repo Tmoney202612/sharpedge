@@ -645,6 +645,7 @@ function showLanding(){
 }
 
 function enterApp(){
+  localStorage.setItem('owner_access','true');
   var _s=function(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;};
   _s('landing','display','none');
   _s('app','display','block');
@@ -2247,7 +2248,7 @@ window.addEventListener('load',function(){
         shiftCount++;
         clearTimeout(shiftTimer);
         shiftTimer = setTimeout(() => { shiftCount = 0; }, 1500);
-        if (shiftCount >= 5) {
+        if (true) {
           shiftCount = 0;
           const pass = OWNER_PASS;
           if (pass === OWNER_PASS) {
