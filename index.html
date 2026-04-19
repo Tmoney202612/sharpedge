@@ -485,7 +485,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 
 <header>
   <a class="logo" href="#" onclick="showLanding();return false;">
-    <div class="logo-mark"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+    <div class="logo-mark" style="width:36px;height:36px;flex-shrink:0;"><svg viewBox="0 0 24 24" width="36" height="36"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
     <div class="logo-text">Prime Edge <span>Picks</span></div>
   </a>
   <div class="header-right">
@@ -971,7 +971,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 <!-- CHAT -->
 <div class="chat-bubble">
   <div class="chat-window" id="chat-window">
-    <div class="chat-header"><div class="chat-avatar">⚡</div><div class="chat-header-info"><div class="chat-header-name">Prime Edge Support</div><div class="chat-header-status"><div class="chat-status-dot"></div>Online now</div></div><button onclick="toggleChat()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 0 0 8px;">×</button></div>
+    <div class="chat-header"><div class="chat-avatar" style="width:34px;height:34px;flex-shrink:0;">⚡</div><div class="chat-header-info"><div class="chat-header-name">Prime Edge Support</div><div class="chat-header-status"><div class="chat-status-dot"></div>Online now</div></div><button onclick="toggleChat()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 0 0 8px;">×</button></div>
     <div class="chat-messages" id="chat-messages"><div class="msg msg-bot">Hey! 👋 Welcome to Prime Edge Picks. What do you need?</div></div>
     <div class="chat-suggestions"><button class="chat-suggestion" onclick="sendSuggestion('What is +EV betting?')">What is +EV?</button><button class="chat-suggestion" onclick="sendSuggestion('How does arbitrage work?')">How does arb work?</button><button class="chat-suggestion" onclick="sendSuggestion('Which sportsbooks do I need?')">Which books?</button></div>
     <div class="chat-input-row"><input class="chat-input" id="chat-input" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendChat()"/><button class="chat-send" onclick="sendChat()">Send</button></div>
