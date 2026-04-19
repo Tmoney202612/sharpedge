@@ -972,7 +972,7 @@ function renderArbRows(){
   if(!container)return;
   if(!filtered.length){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';return;}
   const STAKE=200;
-  container.innerHTML=DOMPurify.sanitize(filtered.map(o=>{
+  container.innerHTML=filtered.map(o=>{
     const leg1=o.leg1,leg2=o.leg2,leg3=o.leg3;if(!leg1||!leg2)return'';
     const gameDate=o.commenceTime?new Date(o.commenceTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
     const isLive=o.commenceTime&&new Date(o.commenceTime)<new Date();
@@ -1101,7 +1101,7 @@ function renderEVRows(){
   else if(evDateFilter==='week'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+604800000);}
   else if(evDateFilter==='best'){filtered=filtered.sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev)).slice(0,30);}
   if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "All Upcoming" for more results.</div>';return;}
-  document.getElementById('ev-rows').innerHTML=DOMPurify.sanitize(filtered.map(r=>`
+  document.getElementById('ev-rows').innerHTML=filtered.map(r=>`
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
       <div><div class="arb-sport-badge" style="background:${r.sportBg};color:${r.sportColor};border:1px solid ${r.sportColor}40;font-size:8px;">${r.sportEmoji} ${r.sport}</div></div>
       <div><div class="game-teams">${r.name}</div><div class="game-meta">${r.game} · ${fmtT(r.time)}</div></div>
@@ -1143,7 +1143,7 @@ function renderPicksRows(){
     'Value bet confirmed by no-vig fair line calculation. Act fast.',
     'Statistical edge confirmed. EV positive based on 90-day closing line analysis.',
   ];
-  document.getElementById('picks-container').innerHTML=DOMPurify.sanitize(filtered.map((p,i)=>`
+  document.getElementById('picks-container').innerHTML=filtered.map((p,i)=>`
     <div class="pick-card">
       <div class="pick-header">
         <div style="display:flex;align-items:center;gap:8px;">
@@ -1213,7 +1213,7 @@ function renderLiveRows(){
   const now=Date.now();
   const filtered=liveFilter==='all'?allLiveResults:allLiveResults.filter(g=>g.sportLabel===liveFilter);
   if(!filtered.length){document.getElementById('live-rows').innerHTML=`<div class="info-box">ℹ️ No live or upcoming games${liveFilter!=='all'?' for '+liveFilter:''} in the next 24 hours.</div>`;return;}
-  document.getElementById('live-rows').innerHTML=DOMPurify.sanitize(filtered.map(g=>{
+  document.getElementById('live-rows').innerHTML=filtered.map(g=>{
     const t=new Date(g.commence_time).getTime();const isLive=t<=now;const minsUntil=Math.round((t-now)/60000);
     const timeLabel=isLive?'<span style="color:var(--red);font-weight:700;font-family:var(--fm);">● LIVE</span>':minsUntil<60?`<span style="color:var(--yellow);font-family:var(--fm);">⚡ ${minsUntil}m</span>`:`<span style="color:var(--muted);font-family:var(--fm);">${fmtT(g.commence_time)}</span>`;
     const books=g.bookmakers||[];
@@ -1246,7 +1246,7 @@ async function loadSingleSport(){
 
 function renderOdds(data,isDemo){
   if(isDemo||!data.length){document.getElementById('odds-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB.</div>';return;}
-  document.getElementById('odds-rows').innerHTML=DOMPurify.sanitize(data.map(g=>{
+  document.getElementById('odds-rows').innerHTML=data.map(g=>{
     const books=g.bookmakers||[];if(!books.length)return'';
     const h=g.home_team,a=g.away_team;
     const bo=books.map(bm=>{const mk=bm.markets?.[0];if(!mk)return null;const hO=mk.outcomes.find(o=>o.name===h);const aO=mk.outcomes.find(o=>o.name===a);if(!hO||!aO||!validOdds(hO.price)||!validOdds(aO.price))return null;return{book:bm.title,h:hO.price,a:aO.price};}).filter(Boolean);
@@ -1355,7 +1355,7 @@ function initBookSelector(){
 }
 function renderBookGrid(containerId,books){
   const c=document.getElementById(containerId);if(!c)return;
-  c.innerHTML=DOMPurify.sanitize(books.map(b=>{
+  c.innerHTML=books.map(b=>{
     const sel=!userBooks||userBooks.includes(b);
     return `<div onclick="toggleBook(this,'${b.replace(/'/g,"\\'")}')" style="background:${sel?'rgba(59,130,246,0.1)':'var(--surface)'};border:1px solid ${sel?'rgba(59,130,246,0.2)':'var(--border)'};border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:all 0.15s;" data-book="${b}" data-selected="${sel}"><div style="font-size:11px;font-weight:700;color:${sel?'var(--accent)':'var(--muted)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sel?'✓ ':''}${b}</div></div>`;
   }).join('');
@@ -1822,7 +1822,7 @@ function renderSharpRows(){
   if(window._sharpFilter==='heavy')games=games.filter(g=>g.isHeavy);
   else if(window._sharpFilter==='reverse')games=games.filter(g=>g.isReverse);
   if(!games.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;">NO SIGNALS FOR THIS FILTER</div>';return;}
-  rows.innerHTML=DOMPurify.sanitize(games.slice(0,25).map(g=>{
+  rows.innerHTML=games.slice(0,25).map(g=>{
     // Recalculate signal based on correct interpretation
     var pinAbs2=Math.abs(g.pin), dkAbs2=Math.abs(g.dk);
     var isRealSharp = (g.pin<0 && g.dk<0 && pinAbs2<dkAbs2) || (g.pin>0 && g.dk>0 && g.pin>g.dk);
