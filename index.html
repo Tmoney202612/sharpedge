@@ -622,10 +622,10 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
     <button class="tab-btn" onclick="showTab('live',this)">🔴 Live Now</button>
     <button class="tab-btn active" onclick="showTab('picks',this)">🎯 Daily Picks</button>
     <button class="tab-btn" onclick="showTab('ev',this)">📈 Positive EV</button>
-    <button class="tab-btn" onclick="showTab('arb',this)">🔄 Arbitrage</button><button class="tab-btn" onclick="showTab('lowhold',this)">💎 Low Hold</button><button class="tab-btn" onclick="showTab('middles',this)">🎯 Middles</button>
-    <button class="tab-btn" onclick="showTab('parlay',this)">🎲 Parlay Builder</button>
-    <button class="tab-btn" onclick="showTab('odds',this)">📊 Odds Compare</button>
-    <button class="tab-btn" onclick="showTab('tracker',this)">📋 Bet Tracker</button>
+    <button class="tab-btn" onclick="showTab('arb',this)" class="tab-btn pro-only">🔄 Arbitrage</button><button class="tab-btn" onclick="showTab('lowhold',this)">💎 Low Hold</button><button class="tab-btn" onclick="showTab('middles',this)" class="tab-btn pro-only">🎯 Middles</button>
+    <button class="tab-btn" onclick="showTab('parlay',this)" class="tab-btn pro-only">🎲 Parlay Builder</button>
+    <button class="tab-btn" onclick="showTab('odds',this)" class="tab-btn pro-only">📊 Odds Compare</button>
+    <button class="tab-btn" onclick="showTab('tracker',this)" class="tab-btn pro-only">📋 Bet Tracker</button>
     <button class="tab-btn" onclick="showTab('calc',this)">🔢 Calculators</button>
     <button class="tab-btn" onclick="showTab('promos',this)">🎁 Promos</button>
     <button class="tab-btn" onclick="showTab('tools',this)">🔧 More Tools</button>
@@ -2394,8 +2394,9 @@ async function doSignIn(){
     .then(function(d){
       if(d.active){
         localStorage.setItem('pep_auth','1');
+        localStorage.setItem('pep_plan_active',d.plan||'edge');
         document.getElementById('login-modal').style.display='none';
-        try{enterApp();}catch(e){}
+        try{enterApp();setTimeout(function(){applyPlanRestrictions(d.plan||'edge');},600);}catch(e){}
       } else {
         document.getElementById('si-err').style.color='#ff4757';
         document.getElementById('si-err').innerHTML='No active subscription. <a href="https://whop.com/prime-edge-picks/" target="_blank" style="color:#3b82f6;text-decoration:underline;">Subscribe here →</a>';
@@ -2436,6 +2437,7 @@ async function forgotPassword(){
   document.getElementById('si-err').style.color='#00e676';
   document.getElementById('si-err').textContent='✓ Password reset email sent!';
 }
+function applyPlanRestrictions(plan){if(!plan||plan==='sharp')return;var locked=['arb','middles','parlay','odds','tracker','sharp'];locked.forEach(function(id){var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'");});if(btn){btn.style.opacity='0.4';btn.onclick=function(e){e.preventDefault();e.stopPropagation();if(confirm('This feature requires The Sharp plan ($99/mo). Upgrade now?')){window.open('https://whop.com/joined/prime-edge-picks/products/the-sharp-0c/','_blank');}return false;};}});}
 function doLogin(){doSignIn();}
 document.addEventListener('keydown',function(e){
   var m=document.getElementById('login-modal');
