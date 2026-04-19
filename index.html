@@ -2447,6 +2447,8 @@ function showUpgradeModal(feature){
   m.style.display='flex';
 }
 function applyPlanRestrictions(plan){
+  // Owner bypass — always full pro access
+  if(localStorage.getItem('owner_access')==='true') return;
   if(!plan||plan==='sharp')return;
   var locked=[
     {id:'arb',name:'Arbitrage Finder'},
