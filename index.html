@@ -2284,15 +2284,30 @@ function renderSharpRows(){
     var sc=isRealSharp?(g.diff>=25?'var(--green)':'var(--accent)'):'var(--muted)';
     var t=new Date(g.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     var pinAbs=Math.abs(g.pin), dkAbs=Math.abs(g.dk);
-    var note;
+    var note, thePlay;
+    var bestPublicBook = Math.abs(g.dk) <= Math.abs(g.fd||g.dk) ? 'DraftKings' : 'FanDuel';
+    var bestPublicOdds = Math.abs(g.dk) <= Math.abs(g.fd||g.dk) ? g.dk : (g.fd||g.dk);
+    var bestPublicStr = (bestPublicOdds>0?'+':'')+bestPublicOdds;
     if(g.pin<0 && g.dk<0){
-      // Both favorites - lower absolute = less juice = sharps have bet this down
-      note = pinAbs < dkAbs ? 'Sharp money on '+g.team+' — Pinnacle has less juice than public books' : 'Public books overpriced on '+g.team+' — fade opportunity or wait for line to move';
+      if(pinAbs < dkAbs){
+        note = 'Sharp money on '+g.team+' — Pinnacle has less juice than public books';
+        thePlay = '🎯 Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+') — sharps are on this side';
+      } else {
+        // Find the other team name - it's the opposite outcome
+        note = 'Public books overpriced on '+g.team+' — sharp money may be on the other side';
+        thePlay = '🎯 Consider the opposing team — public is inflating '+g.team+''s price at DK/FD';
+      }
     } else if(g.pin>0 && g.dk>0){
-      // Both underdogs - higher price at Pinnacle = sharps like this dog
-      note = g.pin > g.dk ? 'Sharp money on '+g.team+' — Pinnacle offering better underdog price' : 'Public books giving more on '+g.team+' — Pinnacle sees less value here';
+      if(g.pin > g.dk){
+        note = 'Sharp money on '+g.team+' — Pinnacle offering better underdog price';
+        thePlay = '🎯 Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+') — Pinnacle likes them more than public does';
+      } else {
+        note = 'Public books giving more on '+g.team+' — Pinnacle sees less value here';
+        thePlay = '🎯 Skip '+g.team+' — public books are inflating the odds, Pinnacle disagrees';
+      }
     } else {
       note = 'Mixed signals on '+g.team+' — Pinnacle and public books disagree on side';
+      thePlay = '🎯 Avoid — unclear signal, books are split on which side wins';
     }
     return '<div class="pick-card" style="border-left:3px solid '+sc+';margin-bottom:8px;">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'+
@@ -2309,6 +2324,7 @@ function renderSharpRows(){
         '<div style="margin-left:auto;text-align:right;"><div style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">LINE GAP</div><div style="font-family:var(--fm);font-size:26px;font-weight:700;color:'+sc+';">'+g.diff+' pts</div></div>'+
       '</div>'+
       '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:#94a3b8;">'+note+'</div>'+
+      '<div style="margin-top:6px;font-size:12px;font-weight:600;color:#fff;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);border-radius:6px;padding:7px 12px;">'+thePlay+'</div>'+
     '</div>';
   }).join('');
 }
