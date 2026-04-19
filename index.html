@@ -485,6 +485,10 @@
   <div id="panel-sharp" class="panel">
         <div class="section-title">🔥 Sharp Money Tracker</div>
         <div class="section-sub">Where sharp money is going — Pinnacle vs public books, line gaps, steam moves.</div>
+<div class="mode-toggle" style="display:flex;gap:6px;align-items:center;margin:14px 0;">
+<button id="sharp-prematch-btn" onclick="setSharpMode('prematch')" class="mode-btn active" style="padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;">Pre-Match</button>
+<button id="sharp-live-btn" onclick="setSharpMode('live')" class="mode-btn" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;">🔴 Live</button>
+</div>
         <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:8px;padding:16px;margin-bottom:16px;font-size:13px;color:#94a3b8;line-height:1.8;">
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;">💡 How this works — in plain English</div>
           <p style="margin-bottom:8px;">Pinnacle is a sportsbook that <strong style="color:#fff">never limits sharp bettors</strong>. That means when their odds look different from DraftKings or FanDuel, it's because <strong style="color:#fff">professional bettors have already bet that line</strong>.</p>
@@ -954,8 +958,45 @@ async function fetchSportArbs(sport,market='h2h'){
 
 function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');arbFilter=sport;renderArbRows();}
 
+// Pre-Match / Live toggle state
+let arbMode='prematch';
+let evMode='prematch';
+let sharpMode='prematch';
+
+function setArbMode(mode){
+  arbMode=mode;
+  document.getElementById('arb-prematch-btn').style.background=mode==='prematch'?'var(--accent)':'transparent';
+  document.getElementById('arb-prematch-btn').style.color=mode==='prematch'?'#fff':'var(--muted)';
+  document.getElementById('arb-prematch-btn').style.borderColor=mode==='prematch'?'var(--accent)':'var(--border)';
+  document.getElementById('arb-live-btn').style.background=mode==='live'?'#ff4757':'transparent';
+  document.getElementById('arb-live-btn').style.color=mode==='live'?'#fff':'var(--muted)';
+  document.getElementById('arb-live-btn').style.borderColor=mode==='live'?'#ff4757':'var(--border)';
+  renderArbRows();
+}
+function setEvMode(mode){
+  evMode=mode;
+  document.getElementById('ev-prematch-btn').style.background=mode==='prematch'?'var(--accent)':'transparent';
+  document.getElementById('ev-prematch-btn').style.color=mode==='prematch'?'#fff':'var(--muted)';
+  document.getElementById('ev-prematch-btn').style.borderColor=mode==='prematch'?'var(--accent)':'var(--border)';
+  document.getElementById('ev-live-btn').style.background=mode==='live'?'#ff4757':'transparent';
+  document.getElementById('ev-live-btn').style.color=mode==='live'?'#fff':'var(--muted)';
+  document.getElementById('ev-live-btn').style.borderColor=mode==='live'?'#ff4757':'var(--border)';
+  renderEVRows();
+}
+function setSharpMode(mode){
+  sharpMode=mode;
+  const spb=document.getElementById('sharp-prematch-btn');
+  const slb=document.getElementById('sharp-live-btn');
+  if(spb){spb.style.background=mode==='prematch'?'var(--accent)':'transparent';spb.style.color=mode==='prematch'?'#fff':'var(--muted)';spb.style.borderColor=mode==='prematch'?'var(--accent)':'var(--border)';}
+  if(slb){slb.style.background=mode==='live'?'#ff4757':'transparent';slb.style.color=mode==='live'?'#fff':'var(--muted)';slb.style.borderColor=mode==='live'?'#ff4757':'var(--border)';}
+  renderSharpRows();
+}
+
 function renderArbRows(){
   let filtered;
+const now=new Date();
+if(arbMode==='live'){filtered=(window.allArbOpps||[]).filter(o=>o.commenceTime&&new Date(o.commenceTime)<=now);}
+else{filtered=(window.allArbOpps||[]).filter(o=>!o.commenceTime||new Date(o.commenceTime)>now);}
   if(arbFilter==='all')filtered=allArbOpps;
   else if(arbFilter==='polymarket')filtered=allArbOpps.filter(o=>o.isPolymarket);
   else filtered=allArbOpps.filter(o=>o.sportLabel===arbFilter);
@@ -1100,7 +1141,10 @@ function renderEVRows(){
   if(evDateFilter==='today'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+86400000);}
   else if(evDateFilter==='week'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+604800000);}
   else if(evDateFilter==='best'){filtered=filtered.sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev)).slice(0,30);}
-  if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "All Upcoming" for more results.</div>';return;}
+  // Pre-Match / Live toggle filter
+if(evMode==='live'){filtered=filtered.filter(r=>r.commenceTime&&new Date(r.commenceTime)<=new Date());}
+else{filtered=filtered.filter(r=>!r.commenceTime||new Date(r.commenceTime)>new Date());}
+if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "All Upcoming" for more results.</div>';return;}
   document.getElementById('ev-rows').innerHTML=filtered.map(r=>`
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
       <div><div class="arb-sport-badge" style="background:${r.sportBg};color:${r.sportColor};border:1px solid ${r.sportColor}40;font-size:8px;">${r.sportEmoji} ${r.sport}</div></div>
@@ -1822,7 +1866,11 @@ function renderSharpRows(){
   if(window._sharpFilter==='heavy')games=games.filter(g=>g.isHeavy);
   else if(window._sharpFilter==='reverse')games=games.filter(g=>g.isReverse);
   if(!games.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;">NO SIGNALS FOR THIS FILTER</div>';return;}
-  rows.innerHTML=games.slice(0,25).map(g=>{
+  // Pre-Match / Live toggle filter
+const _now=new Date();
+if(sharpMode==='live'){games=games.filter(g=>g.commence_time&&new Date(g.commence_time)<=_now);}
+else{games=games.filter(g=>!g.commence_time||new Date(g.commence_time)>_now);}
+rows.innerHTML=games.slice(0,25).map(g=>{
     // Recalculate signal based on correct interpretation
     var pinAbs2=Math.abs(g.pin), dkAbs2=Math.abs(g.dk);
     var isRealSharp = (g.pin<0 && g.dk<0 && pinAbs2<dkAbs2) || (g.pin>0 && g.dk>0 && g.pin>g.dk);
