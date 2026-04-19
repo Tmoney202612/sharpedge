@@ -273,10 +273,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .scanner-tab.active{color:var(--accent);background:rgba(59,130,246,0.1);}
 .scanner-body{padding:14px;}
 .scanner-row{display:grid;grid-template-columns:auto 2fr 1fr 1fr 1fr;gap:12px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;opacity:0;animation:scannerFadeIn 0.5s ease forwards;}
-.scanner-row:nth-child(1){animation-delay:0.3s;}
-.scanner-row:nth-child(2){animation-delay:0.8s;}
-.scanner-row:nth-child(3){animation-delay:1.3s;}
-.scanner-row:nth-child(4){animation-delay:1.8s;}
+/* Scanner animation timing - edit vars to adjust all rows at once */
+:root{--scanner-delay-base:0.3s;--scanner-delay-step:0.5s;}
+.scanner-row:nth-child(1){animation-delay:var(--scanner-delay-base);}
+.scanner-row:nth-child(2){animation-delay:calc(var(--scanner-delay-base) + var(--scanner-delay-step));}
+.scanner-row:nth-child(3){animation-delay:calc(var(--scanner-delay-base) + var(--scanner-delay-step) * 2);}
+.scanner-row:nth-child(4){animation-delay:calc(var(--scanner-delay-base) + var(--scanner-delay-step) * 3);}
 @keyframes scannerFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .scanner-sport{font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:4px;text-transform:uppercase;}
 .scanner-game{font-size:12px;font-weight:700;color:#fff;}
