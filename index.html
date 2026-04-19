@@ -851,6 +851,30 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
       <!-- FIX 4: Added missing <div tag -->
       <div id="panel-odds" class="panel">
         <div class="section-title">📊 Live Odds Comparison</div>
+        
+<div style="padding:16px 0;">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <button onclick="setOddsWidget('basketball_nba')" id="ow-nba" class="btn-ghost" style="font-size:11px;padding:5px 12px;background:rgba(59,130,246,0.15);border-color:#3b82f6;color:#3b82f6;">🏀 NBA</button>
+    <button onclick="setOddsWidget('baseball_mlb')" id="ow-mlb" class="btn-ghost" style="font-size:11px;padding:5px 12px;">⚾ MLB</button>
+    <button onclick="setOddsWidget('icehockey_nhl')" id="ow-nhl" class="btn-ghost" style="font-size:11px;padding:5px 12px;">🏒 NHL</button>
+    <button onclick="setOddsWidget('mma_mixed_martial_arts')" id="ow-mma" class="btn-ghost" style="font-size:11px;padding:5px 12px;">🥊 MMA</button>
+    <button onclick="setOddsWidget('soccer_usa_mls')" id="ow-mls" class="btn-ghost" style="font-size:11px;padding:5px 12px;">⚽ MLS</button>
+  </div>
+  <iframe id="odds-widget-frame" title="Sports Odds Widget" style="width:100%;height:600px;border:1px solid #1a2235;border-radius:8px;" src="https://widget.the-odds-api.com/v1/sports/basketball_nba/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total"></iframe>
+</div>
+<script>
+function setOddsWidget(sport){
+  var frame=document.getElementById('odds-widget-frame');
+  frame.src='https://widget.the-odds-api.com/v1/sports/'+sport+'/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total';
+  ['nba','mlb','nhl','mma','mls'].forEach(function(s){
+    var btn=document.getElementById('ow-'+s);
+    if(btn){btn.style.background='';btn.style.borderColor='';btn.style.color='';}
+  });
+  var key=sport.includes('nba')?'nba':sport.includes('mlb')?'mlb':sport.includes('nhl')?'nhl':sport.includes('mma')?'mma':'mls';
+  var active=document.getElementById('ow-'+key);
+  if(active){active.style.background='rgba(59,130,246,0.15)';active.style.borderColor='#3b82f6';active.style.color='#3b82f6';}
+}
+</script>
         <div class="section-sub">Real-time odds across all major books. Best price in green.</div>
         <div id="odds-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
       </div>
