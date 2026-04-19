@@ -53,53 +53,73 @@
 <!-- LANDING -->
 <div id="landing">
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-badge">📊 2025 Record: 68% Hit Rate · +22% ROI · 847 Members · Updated by 9AM ET</div>
-    <h1>Stop Guessing.<br><span>Start Winning.</span></h1>
-    <p>Expert +EV picks by 9AM. Live arbitrage scanner. Real-time odds comparison across 15 books. We do the math — you collect.</p>
-    <div class="hero-btns">
-      <button class="hero-btn-primary" onclick="showLogin();setTimeout(function(){switchTab('signup');},100)">Get Started →</button>
-      <button class="hero-btn-secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">View Plans</button>
-    </div>
-    <div class="hero-stats-bar">
-      <div class="hero-stat"><span class="hero-stat-num">68%</span><span class="hero-stat-lbl">Win Rate</span></div>
-      <div class="hero-stat"><span class="hero-stat-num">+22%</span><span class="hero-stat-lbl">Avg ROI</span></div>
-      <div class="hero-stat"><span class="hero-stat-num">847+</span><span class="hero-stat-lbl">Members</span></div>
-      <div class="hero-stat"><span class="hero-stat-num">9AM</span><span class="hero-stat-lbl">Daily Picks</span></div>
-    </div>
-  </div>
+  <!-- HERO 2-COLUMN -->
+  <div class="hero-2col">
 
-  <!-- LIVE PREVIEW -->
-  <div class="scanner-preview-wrap">
-    <div class="scanner-preview-label">⚡ Live Scanner Preview</div>
-    <div class="scanner-preview-card">
-      <div class="scanner-preview-header">
-        <span><span class="live-dot"></span> Live +EV Scanner</span>
-        <span style="color:var(--accent)">234 bets found today</span>
+    <!-- Ambient background odds numbers -->
+    <div class="ambient-odds" aria-hidden="true">
+      <span style="top:80px;left:2%">+245</span>
+      <span style="top:180px;left:1%">-110</span>
+      <span style="top:280px;left:3%">+380</span>
+      <span style="top:120px;left:6%;font-size:10px;">7.6% ARB</span>
+      <span style="top:320px;left:2%;font-size:10px;">+5.2% EV</span>
+      <span style="top:80px;right:2%">-144</span>
+      <span style="top:200px;right:1%">+520</span>
+      <span style="top:300px;right:3%">-175</span>
+      <span style="top:140px;right:6%;font-size:10px;">+14.5% ARB</span>
+      <span style="top:340px;right:2%;font-size:10px;">+6.9% EV</span>
+    </div>
+
+    <!-- Left: Headline + CTA -->
+    <div class="hero-left">
+      <div class="hero-badge">📊 2025 Record: 68% Hit Rate · +22% ROI · 847 Members · Updated by 9AM ET</div>
+      <h1>Stop Guessing.<br><span>Start Winning.</span></h1>
+      <p>Expert +EV picks by 9AM. Live arbitrage scanner. Real-time odds comparison across 15 books. We do the math — you collect.</p>
+      <div class="hero-btns">
+        <button class="btn-primary hero-cta" onclick="showLogin()">Get Started →</button>
+        <button class="hero-btn-secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">View Plans</button>
       </div>
-      <div class="scanner-row">
-        <div><div class="scanner-sport">🏀 NBA · Moneyline</div><div class="scanner-game">Celtics ML</div><div class="scanner-time">Celtics vs Bucks · Today 7:30 PM</div></div>
-        <div style="text-align:right"><div class="scanner-odds">-145</div><div class="scanner-ev">+5.2% EV</div><div class="scanner-book">DraftKings</div></div>
-      </div>
-      <div class="scanner-row">
-        <div><div class="scanner-sport">⚾ MLB · Spread</div><div class="scanner-game">Dodgers -1.5</div><div class="scanner-time">Dodgers vs Padres · Today 9:10 PM</div></div>
-        <div style="text-align:right"><div class="scanner-odds">+135</div><div class="scanner-ev">+4.8% EV</div><div class="scanner-book">FanDuel</div></div>
-      </div>
-      <div class="scanner-row">
-        <div><div class="scanner-sport">🏒 NHL · ARB</div><div class="scanner-game">Rangers ML + Hurricanes ML</div><div class="scanner-time">Rangers vs Hurricanes · Today 7:00 PM</div></div>
-        <div style="text-align:right"><div class="scanner-odds" style="color:var(--green)">+3.2% ARB</div><div class="scanner-book">BetMGM / Pinnacle</div></div>
-      </div>
-      <div class="scanner-blur-row">
-        <div><div class="scanner-sport">🥊 UFC · ML</div><div class="scanner-game">Burns ML</div></div>
-        <div style="text-align:right"><div class="scanner-odds">-160</div><div class="scanner-ev">+3.1% EV</div></div>
-      </div>
-      <div class="scanner-unlock">
-        <button onclick="showLogin()" class="scanner-unlock-btn">🔒 Unlock Full Access — 7 Days Free</button>
+      <div class="hero-stats-bar">
+        <div class="hero-stat"><span class="hero-stat-num">68%</span><span class="hero-stat-lbl">Win Rate</span></div>
+        <div class="hero-stat"><span class="hero-stat-num">+22%</span><span class="hero-stat-lbl">Avg ROI</span></div>
+        <div class="hero-stat"><span class="hero-stat-num">847+</span><span class="hero-stat-lbl">Members</span></div>
+        <div class="hero-stat"><span class="hero-stat-num">9AM</span><span class="hero-stat-lbl">Daily Picks</span></div>
       </div>
     </div>
-  </div>
 
+    <!-- Right: Live scanner preview card -->
+    <div class="hero-right">
+      <div class="scanner-preview-wrap">
+        <div class="scanner-preview-label">⚡ Live Scanner Preview</div>
+        <div class="scanner-preview-card">
+          <div class="scanner-preview-header">
+            <span><span class="live-dot"></span> Live +EV Scanner</span>
+            <span style="color:var(--accent)">234 bets found today</span>
+          </div>
+          <div class="scanner-row">
+            <div><div class="scanner-sport">🏀 NBA · Moneyline</div><div class="scanner-game">Celtics ML</div><div class="scanner-time">Celtics vs Bucks · Today 7:30 PM</div></div>
+            <div style="text-align:right"><div class="scanner-odds">-145</div><div class="scanner-ev">+5.2% EV</div><div class="scanner-book">DraftKings</div></div>
+          </div>
+          <div class="scanner-row">
+            <div><div class="scanner-sport">⚾ MLB · Spread</div><div class="scanner-game">Dodgers -1.5</div><div class="scanner-time">Dodgers vs Padres · Today 9:10 PM</div></div>
+            <div style="text-align:right"><div class="scanner-odds">+135</div><div class="scanner-ev">+4.8% EV</div><div class="scanner-book">FanDuel</div></div>
+          </div>
+          <div class="scanner-row">
+            <div><div class="scanner-sport">🏒 NHL · ARB</div><div class="scanner-game">Rangers ML + Hurricanes ML</div><div class="scanner-time">Rangers vs Hurricanes · Today 7:30 PM</div></div>
+            <div style="text-align:right"><div class="scanner-odds" style="color:var(--green)">+3.2% ARB</div><div class="scanner-book">BetMGM / Pinnacle</div></div>
+          </div>
+          <div class="scanner-blur-row">
+            <div><div class="scanner-sport">🥊 UFC · ML</div><div class="scanner-game">Burns ML</div></div>
+            <div style="text-align:right"><div class="scanner-odds">-160</div><div class="scanner-ev">+3.1% EV</div></div>
+          </div>
+          <div class="scanner-unlock">
+            <button onclick="showLogin()" class="scanner-unlock-btn">🔒 Unlock Full Access — 7 Days Free</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 
 <!-- TESTIMONIALS -->
 <div class="testimonial-section">
