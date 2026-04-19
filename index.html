@@ -594,7 +594,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
           <li>Bet tracker with real-time P/L & ROI</li>
           <li>Discord community</li>
         </ul>
-        <button class="pricing-btn-secondary" onclick="showLogin()">Start Free — 7 Days on Us →</button>
+        <button class="pricing-btn-secondary" onclick="localStorage.setItem('pep_plan','edge');showLogin();setTimeout(function(){switchTab('signup');},100)">Start Free Trial — 7 Days →</button>
       </div>
       <div class="pricing-card pricing-card-featured">
         <div class="pricing-badge">Most Popular</div>
@@ -611,7 +611,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
           <li>Low Hold, Middles & Promo Finder</li>
           <li>Priority Discord + analyst access</li>
         </ul>
-        <button class="pricing-btn-primary" onclick="showLogin();setTimeout(function(){switchTab('signup');},100)">Get Started →</button>
+        <button class="pricing-btn-primary" onclick="localStorage.setItem('pep_plan','sharp');showLogin();setTimeout(function(){switchTab('signup');},100)">Start Free Trial — 7 Days →</button>
       </div>
     </div>
   </div>
@@ -2416,7 +2416,7 @@ async function doSignUp(){
   if(!name||!email||!pw){err.textContent='Please fill in all fields.';return;}
   if(pw.length<6){err.textContent='Password must be at least 6 characters.';return;}
   err.textContent='Creating account...';err.style.color='#94a3b8';
-  var r=await _supa.auth.signUp({email:email,password:pw,options:{data:{full_name:name}}});
+  var r=await _supa.auth.signUp({email:email,password:pw,options:{data:{full_name:name,plan:localStorage.getItem('pep_plan')||'sharp'}}});
   if(r.error){err.textContent=r.error.message;err.style.color='#ff4757';return;}
   // Store email for post-payment reference
   localStorage.setItem('pep_pending_email', email);
@@ -2424,7 +2424,9 @@ async function doSignUp(){
   err.style.color='#00e676';
   err.textContent='✓ Account created! Taking you to subscribe now...';
   setTimeout(function(){
-    window.location.href='https://whop.com/prime-edge-picks/?email='+encodeURIComponent(email);
+    var plan=localStorage.getItem('pep_plan')||'sharp';
+    var whopUrl=plan==='edge'?'https://whop.com/prime-edge-picks/the-edge-28/':'https://whop.com/joined/prime-edge-picks/products/the-sharp-0c/';
+    window.location.href=whopUrl+'?email='+encodeURIComponent(email);
   }, 1500);
 }
 async function forgotPassword(){
