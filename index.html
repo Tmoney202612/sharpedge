@@ -480,7 +480,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 .pricing-price{font-size:60px!important;}
 </style>
 </head>
-<body>
+<body onload="if(localStorage.getItem('pep_auth')==='1'){enterApp();}">
 
 <header>
   <a class="logo" href="#" onclick="showLanding();return false;">
@@ -1063,7 +1063,7 @@ function showLanding(){
   window.onscroll=function(){const bar=document.getElementById('sticky-bar');if(bar&&window.scrollY>400)bar.style.transform='translateY(0)';else if(bar)bar.style.transform='translateY(100%)';};
 }
 
-function enterApp(){
+function enterApp(){localStorage.setItem('pep_auth','1');
   var _s=function(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;};
   _s('landing','display','none');
   _s('app','display','block');
@@ -2342,7 +2342,7 @@ function renderSharpRows(){
 </div>
 <script>
 function showLogin(){var m=document.getElementById('login-modal');m.style.display='flex';setTimeout(function(){document.getElementById('lpw').focus();},100);}
-function doLogin(){var p=document.getElementById('lpw').value,e=document.getElementById('lerr');if(p==='sharpedge2026'){document.getElementById('login-modal').style.display='none';enterApp();}else{e.textContent='Wrong password. Try again.';}}
+function doLogin(){var p=document.getElementById('lpw').value,e=document.getElementById('lerr');if(p==='sharpedge2026'){localStorage.setItem('pep_auth','1');document.getElementById('login-modal').style.display='none';enterApp();}else{e.textContent='Wrong password. Try again.';}}
 document.addEventListener('keydown',function(e){var m=document.getElementById('login-modal');if(m&&m.style.display==='flex'&&e.key==='Enter')doLogin();if(e.key==='Escape'&&m)m.style.display='none';});
 </script>
 </body>
