@@ -1,11 +1,11 @@
-<!DOCTYPE html><!-- v1776567652657 -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Edge Picks — Sports Betting +EV Picks, Arbitrage & Live Odds Scanner</title>
 <meta name="description" content="Beat the sportsbooks with math. Daily +EV picks by 9AM, live arbitrage scanner, odds comparison across 30+ books, and real-time bet tracking. 68% hit rate, +22% ROI. Start your free 7-day trial.">
-<meta name="keywords" content="sports betting, positive EV, arbitrage betting, sports picks, odds comparison, betting calculator, +EV schanner, arb finder, sports betting tools, DraftKings odds, FanDuel odds, BetMGM odds, free betting picks, sports betting ROI">
+<meta name="keywords" content="sports betting, positive EV, arbitrage betting, sports picks, odds comparison, betting calculator, +EV scanner, arb finder, sports betting tools, DraftKings odds, FanDuel odds, BetMGM odds, free betting picks, sports betting ROI">
 <meta name="author" content="Prime Edge Picks">
 <meta name="robots" content="index, follow">
 <meta property="og:title" content="Prime Edge Picks — Beat the Books with Real Math">
@@ -75,9 +75,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .price-btn-outline:hover{border-color:var(--accent);color:var(--accent);}
 .nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;overflow-x:auto;scrollbar-width:none;position:relative;z-index:1;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.odds-sport-btn{font-family:var(--fm);font-size:10px;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .2s;}
-.odds-sport-btn:hover,.odds-sport-btn.active{background:rgba(59,130,246,0.12);border-color:#3b82f6;color:#3b82f6;}
-.odds-sport-btn{font-family:var(--fm);font-size:10px;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .2s;}.odds-sport-btn:hover,.odds-sport-btn.active{background:rgba(59,130,246,0.12);border-color:#3b82f6;color:#3b82f6;}
 .tab-btn{padding:14px 20px;font-family:var(--fh);font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;}
 .tab-btn:hover{color:var(--text);}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
@@ -502,7 +499,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
     <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Start Free Trial →</button>
-    <button class="btn-ghost" id="header-demo" onclick="showLogin()">🔒 Member Login
+    <button class="btn-ghost" id="header-demo" onclick="window.open('https://whop.com/prime-edge-picks/the-sharp-0c/','_blank')">View Live Demo
   </div>
 </header>
 
@@ -853,18 +850,119 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 
       <!-- FIX 4: Added missing <div tag -->
       <div id="panel-odds" class="panel">
-  <div class="section-title">📊 Live Odds Comparison</div>
-  <div class="section-sub">Best lines across all major books — updated live. Green = best available odds.</div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;margin-top:12px;">
-    <button onclick="loadOddsCompare('basketball_nba',this)" class="odds-sport-btn active" id="ocb-nba">🏀 NBA</button>
-    <button onclick="loadOddsCompare('baseball_mlb',this)" class="odds-sport-btn" id="ocb-mlb">⚾ MLB</button>
-    <button onclick="loadOddsCompare('icehockey_nhl',this)" class="odds-sport-btn" id="ocb-nhl">🏒 NHL</button>
-    <button onclick="loadOddsCompare('mma_mixed_martial_arts',this)" class="odds-sport-btn" id="ocb-mma">🥊 MMA</button>
-    <button onclick="loadOddsCompare('soccer_usa_mls',this)" class="odds-sport-btn" id="ocb-mls">⚽ MLS</button>
-  </div>
-  <div id="odds-compare-rows"><div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;font-family:var(--fm);letter-spacing:1px;">⟳ LOADING...</div></div>
-</div>
-<div id="promo-rows" style="display:none;"></div>
+        <div class="section-title">📊 Live Odds Comparison</div>
+        <div class="section-sub">Real-time odds across all major books. Best price in green.</div>
+        <div id="odds-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
+      </div>
+
+      <!-- TRACKER -->
+      <div id="panel-tracker" class="panel">
+        <div class="section-title">📋 Bet Tracker</div>
+        <div class="section-sub">Your full portfolio. P/L and ROI auto-calculated.</div>
+        <div class="add-bet-form">
+          <div style="font-size:15px;font-weight:800;margin-bottom:16px;color:#fff;">➕ Log a Bet</div>
+          <div class="form-grid">
+            <div><label class="calc-label">Game</label><input class="calc-input" id="t-game" placeholder="Lakers vs Warriors"/></div>
+            <div><label class="calc-label">Market / Pick</label><input class="calc-input" id="t-market" placeholder="Lakers ML"/></div>
+            <div><label class="calc-label">Odds</label><input class="calc-input" id="t-odds" placeholder="+150"/></div>
+            <div><label class="calc-label">Stake ($)</label><input class="calc-input" id="t-stake" placeholder="100" type="number"/></div>
+            <div><label class="calc-label">Book</label><select class="calc-input" id="t-book"><option>DraftKings</option><option>FanDuel</option><option>BetMGM</option><option>Caesars</option><option>BetRivers</option></select></div>
+            <div><label class="calc-label">Type</label><select class="calc-input" id="t-type"><option>+EV</option><option>Arbitrage</option><option>Expert Pick</option><option>Standard</option></select></div>
+          </div>
+          <button class="add-bet-btn" onclick="addBet()">+ Add Bet</button>
+        </div>
+        <div class="tracker-stats" id="tracker-stats"></div>
+        <div class="bets-table">
+          <div class="bth"><span>Game / Market</span><span>Book</span><span>Odds</span><span>Stake</span><span>P/L</span><span>Status</span></div>
+          <div id="tracker-rows"></div>
+        </div>
+      </div>
+
+      <!-- CALCULATORS -->
+      <div id="panel-calc" class="panel">
+        <div class="section-title">🔢 Calculators</div>
+        <div class="section-sub">Professional betting math.</div>
+        <div class="calc-grid">
+          <div class="calc-card"><div class="calc-title">📈 EV Calculator</div><div class="calc-desc">Is a bet mathematically profitable?</div><div class="calc-field"><label class="calc-label">Your Odds</label><input class="calc-input" id="ev-your-odds" placeholder="+150"/></div><div class="calc-field"><label class="calc-label">Fair/Sharp Odds</label><input class="calc-input" id="ev-fair-odds" placeholder="+120"/></div><div class="calc-field"><label class="calc-label">Stake ($)</label><input class="calc-input" id="ev-stake" placeholder="100" type="number"/></div><button class="calc-btn" onclick="calcEV()">Calculate EV</button><div class="calc-result" id="ev-result"><div class="result-row"><span class="result-key">Implied Prob</span><span class="result-val" id="ev-impl">—</span></div><div class="result-row"><span class="result-key">True Prob</span><span class="result-val" id="ev-true">—</span></div><div class="result-row"><span class="result-key">EV %</span><span class="result-val" id="ev-pct">—</span></div><div class="result-row"><span class="result-key">Expected Profit</span><span class="result-val" id="ev-profit">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">🔄 Arbitrage Calculator</div><div class="calc-desc">Exact stakes for guaranteed profit.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="arb-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="arb-b" placeholder="+120"/></div><div class="calc-field"><label class="calc-label">Total Bankroll ($)</label><input class="calc-input" id="arb-bank" placeholder="200" type="number"/></div><button class="calc-btn" onclick="calcArb()">Calculate Arb</button><div class="calc-result" id="arb-result"><div class="result-row"><span class="result-key">Stake Side A</span><span class="result-val" id="arb-stake-a">—</span></div><div class="result-row"><span class="result-key">Stake Side B</span><span class="result-val" id="arb-stake-b">—</span></div><div class="result-row"><span class="result-key">Guaranteed Profit</span><span class="result-val" id="arb-profit">—</span></div><div class="result-row"><span class="result-key">Profit %</span><span class="result-val" id="arb-pct">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">💰 Hold / Vig Calculator</div><div class="calc-desc">The book's edge and true no-vig fair odds.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="hold-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="hold-b" placeholder="-110"/></div><button class="calc-btn" onclick="calcHold()">Calculate Hold</button><div class="calc-result" id="hold-result"><div class="result-row"><span class="result-key">Side A Implied</span><span class="result-val" id="hold-a-prob">—</span></div><div class="result-row"><span class="result-key">Side B Implied</span><span class="result-val" id="hold-b-prob">—</span></div><div class="result-row"><span class="result-key">Total Hold (Vig)</span><span class="result-val" id="hold-vig">—</span></div><div class="result-row"><span class="result-key">No-Vig Side A</span><span class="result-val" id="hold-fair-a">—</span></div><div class="result-row"><span class="result-key">No-Vig Side B</span><span class="result-val" id="hold-fair-b">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">📐 Kelly Criterion</div><div class="calc-desc">Optimal bet sizing.</div><div class="calc-field"><label class="calc-label">Bankroll ($)</label><input class="calc-input" id="kelly-bank" placeholder="5000" type="number"/></div><div class="calc-field"><label class="calc-label">Your Odds</label><input class="calc-input" id="kelly-odds" placeholder="+150"/></div><div class="calc-field"><label class="calc-label">Win Prob (%)</label><input class="calc-input" id="kelly-prob" placeholder="45" type="number"/></div><button class="calc-btn" onclick="calcKelly()">Calculate Kelly</button><div class="calc-result" id="kelly-result"><div class="result-row"><span class="result-key">Full Kelly</span><span class="result-val" id="kelly-full">—</span></div><div class="result-row"><span class="result-key">Half Kelly (Recommended)</span><span class="result-val" id="kelly-half">—</span></div><div class="result-row"><span class="result-key">Quarter Kelly (Safe)</span><span class="result-val" id="kelly-quarter">—</span></div><div class="result-row"><span class="result-key">Edge %</span><span class="result-val" id="kelly-edge">—</span></div></div></div>
+        </div>
+      </div>
+
+      <!-- PROMOS -->
+      <div id="panel-promos" class="panel">
+        <div class="section-title">🎁 Promo Finder</div>
+        <div class="section-sub">Best signup bonuses sorted by value.</div>
+        <div id="promo-rows"></div>
+      </div>
+
+      <!-- LOW HOLD -->
+      <div id="panel-lowhold" class="panel">
+        <div class="section-title">💎 Low Hold Bets</div>
+        <div class="section-sub">Markets where the sportsbook's edge is lowest.</div>
+        <div class="stats-bar">
+          <div class="stat-card"><div class="stat-label">Low Hold Bets</div><div class="stat-value" id="lh-count">—</div><div class="stat-sub">under 3% hold</div></div>
+          <div class="stat-card"><div class="stat-label">Avg Hold</div><div class="stat-value" id="lh-avg" style="color:var(--accent2)">—</div></div>
+          <div class="stat-card"><div class="stat-label">Best Hold</div><div class="stat-value" id="lh-best" style="color:var(--yellow)">—</div></div>
+          <div class="stat-card"><div class="stat-label">Games</div><div class="stat-value" id="lh-games" style="color:var(--accent)">—</div></div>
+        </div>
+        <div class="table-header" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr"><span>Game</span><span class="col-c">Book</span><span class="col-c">Side A</span><span class="col-c">Side B</span><span class="col-c">Hold %</span><span class="col-c">Bet</span></div>
+        <div id="lh-rows"><div class="loading-state"><div class="loading-spinner"></div>Finding low hold markets...</div></div>
+      </div>
+
+      <!-- MIDDLES -->
+      <div id="panel-middles" class="panel">
+        <div class="section-title">🎯 Middles <span style="font-size:13px;color:var(--yellow);font-family:var(--fm);font-weight:700">WIN BOTH SIDES</span></div>
+        <div class="section-sub">Bet both sides at different numbers.</div>
+        <div class="stats-bar">
+          <div class="stat-card"><div class="stat-label">Middle Opps</div><div class="stat-value" id="mid-count">—</div></div>
+          <div class="stat-card"><div class="stat-label">Avg Window</div><div class="stat-value" id="mid-window" style="color:var(--yellow)">—</div></div>
+          <div class="stat-card"><div class="stat-label">Best Window</div><div class="stat-value" id="mid-best" style="color:var(--accent2)">—</div></div>
+          <div class="stat-card"><div class="stat-label">Books</div><div class="stat-value" id="mid-books" style="color:var(--accent)">—</div></div>
+        </div>
+        <div id="mid-rows"><div class="loading-state"><div class="loading-spinner"></div>Scanning for middles...</div></div>
+      </div>
+
+      <!-- MORE TOOLS -->
+      <div id="panel-tools" class="panel">
+        <div class="section-title">🔧 More Calculators</div>
+
+
+        <div class="calc-grid">
+          <div class="calc-card"><div class="calc-title">🔄 Odds Converter</div><div class="calc-desc">Convert between American, Decimal, Fractional and Implied Probability.</div><div class="calc-field"><label class="calc-label">American Odds</label><input class="calc-input" id="oc-american" placeholder="-110" oninput="convertOdds('american')"/></div><div class="calc-field"><label class="calc-label">Decimal Odds</label><input class="calc-input" id="oc-decimal" placeholder="1.91" oninput="convertOdds('decimal')"/></div><div class="calc-field"><label class="calc-label">Fractional Odds</label><input class="calc-input" id="oc-fractional" placeholder="10/11" oninput="convertOdds('fractional')"/></div><div class="calc-field"><label class="calc-label">Implied Probability</label><input class="calc-input" id="oc-implied" placeholder="52.4%" oninput="convertOdds('implied')"/></div></div>
+          <div class="calc-card"><div class="calc-title">🎁 Free Bet Converter</div><div class="calc-desc">Convert bonus bets to real cash.</div><div class="calc-field"><label class="calc-label">Free Bet Amount ($)</label><input class="calc-input" id="fb-amount" placeholder="100" type="number"/></div><div class="calc-field"><label class="calc-label">Back Odds</label><input class="calc-input" id="fb-back" placeholder="+200"/></div><div class="calc-field"><label class="calc-label">Lay Odds (hedge book)</label><input class="calc-input" id="fb-lay" placeholder="-220"/></div><button class="calc-btn" onclick="calcFreeBet()">Calculate Conversion</button><div class="calc-result" id="fb-result"><div class="result-row"><span class="result-key">Hedge Stake</span><span class="result-val" id="fb-hedge">—</span></div><div class="result-row"><span class="result-key">Cash Profit (Win)</span><span class="result-val" id="fb-win">—</span></div><div class="result-row"><span class="result-key">Cash Profit (Lose)</span><span class="result-val" id="fb-lose">—</span></div><div class="result-row"><span class="result-key">Conversion Rate</span><span class="result-val" id="fb-rate">—</span></div></div></div>
+          <div class="calc-card"><div class="calc-title">⚖️ No-Vig Fair Odds</div><div class="calc-desc">Strip the juice to find true fair odds.</div><div class="calc-field"><label class="calc-label">Side A Odds</label><input class="calc-input" id="nv-a" placeholder="-110"/></div><div class="calc-field"><label class="calc-label">Side B Odds</label><input class="calc-input" id="nv-b" placeholder="-110"/></div><button class="calc-btn" onclick="calcNoVig()">Calculate Fair Odds</button><div class="calc-result" id="nv-result"><div class="result-row"><span class="result-key">Side A Fair Odds</span><span class="result-val" id="nv-fair-a">—</span></div><div class="result-row"><span class="result-key">Side B Fair Odds</span><span class="result-val" id="nv-fair-b">—</span></div><div class="result-row"><span class="result-key">Side A True Prob</span><span class="result-val" id="nv-prob-a">—</span></div><div class="result-row"><span class="result-key">Side B True Prob</span><span class="result-val" id="nv-prob-b">—</span></div><div class="result-row"><span class="result-key">Total Vig</span><span class="result-val" id="nv-vig">—</span></div></div></div>
+        </div>
+      </div>
+
+  <div id="panel-sharp" class="panel">
+        <div class="section-title">🔥 Sharp Money Tracker</div>
+        <div class="section-sub">Where sharp money is going — Pinnacle vs public books, line gaps, steam moves.</div>
+        <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:8px;padding:16px;margin-bottom:16px;font-size:13px;color:#94a3b8;line-height:1.8;">
+          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;">💡 How this works — in plain English</div>
+          <p style="margin-bottom:8px;">Pinnacle is a sportsbook that <strong style="color:#fff">never limits sharp bettors</strong>. That means when their odds look different from DraftKings or FanDuel, it's because <strong style="color:#fff">professional bettors have already bet that line</strong>.</p>
+          <p style="margin-bottom:8px;">The <strong style="color:var(--green)">LINE GAP</strong> tells you how different Pinnacle's odds are from the public books. A big gap = strong signal that sharp money is on one side.</p>
+          <p style="margin-bottom:12px;"><strong style="color:#fff">What to do:</strong> Find a game with a big gap. Check which team Pinnacle has at a much lower number (closer to -100). That's the side sharp money is on. Bet it at DraftKings or FanDuel where the odds are better.</p>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;padding-top:10px;border-top:1px solid rgba(59,130,246,0.15);font-size:12px;">
+            <span>💰 <strong style="color:var(--green)">Heavy Sharp</strong> = 25+ point gap between books</span>
+            <span>↩ <strong style="color:var(--yellow)">Reverse Line</strong> = sharp money going against the public</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-label">SIGNALS FOUND</div><div class="stat-value" id="sharp-total" style="color:var(--accent)">—</div></div>
+          <div class="stat-card"><div class="stat-label">AVG LINE GAP</div><div class="stat-value" id="sharp-avg" style="color:var(--yellow)">—</div></div>
+          <div class="stat-card"><div class="stat-label">HEAVY SHARP</div><div class="stat-value" id="sharp-heavy" style="color:var(--green)">—</div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+          <button class="filter-btn active" onclick="filterSharp('all',this)">All</button>
+          <button class="filter-btn" onclick="filterSharp('heavy',this)">💰 Heavy Money</button>
+          <button class="filter-btn" onclick="filterSharp('reverse',this)">↩ Reverse Line</button>
+        </div>
+        <div id="sharp-rows"><div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:12px;">Loading sharp data...</div></div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -965,7 +1063,7 @@ function showLanding(){
   window.onscroll=function(){const bar=document.getElementById('sticky-bar');if(bar&&window.scrollY>400)bar.style.transform='translateY(0)';else if(bar)bar.style.transform='translateY(100%)';};
 }
 
-function enterApp(){localStorage.setItem('pep_auth','1');
+function enterApp(){
   var _s=function(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;};
   _s('landing','display','none');
   _s('app','display','block');
@@ -976,7 +1074,7 @@ function enterApp(){localStorage.setItem('pep_auth','1');
   _s('sticky-bar','transform','translateY(100%)');
   window.onscroll=null;
   inApp=true;
-  try{renderPromos();}catch(e){} try{renderTracker();}catch(e){} 
+  renderPromos();renderTracker();
   loadSingleSport();
   loadAllArbSports();
   loadAllEVSports();
@@ -1614,7 +1712,7 @@ function renderOdds(data,isDemo){
 
 function renderPromos(){
   const p=[{book:'DraftKings',s:'DK',c:'#1b8a3c',o:'$200 in Bonus Bets',d:'Bet $5, get $200 instantly.',v:'$200',cv:'100%'},{book:'FanDuel',s:'FD',c:'#1565c0',o:'$1,000 No-Sweat Bet',d:'First bet refunded up to $1,000.',v:'$1,000',cv:'85%'},{book:'BetMGM',s:'MGM',c:'#c9a227',o:'$150 in Bonus Bets',d:'Bet $10 get $150.',v:'$150',cv:'88%'},{book:'Caesars',s:'CZR',c:'#7b1fa2',o:'Up to $1,000 First Bet',d:'First bet matched up to $1,000.',v:'$1,000',cv:'82%'},{book:'BetRivers',s:'BR',c:'#bf360c',o:'$500 Second Chance',d:'Second chance bet up to $500.',v:'$500',cv:'87%'}];
-  var _pr=document.getElementById('promo-rows');if(!_pr)return;_pr.innerHTML=p.map(x=>`<div class="promo-card"><div class="book-av" style="background:${x.c}18;color:${x.c};border:1px solid ${x.c}35">${x.s}</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">${x.book}</div><div style="font-size:13px;font-weight:600;margin:3px 0">${x.o}</div><div style="font-size:12px;color:var(--muted)">${x.d}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:22px;font-weight:800;color:var(--accent);font-family:var(--fm);">${x.v}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Conv: <span style="color:var(--green);font-weight:700">${x.cv}</span></div><button class="bet-btn" style="margin-top:10px" onclick="openBook('${x.book}')">CLAIM →</button></div></div>`).join('');
+  document.getElementById('promo-rows').innerHTML=p.map(x=>`<div class="promo-card"><div class="book-av" style="background:${x.c}18;color:${x.c};border:1px solid ${x.c}35">${x.s}</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">${x.book}</div><div style="font-size:13px;font-weight:600;margin:3px 0">${x.o}</div><div style="font-size:12px;color:var(--muted)">${x.d}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:22px;font-weight:800;color:var(--accent);font-family:var(--fm);">${x.v}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Conv: <span style="color:var(--green);font-weight:700">${x.cv}</span></div><button class="bet-btn" style="margin-top:10px" onclick="openBook('${x.book}')">CLAIM →</button></div></div>`).join('');
 }
 
 function renderTracker(){
@@ -1622,7 +1720,7 @@ function renderTracker(){
   const stk=trackerBets.reduce((s,b)=>s+parseFloat(b.stake),0);
   let pl=0;trackerBets.forEach(b=>{const d=atod(parseFloat(b.odds));if(b.status==='WIN')pl+=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl-=parseFloat(b.stake);});
   const roi=stk?(pl/stk*100).toFixed(1):0;
-  var _ts=document.getElementById('tracker-stats');if(!_ts)return;_ts.innerHTML=`<div class="tracker-card"><div class="tv">${trackerBets.length}</div><div class="tl">Total Bets</div></div><div class="tracker-card"><div class="tv" style="color:var(--green)">${w}</div><div class="tl">Wins</div></div><div class="tracker-card"><div class="tv" style="color:var(--red)">${l}</div><div class="tl">Losses</div></div><div class="tracker-card"><div class="tv" style="color:${pl>=0?'var(--green)':'var(--red)'}">${pl>=0?'+':''}$${pl.toFixed(0)}</div><div class="tl">P/L</div></div><div class="tracker-card"><div class="tv" style="color:${roi>=0?'var(--green)':'var(--red)'}">${roi}%</div><div class="tl">ROI</div></div>`;
+  document.getElementById('tracker-stats').innerHTML=`<div class="tracker-card"><div class="tv">${trackerBets.length}</div><div class="tl">Total Bets</div></div><div class="tracker-card"><div class="tv" style="color:var(--green)">${w}</div><div class="tl">Wins</div></div><div class="tracker-card"><div class="tv" style="color:var(--red)">${l}</div><div class="tl">Losses</div></div><div class="tracker-card"><div class="tv" style="color:${pl>=0?'var(--green)':'var(--red)'}">${pl>=0?'+':''}$${pl.toFixed(0)}</div><div class="tl">P/L</div></div><div class="tracker-card"><div class="tv" style="color:${roi>=0?'var(--green)':'var(--red)'}">${roi}%</div><div class="tl">ROI</div></div>`;
   document.getElementById('tracker-rows').innerHTML=trackerBets.map(b=>{const d=atod(parseFloat(b.odds));let pl=0;if(b.status==='WIN')pl=parseFloat(b.stake)*(d-1);else if(b.status==='LOSS')pl=-parseFloat(b.stake);return`<div class="btr"><div><div style="font-size:13px;font-weight:700;color:#fff">${b.game}</div><div style="font-size:11px;color:var(--muted)">${b.market} · <span style="color:var(--accent2)">${b.type}</span></div></div>${bookBadge(b.book)}<div style="font-family:var(--fm);font-size:13px;font-weight:700">${b.odds}</div><div style="font-family:var(--fm);font-size:13px">$${b.stake}</div><div style="font-family:var(--fm);font-size:13px;font-weight:700;color:${b.status==='WIN'?'var(--green)':b.status==='LOSS'?'var(--red)':'var(--yellow)'}">${b.status==='PENDING'?'—':(pl>=0?'+':'')+`$${pl.toFixed(0)}`}</div><div class="${b.status==='WIN'?'sw':b.status==='LOSS'?'sl':'sp'}">${b.status}</div></div>`;}).join('');
 }
 
@@ -1637,7 +1735,7 @@ function calcArb(){const oA=po(document.getElementById('arb-a').value),oB=po(doc
 function calcHold(){const oA=po(document.getElementById('hold-a').value),oB=po(document.getElementById('hold-b').value);if(isNaN(oA)||isNaN(oB))return;const pA=ip(oA),pB=ip(oB),nvA=pA/(pA+pB),nvB=pB/(pA+pB);document.getElementById('hold-result').classList.add('show');document.getElementById('hold-a-prob').textContent=(pA*100).toFixed(1)+'%';document.getElementById('hold-b-prob').textContent=(pB*100).toFixed(1)+'%';document.getElementById('hold-vig').textContent=((pA+pB-1)*100).toFixed(2)+'%';document.getElementById('hold-fair-a').textContent=fmt(dtoa(1/nvA));document.getElementById('hold-fair-b').textContent=fmt(dtoa(1/nvB));}
 function calcKelly(){const bk=parseFloat(document.getElementById('kelly-bank').value)||5000,od=po(document.getElementById('kelly-odds').value),pr=parseFloat(document.getElementById('kelly-prob').value)/100;if(isNaN(od)||isNaN(pr))return;const b=atod(od)-1,q=1-pr,k=(b*pr-q)/b;document.getElementById('kelly-result').classList.add('show');document.getElementById('kelly-full').textContent=k>0?'$'+(k*bk).toFixed(2):'No Edge';document.getElementById('kelly-half').textContent=k>0?'$'+(k/2*bk).toFixed(2):'No Edge';document.getElementById('kelly-quarter').textContent=k>0?'$'+(k/4*bk).toFixed(2):'No Edge';const ke=document.getElementById('kelly-edge');ke.textContent=(k*100>=0?'+':''+(k*100).toFixed(2))+'%';ke.style.color=k>=0?'var(--green)':'var(--red)';}
 
-function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');if(id==='sharp')loadSharpMoney();if(id==='odds')loadOddsCompare('basketball_nba',document.getElementById('ocb-nba'));}
+function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');if(id==='sharp')loadSharpMoney();}
 function selectSport(el,sport){
   ['basketball_nba','baseball_mlb','americanfootball_nfl','icehockey_nhl','basketball_ncaab','soccer_usa_mls','soccer_epl','soccer_uefa_champs_league','soccer_spain_la_liga','soccer_italy_serie_a','soccer_germany_bundesliga','tennis_atp_french_open','mma_mixed_martial_arts','boxing_boxing'].forEach(s=>{const el2=document.getElementById('sport-'+s);if(el2)el2.classList.remove('active');});
   el.classList.add('active');currentSport=sport;loadSingleSport();
@@ -2131,103 +2229,7 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 })();
 
 // Admin: Ctrl+Shift+A to access app
-function setOW(sport,key){
-  var f=document.getElementById('ow-frame');
-  if(f)f.src='https://widget.the-odds-api.com/v1/sports/'+sport+'/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total';
-  ['nba','mlb','nhl','mma','mls'].forEach(function(s){var b=document.getElementById('ow-'+s);if(b){b.style.background='';b.style.border='';}});
-  var a=document.getElementById('ow-'+key);if(a){a.style.background='rgba(59,130,246,0.15)';a.style.border='1px solid #3b82f6';}
-}
-
-async function loadOddsCompare(sport, btn){
-  document.querySelectorAll('.odds-sport-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  var rows = document.getElementById('odds-compare-rows');
-  rows.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;font-family:var(--fm);letter-spacing:1px;">⟳ LOADING...</div>';
-  try {
-    var r = await fetch('/api/odds?sport='+(sport||'basketball_nba')+'&markets=h2h&oddsFormat=american');
-    var data = await r.json();
-    if(!Array.isArray(data)||!data.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;">No games available</div>';return;}
-    var books=['pinnacle','draftkings','fanduel','betmgm','caesars','bet365','betrivers','fanatics','espnbet','hardrockbet'];
-    var bnames={'pinnacle':'Pinnacle','draftkings':'DraftKings','fanduel':'FanDuel','betmgm':'BetMGM','caesars':'Caesars','bet365':'Bet365','betrivers':'BetRivers','fanatics':'Fanatics','espnbet':'ESPN Bet','hardrockbet':'Hard Rock'};
-    var html = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">';
-    html += '<thead><tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:8px 12px;color:var(--muted);font-family:var(--fm);font-size:10px;letter-spacing:1px;">GAME</th>';
-    books.forEach(b=>{html+='<th style="text-align:center;padding:8px 6px;color:var(--muted);font-family:var(--fm);font-size:10px;letter-spacing:1px;">'+bnames[b]+'</th>';});
-    html += '</tr></thead><tbody>';
-    data.forEach(g=>{
-      var teams=[g.home_team,g.away_team];
-      var time=new Date(g.commence_time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-      var isLive=new Date(g.commence_time)<new Date();
-      teams.forEach((team,ti)=>{
-        html+='<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
-        if(ti===0) html+='<td rowspan="2" style="padding:10px 12px;vertical-align:middle;"><div style="font-weight:600;color:#fff;font-size:12px;">'+g.away_team+' @ '+g.home_team+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">'+(isLive?'<span style="color:#ff4757;font-weight:700;">● LIVE</span>':time)+'</div></td>';
-        var best='',bestVal=-99999;
-        books.forEach(bk=>{
-          var book=g.bookmakers?.find(b=>b.key===bk);
-          var outcome=book?.markets?.[0]?.outcomes?.find(o=>o.name===team);
-          var price=outcome?.price;
-          if(price!==undefined&&price>bestVal){bestVal=price;best=bk;}
-          var color=bk===best?'var(--green)':'#fff';
-          var display=price!==undefined?(price>0?'+':'')+price:'—';
-          html+='<td style="text-align:center;padding:8px 6px;color:'+color+';font-family:var(--fm);font-weight:'+(bk===best?'700':'400')+';">'+display+'</td>';
-        });
-        html+='</tr>';
-      });
-    });
-    html+='</tbody></table></div>';
-    rows.innerHTML=html;
-  } catch(e){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--red);">Error loading odds</div>';}
-}
-async function loadOddsCompare(sport,btn){
-  document.querySelectorAll('.odds-sport-btn').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  var rows=document.getElementById('odds-compare-rows');
-  if(!rows)return;
-  rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;font-family:var(--fm);letter-spacing:1px;">⟳ LOADING...</div>';
-  try{
-    var r=await fetch('/api/odds?sport='+(sport||'basketball_nba')+'&markets=h2h&oddsFormat=american');
-    var data=await r.json();
-    if(!Array.isArray(data)||!data.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);">No games available right now</div>';return;}
-    var books=['pinnacle','draftkings','fanduel','betmgm','caesars','bet365','betrivers','fanatics','espnbet','hardrockbet'];
-    var bnames={'pinnacle':'Pinnacle','draftkings':'DraftKings','fanduel':'FanDuel','betmgm':'BetMGM','caesars':'Caesars','bet365':'Bet365','betrivers':'BetRivers','fanatics':'Fanatics','espnbet':'ESPN Bet','hardrockbet':'Hard Rock'};
-    var html='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">';
-    html+='<thead><tr style="border-bottom:2px solid var(--border);"><th style="text-align:left;padding:10px 12px;color:var(--muted);font-family:var(--fm);font-size:10px;letter-spacing:1px;min-width:180px;">GAME</th>';
-    books.forEach(b=>{html+='<th style="text-align:center;padding:8px 4px;color:var(--muted);font-family:var(--fm);font-size:9px;letter-spacing:1px;white-space:nowrap;">'+bnames[b]+'</th>';});
-    html+='</tr></thead><tbody>';
-    data.forEach(g=>{
-      var teams=[g.away_team,g.home_team];
-      var time=new Date(g.commence_time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-      var isLive=new Date(g.commence_time)<new Date();
-      var badge=isLive?'<span style="background:#ff4757;color:#fff;font-size:8px;padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;">LIVE</span>':'';
-      teams.forEach((team,ti)=>{
-        // Find best odds for this team across all books
-        var bestPrice=-99999;
-        books.forEach(bk=>{var bk_data=g.bookmakers?.find(b=>b.key===bk);var oc=bk_data?.markets?.[0]?.outcomes?.find(o=>o.name===team);if(oc&&oc.price>bestPrice)bestPrice=oc.price;});
-        html+='<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
-        if(ti===0){
-          html+='<td rowspan="2" style="padding:10px 12px;vertical-align:middle;border-right:1px solid var(--border);">';
-          html+='<div style="font-size:11px;color:var(--muted);margin-bottom:3px;">'+time+badge+'</div>';
-          html+='<div style="font-weight:600;color:#fff;font-size:12px;">'+g.away_team+'</div>';
-          html+='<div style="font-size:10px;color:var(--muted);margin:2px 0;">@</div>';
-          html+='<div style="font-weight:600;color:#fff;font-size:12px;">'+g.home_team+'</div></td>';
-        }
-        books.forEach(bk=>{
-          var bk_data=g.bookmakers?.find(b=>b.key===bk);
-          var oc=bk_data?.markets?.[0]?.outcomes?.find(o=>o.name===team);
-          var price=oc?.price;
-          var isBest=price===bestPrice&&price!==-99999;
-          var display=price!==undefined?(price>0?'+':'')+price:'—';
-          var color=isBest?'var(--green)':(price!==undefined?'#cbd5e1':'#334155');
-          var weight=isBest?'700':'400';
-          html+='<td style="text-align:center;padding:8px 4px;color:'+color+';font-family:var(--fm);font-weight:'+weight+';font-size:12px;">'+display+'</td>';
-        });
-        html+='</tr>';
-      });
-    });
-    html+='</tbody></table></div>';
-    rows.innerHTML=html;
-  }catch(e){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--red);">Error: '+e.message+'</div>';}
-}
-document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){enterApp();}});
+document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}});
 
 // ===== SHARP MONEY TRACKER =====
 window._sharpGames=[]; window._sharpFilter='all';
@@ -2293,7 +2295,7 @@ function renderSharpRows(){
       } else {
         // Find the other team name - it's the opposite outcome
         note = 'Public books overpriced on '+g.team+' — sharp money may be on the other side';
-        thePlay = '🎯 Consider the opposing team — public is inflating '+g.team+' price at DK/FD';
+        thePlay = '🎯 Consider the opposing team — public is inflating '+g.team+''s price at DK/FD';
       }
     } else if(g.pin>0 && g.dk>0){
       if(g.pin > g.dk){
@@ -2327,23 +2329,5 @@ function renderSharpRows(){
   }).join('');
 }
 </script>
-
-<div id="login-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;">
-  <div style="background:#0c1018;border:1px solid #1e3a5f;border-radius:14px;padding:36px 32px;width:320px;text-align:center;">
-    <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Prime Edge Picks</div>
-    <div style="font-size:12px;color:#475569;margin-bottom:24px;">Member access only</div>
-    <input id="lpw" type="password" placeholder="Password" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;"/>
-    <div id="lerr" style="color:#ff4757;font-size:11px;min-height:16px;margin-bottom:10px;"></div>
-    <button onclick="doLogin()" style="width:100%;background:#3b82f6;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">Enter Platform</button>
-    <div style="font-size:11px;color:#334155;">Not a member? <a href="https://whop.com/prime-edge-picks/" target="_blank" style="color:#3b82f6;">Join here</a></div>
-  </div>
-</div>
-<script>
-function showLogin(){var m=document.getElementById('login-modal');m.style.display='flex';setTimeout(function(){document.getElementById('lpw').focus();},100);}
-function doLogin(){var p=document.getElementById('lpw').value,e=document.getElementById('lerr');if(p==='sharpedge2026'){localStorage.setItem('pep_auth','1');document.getElementById('login-modal').style.display='none';enterApp();}else{e.textContent='Wrong password. Try again.';}}
-document.addEventListener('keydown',function(e){var m=document.getElementById('login-modal');if(m&&m.style.display==='flex'&&e.key==='Enter')doLogin();if(e.key==='Escape'&&m)m.style.display='none';});
-</script>
 </body>
 </html>
-
-document.addEventListener('DOMContentLoaded',function(){if(localStorage.getItem('pep_auth')==='1'){setTimeout(enterApp,500);}});
