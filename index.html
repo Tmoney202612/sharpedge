@@ -482,7 +482,10 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 }
 .pricing-price{font-size:60px!important;}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <script src="/config/api.js"></script>
+  <script src="/utils/validation.js"></script>
+  <script src="/utils/accessibility.js"></script>
+</head>
 <body>
 
 <header>
@@ -873,7 +876,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
             <div><label class="calc-label">Book</label><select class="calc-input" id="t-book"><option>DraftKings</option><option>FanDuel</option><option>BetMGM</option><option>Caesars</option><option>BetRivers</option></select></div>
             <div><label class="calc-label">Type</label><select class="calc-input" id="t-type"><option>+EV</option><option>Arbitrage</option><option>Expert Pick</option><option>Standard</option></select></div>
           </div>
-          <button class="add-bet-btn" onclick="addBet()">+ Add Bet</button>
+          <button class="add-bet-btn" onclick="addBetSafely()">+ Add Bet</button>
         </div>
         <div class="tracker-stats" id="tracker-stats"></div><div id="tracker-list"></div>
         <div class="bets-table">
@@ -2641,6 +2644,43 @@ window.addEventListener('load',function(){
   })();
 
   document.addEventListener('DOMContentLoaded', updateBannerAuthState);
+
+
+
+  // ── #6 Error handling wrapper for API calls ─────────────────────
+  function safeAPICall(fn, fallbackMsg) {
+    return async function(...args) {
+      try {
+        const result = await fn(...args);
+        if (result && result.success === false) {
+          console.error('API error:', result.error);
+          if (window.apiManager) apiManager.showErrorNotification(result.error || fallbackMsg);
+        }
+        return result;
+      } catch(e) {
+        console.error('Unexpected error:', e);
+        if (window.apiManager) apiManager.showErrorNotification(fallbackMsg || 'Something went wrong. Please try again.');
+        return { success: false, error: e.message };
+      }
+    };
+  }
+
+  // ── #5 Validated add bet wrapper ─────────────────────────────────
+  function addBetSafely() {
+    if (!window.FormValidator) { addBet(); return; }
+    const formData = {
+      game: (document.getElementById('t-game') || {}).value || '',
+      odds: (document.getElementById('t-odds') || {}).value || '',
+      stake: (document.getElementById('t-stake') || {}).value || ''
+    };
+    const result = FormValidator.validateBetForm(formData);
+    if (!result.valid) {
+      Object.entries(result.errors).forEach(([f, err]) => FormValidator.showError('t-' + f, err));
+      return;
+    }
+    FormValidator.clearAll(['t-game','t-odds','t-stake']);
+    addBet();
+  }
 
 </script>
 <div id="upgrade-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);align-items:center;justify-content:center;">
