@@ -1027,12 +1027,12 @@ function setSharpMode(mode){
 
 function renderArbRows(){
   let filtered;
-const now=new Date();
-if(arbMode==='live'){filtered=(window.allArbOpps||[]).filter(o=>o.commenceTime&&new Date(o.commenceTime)<=now);}
-else{filtered=(window.allArbOpps||[]).filter(o=>!o.commenceTime||new Date(o.commenceTime)>now);}
   if(arbFilter==='all')filtered=allArbOpps;
   else if(arbFilter==='polymarket')filtered=allArbOpps.filter(o=>o.isPolymarket);
   else filtered=allArbOpps.filter(o=>o.sportLabel===arbFilter);
+const _now=new Date();
+if(arbMode==='live'){filtered=filtered.filter(o=>o.commenceTime&&new Date(o.commenceTime)<=_now);}
+else{filtered=filtered.filter(o=>!o.commenceTime||new Date(o.commenceTime)>_now);}
   // Apply book filter
   if(userBooks){
     filtered=filtered.filter(o=>{
