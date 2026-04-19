@@ -499,7 +499,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
     <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Start Free Trial →</button>
-    <button class="btn-ghost" id="header-demo" onclick="enterApp()">⚡ Enter App
+    <button class="btn-ghost" id="header-demo" onclick="showLogin()">🔒 Member Login
   </div>
 </header>
 
@@ -2328,6 +2328,22 @@ function renderSharpRows(){
     '</div>';
   }).join('');
 }
+</script>
+
+<div id="login-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;">
+  <div style="background:#0c1018;border:1px solid #1e3a5f;border-radius:14px;padding:36px 32px;width:320px;text-align:center;">
+    <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Prime Edge Picks</div>
+    <div style="font-size:12px;color:#475569;margin-bottom:24px;">Member access only</div>
+    <input id="lpw" type="password" placeholder="Password" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;"/>
+    <div id="lerr" style="color:#ff4757;font-size:11px;min-height:16px;margin-bottom:10px;"></div>
+    <button onclick="doLogin()" style="width:100%;background:#3b82f6;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">Enter Platform</button>
+    <div style="font-size:11px;color:#334155;">Not a member? <a href="https://whop.com/prime-edge-picks/" target="_blank" style="color:#3b82f6;">Join here</a></div>
+  </div>
+</div>
+<script>
+function showLogin(){var m=document.getElementById('login-modal');m.style.display='flex';setTimeout(function(){document.getElementById('lpw').focus();},100);}
+function doLogin(){var p=document.getElementById('lpw').value,e=document.getElementById('lerr');if(p==='sharpedge2026'){document.getElementById('login-modal').style.display='none';enterApp();}else{e.textContent='Wrong password. Try again.';}}
+document.addEventListener('keydown',function(e){var m=document.getElementById('login-modal');if(m&&m.style.display==='flex'&&e.key==='Enter')doLogin();if(e.key==='Escape'&&m)m.style.display='none';});
 </script>
 </body>
 </html>
