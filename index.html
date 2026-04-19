@@ -1144,7 +1144,7 @@ async function loadAllArbSports(){
       if(sport==='mma_mixed_martial_arts'&&market!=='h2h'){done++;return;}
       fetchSportArbs(sport,market).then(opps=>{
         window.allArbOpps=[...window.allArbOpps,...opps];
-        window.allArbOpps.sort((a,b)=>a.margin-b.margin);
+        window.allArbOpps.sort((a,b)=>b.diff-a.diff);
         done++;
         if(done>=totalJobs||window.allArbOpps.length>0)updateArbUI();
       });
