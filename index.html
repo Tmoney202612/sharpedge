@@ -2462,19 +2462,26 @@ async function doResetPassword(){
   err.style.color='#00e676';err.textContent='✓ Password updated! Signing you in...';
   setTimeout(function(){
     document.getElementById('reset-modal').style.display='none';
-    localStorage.setItem('pep_auth','1');
-    try{enterApp();}catch(e){}
+    localStorage.removeItem('pep_auth');
+    showLogin();
   },1500);
 }
 
 // Check for password reset token in URL on page load
 window.addEventListener('load',function(){
   var hash=window.location.hash;
-  if(hash.includes('type=recovery')||hash.includes('access_token')){
+  if(hash.includes('type=recovery')){
     _supa.auth.getSession().then(function(res){
       if(res.data.session){
         document.getElementById('reset-modal').style.display='flex';
         setTimeout(function(){document.getElementById('reset-pw1').focus();},100);
+      }
+    });
+  } else if(hash.includes('type=signup')||hash.includes('type=magiclink')){
+    _supa.auth.getSession().then(function(res){
+      if(res.data.session){
+        localStorage.setItem('pep_auth','1');
+        setTimeout(function(){try{enterApp();}catch(e){}},500);
       }
     });
   }
