@@ -2249,7 +2249,7 @@ window.addEventListener('load',function(){
         shiftTimer = setTimeout(() => { shiftCount = 0; }, 1500);
         if (shiftCount >= 5) {
           shiftCount = 0;
-          const pass = prompt('Owner Access:');
+          const pass = OWNER_PASS;
           if (pass === OWNER_PASS) {
             localStorage.setItem('owner_access', 'true');
             alert('✅ Owner access granted. All features unlocked.');
