@@ -2418,11 +2418,14 @@ async function doSignUp(){
   err.textContent='Creating account...';err.style.color='#94a3b8';
   var r=await _supa.auth.signUp({email:email,password:pw,options:{data:{full_name:name}}});
   if(r.error){err.textContent=r.error.message;err.style.color='#ff4757';return;}
+  // Store email for post-payment reference
+  localStorage.setItem('pep_pending_email', email);
+  // Redirect to Whop to subscribe — after paying they come back and sign in
   err.style.color='#00e676';
-  err.textContent='✓ Check your email to confirm your account!';
-  document.getElementById('su-name').value='';
-  document.getElementById('su-email').value='';
-  document.getElementById('su-password').value='';
+  err.textContent='✓ Account created! Taking you to subscribe...';
+  setTimeout(function(){
+    window.location.href='https://whop.com/prime-edge-picks/?email='+encodeURIComponent(email);
+  }, 1500);
 }
 async function forgotPassword(){
   var email=document.getElementById('si-email').value.trim();
