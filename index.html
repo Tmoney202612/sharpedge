@@ -282,7 +282,11 @@
           <div class="stat-card"><div class="stat-label">Sports Scanned</div><div class="stat-value" id="ev-sports" style="color:var(--yellow)">—</div><div class="stat-sub">live now</div></div>
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="ev-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
         </div>
-        <div class="sport-filters" id="ev-date-filters" style="margin-bottom:8px;">
+        <div class="mode-toggle" style="display:flex;gap:6px;align-items:center;margin-bottom:12px;">
+<button id="ev-prematch-btn" onclick="setEvMode('prematch')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">Pre-Match</button>
+<button id="ev-live-btn" onclick="setEvMode('live')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">🔴 Live</button>
+</div>
+<div class="sport-filters" id="ev-date-filters" style="margin-bottom:8px;">
           <div class="sport-chip active" onclick="filterEVDate(this,'today')">📅 Today</div>
           <div class="sport-chip" onclick="filterEVDate(this,'week')">🗓️ This Week</div>
           <div class="sport-chip" onclick="filterEVDate(this,'all')">📊 All Upcoming</div>
@@ -317,7 +321,11 @@
           <div class="stat-card"><div class="stat-label">Avg Profit</div><div class="stat-value" id="arb-avg" style="color:var(--yellow)">—</div><div class="stat-sub">per arb</div></div>
           <div class="stat-card"><div class="stat-label">Sports Scanned</div><div class="stat-value" id="arb-sports-count" style="color:var(--accent)">—</div><div class="stat-sub">live now</div></div>
         </div>
-        <div class="sport-filters" id="arb-sport-filters">
+        <div class="mode-toggle" style="display:flex;gap:6px;align-items:center;margin-bottom:12px;">
+<button id="arb-prematch-btn" onclick="setArbMode('prematch')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">Pre-Match</button>
+<button id="arb-live-btn" onclick="setArbMode('live')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">🔴 Live</button>
+</div>
+<div class="sport-filters" id="arb-sport-filters">
           <div class="sport-chip active" onclick="filterArbSport(this,'all')">🌐 All <span class="chip-count" id="chip-count-all">—</span></div>
           <div class="sport-chip" onclick="filterArbSport(this,'NBA')">🏀 NBA <span class="chip-count" id="chip-count-NBA">0</span></div>
           <div class="sport-chip" onclick="filterArbSport(this,'MLB')">⚾ MLB <span class="chip-count" id="chip-count-MLB">0</span></div>
