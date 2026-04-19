@@ -2500,8 +2500,9 @@ document.addEventListener('DOMContentLoaded',function(){
           _supa.auth.signOut();
         }
       }).catch(function(){
-        localStorage.setItem('pep_auth','1');
-        setTimeout(function(){try{enterApp();}catch(e){}},500);
+        // Fail closed — if check errors, sign them out
+        localStorage.removeItem('pep_auth');
+        _supa.auth.signOut();
       });
     } else {
       localStorage.removeItem('pep_auth');
