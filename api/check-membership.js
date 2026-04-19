@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   const email = req.query.email;
-  if (!email) return res.json({ active: false });
+  if (!email) return res.json({ active: false, plan: null });
   try {
     const r = await fetch('https://api.whop.com/api/v2/memberships?email=' + encodeURIComponent(email), {
       headers: {
@@ -9,9 +9,16 @@ export default async function handler(req, res) {
       }
     });
     const d = await r.json();
-    const active = d.data && d.data.some(m => m.status === 'active' || m.status === 'trialing');
-    return res.json({ active: !!active });
+    if (!d.data || !d.data.length) return res.json({ active: false, plan: null });
+    
+    const active = d.data.find(m => m.status === 'active' || m.status === 'trialing');
+    if (!active) return res.json({ active: false, plan: null });
+    
+    // Determine plan based on product ID
+    // the-sharp-0c = $99 Pro plan, the-edge-28 = $39 Starter plan
+    const plan = active.product_id === 'the-sharp-0c' ? 'sharp' : 'edge';
+    return res.json({ active: true, plan: plan });
   } catch(e) {
-    return res.json({ active: true });
+    return res.json({ active: true, plan: 'edge' });
   }
 }
