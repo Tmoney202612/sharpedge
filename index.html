@@ -75,6 +75,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,10,13,0.96);backdrop-
 .price-btn-outline:hover{border-color:var(--accent);color:var(--accent);}
 .nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;overflow-x:auto;scrollbar-width:none;position:relative;z-index:1;}
 .nav-tabs::-webkit-scrollbar{display:none;}
+.odds-sport-btn{font-family:var(--fm);font-size:10px;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .2s;}
+.odds-sport-btn:hover,.odds-sport-btn.active{background:rgba(59,130,246,0.12);border-color:#3b82f6;color:#3b82f6;}
 .tab-btn{padding:14px 20px;font-family:var(--fh);font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;}
 .tab-btn:hover{color:var(--text);}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
@@ -850,34 +852,17 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 
       <!-- FIX 4: Added missing <div tag -->
       <div id="panel-odds" class="panel">
-        <div class="section-title">📊 Live Odds Comparison</div>
-        
-<div style="padding:16px 0;">
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-    <button onclick="setOddsWidget('basketball_nba')" id="ow-nba" class="btn-ghost" style="font-size:11px;padding:5px 12px;background:rgba(59,130,246,0.15);border-color:#3b82f6;color:#3b82f6;">🏀 NBA</button>
-    <button onclick="setOddsWidget('baseball_mlb')" id="ow-mlb" class="btn-ghost" style="font-size:11px;padding:5px 12px;">⚾ MLB</button>
-    <button onclick="setOddsWidget('icehockey_nhl')" id="ow-nhl" class="btn-ghost" style="font-size:11px;padding:5px 12px;">🏒 NHL</button>
-    <button onclick="setOddsWidget('mma_mixed_martial_arts')" id="ow-mma" class="btn-ghost" style="font-size:11px;padding:5px 12px;">🥊 MMA</button>
-    <button onclick="setOddsWidget('soccer_usa_mls')" id="ow-mls" class="btn-ghost" style="font-size:11px;padding:5px 12px;">⚽ MLS</button>
+  <div class="section-title">📊 Live Odds Comparison</div>
+  <div class="section-sub">Best lines across all major books — updated live</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <button onclick="loadOddsCompare('basketball_nba',this)" class="odds-sport-btn active" id="ocb-nba">🏀 NBA</button>
+    <button onclick="loadOddsCompare('baseball_mlb',this)" class="odds-sport-btn" id="ocb-mlb">⚾ MLB</button>
+    <button onclick="loadOddsCompare('icehockey_nhl',this)" class="odds-sport-btn" id="ocb-nhl">🏒 NHL</button>
+    <button onclick="loadOddsCompare('mma_mixed_martial_arts',this)" class="odds-sport-btn" id="ocb-mma">🥊 MMA</button>
+    <button onclick="loadOddsCompare('soccer_usa_mls',this)" class="odds-sport-btn" id="ocb-mls">⚽ MLS</button>
   </div>
-  <iframe id="odds-widget-frame" title="Sports Odds Widget" style="width:100%;height:600px;border:1px solid #1a2235;border-radius:8px;" src="https://widget.the-odds-api.com/v1/sports/basketball_nba/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total"></iframe>
+  <div id="odds-compare-rows"><div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;font-family:var(--fm);letter-spacing:1px;">⟳ LOADING...</div></div>
 </div>
-<script>
-function setOddsWidget(sport){
-  var frame=document.getElementById('odds-widget-frame');
-  frame.src='https://widget.the-odds-api.com/v1/sports/'+sport+'/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total';
-  ['nba','mlb','nhl','mma','mls'].forEach(function(s){
-    var btn=document.getElementById('ow-'+s);
-    if(btn){btn.style.background='';btn.style.borderColor='';btn.style.color='';}
-  });
-  var key=sport.includes('nba')?'nba':sport.includes('mlb')?'mlb':sport.includes('nhl')?'nhl':sport.includes('mma')?'mma':'mls';
-  var active=document.getElementById('ow-'+key);
-  if(active){active.style.background='rgba(59,130,246,0.15)';active.style.borderColor='#3b82f6';active.style.color='#3b82f6';}
-}
-</script>
-        <div class="section-sub">Real-time odds across all major books. Best price in green.</div>
-        <div id="odds-rows"><div class="loading-state"><div class="loading-spinner"></div>Loading...</div></div>
-      </div>
 
       <!-- TRACKER -->
       <div id="panel-tracker" class="panel">
@@ -1759,7 +1744,7 @@ function calcArb(){const oA=po(document.getElementById('arb-a').value),oB=po(doc
 function calcHold(){const oA=po(document.getElementById('hold-a').value),oB=po(document.getElementById('hold-b').value);if(isNaN(oA)||isNaN(oB))return;const pA=ip(oA),pB=ip(oB),nvA=pA/(pA+pB),nvB=pB/(pA+pB);document.getElementById('hold-result').classList.add('show');document.getElementById('hold-a-prob').textContent=(pA*100).toFixed(1)+'%';document.getElementById('hold-b-prob').textContent=(pB*100).toFixed(1)+'%';document.getElementById('hold-vig').textContent=((pA+pB-1)*100).toFixed(2)+'%';document.getElementById('hold-fair-a').textContent=fmt(dtoa(1/nvA));document.getElementById('hold-fair-b').textContent=fmt(dtoa(1/nvB));}
 function calcKelly(){const bk=parseFloat(document.getElementById('kelly-bank').value)||5000,od=po(document.getElementById('kelly-odds').value),pr=parseFloat(document.getElementById('kelly-prob').value)/100;if(isNaN(od)||isNaN(pr))return;const b=atod(od)-1,q=1-pr,k=(b*pr-q)/b;document.getElementById('kelly-result').classList.add('show');document.getElementById('kelly-full').textContent=k>0?'$'+(k*bk).toFixed(2):'No Edge';document.getElementById('kelly-half').textContent=k>0?'$'+(k/2*bk).toFixed(2):'No Edge';document.getElementById('kelly-quarter').textContent=k>0?'$'+(k/4*bk).toFixed(2):'No Edge';const ke=document.getElementById('kelly-edge');ke.textContent=(k*100>=0?'+':''+(k*100).toFixed(2))+'%';ke.style.color=k>=0?'var(--green)':'var(--red)';}
 
-function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');if(id==='sharp')loadSharpMoney();}
+function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');if(id==='sharp')loadSharpMoney();if(id==='odds')loadOddsCompare('basketball_nba',document.getElementById('ocb-nba'));}
 function selectSport(el,sport){
   ['basketball_nba','baseball_mlb','americanfootball_nfl','icehockey_nhl','basketball_ncaab','soccer_usa_mls','soccer_epl','soccer_uefa_champs_league','soccer_spain_la_liga','soccer_italy_serie_a','soccer_germany_bundesliga','tennis_atp_french_open','mma_mixed_martial_arts','boxing_boxing'].forEach(s=>{const el2=document.getElementById('sport-'+s);if(el2)el2.classList.remove('active');});
   el.classList.add('active');currentSport=sport;loadSingleSport();
@@ -2258,6 +2243,46 @@ function setOW(sport,key){
   if(f)f.src='https://widget.the-odds-api.com/v1/sports/'+sport+'/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total';
   ['nba','mlb','nhl','mma','mls'].forEach(function(s){var b=document.getElementById('ow-'+s);if(b){b.style.background='';b.style.border='';}});
   var a=document.getElementById('ow-'+key);if(a){a.style.background='rgba(59,130,246,0.15)';a.style.border='1px solid #3b82f6';}
+}
+
+async function loadOddsCompare(sport, btn){
+  document.querySelectorAll('.odds-sport-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  var rows = document.getElementById('odds-compare-rows');
+  rows.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;font-family:var(--fm);letter-spacing:1px;">⟳ LOADING...</div>';
+  try {
+    var r = await fetch('/api/odds?sport='+(sport||'basketball_nba')+'&markets=h2h&oddsFormat=american');
+    var data = await r.json();
+    if(!Array.isArray(data)||!data.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;">No games available</div>';return;}
+    var books=['pinnacle','draftkings','fanduel','betmgm','caesars','bet365','betrivers','fanatics','espnbet','hardrockbet'];
+    var bnames={'pinnacle':'Pinnacle','draftkings':'DraftKings','fanduel':'FanDuel','betmgm':'BetMGM','caesars':'Caesars','bet365':'Bet365','betrivers':'BetRivers','fanatics':'Fanatics','espnbet':'ESPN Bet','hardrockbet':'Hard Rock'};
+    var html = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">';
+    html += '<thead><tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:8px 12px;color:var(--muted);font-family:var(--fm);font-size:10px;letter-spacing:1px;">GAME</th>';
+    books.forEach(b=>{html+='<th style="text-align:center;padding:8px 6px;color:var(--muted);font-family:var(--fm);font-size:10px;letter-spacing:1px;">'+bnames[b]+'</th>';});
+    html += '</tr></thead><tbody>';
+    data.forEach(g=>{
+      var teams=[g.home_team,g.away_team];
+      var time=new Date(g.commence_time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      var isLive=new Date(g.commence_time)<new Date();
+      teams.forEach((team,ti)=>{
+        html+='<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+        if(ti===0) html+='<td rowspan="2" style="padding:10px 12px;vertical-align:middle;"><div style="font-weight:600;color:#fff;font-size:12px;">'+g.away_team+' @ '+g.home_team+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">'+(isLive?'<span style="color:#ff4757;font-weight:700;">● LIVE</span>':time)+'</div></td>';
+        var best='',bestVal=-99999;
+        books.forEach(bk=>{
+          var book=g.bookmakers?.find(b=>b.key===bk);
+          var outcome=book?.markets?.[0]?.outcomes?.find(o=>o.name===team);
+          var price=outcome?.price;
+          if(price!==undefined&&price>bestVal){bestVal=price;best=bk;}
+          var color=bk===best?'var(--green)':'#fff';
+          var display=price!==undefined?(price>0?'+':'')+price:'—';
+          html+='<td style="text-align:center;padding:8px 6px;color:'+color+';font-family:var(--fm);font-weight:'+(bk===best?'700':'400')+';">'+display+'</td>';
+        });
+        html+='</tr>';
+      });
+    });
+    html+='</tbody></table></div>';
+    rows.innerHTML=html;
+  } catch(e){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--red);">Error loading odds</div>';}
 }
 document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){enterApp();}});
 
