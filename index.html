@@ -2253,6 +2253,12 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 })();
 
 // Admin: Ctrl+Shift+A to access app
+function setOW(sport,key){
+  var f=document.getElementById('ow-frame');
+  if(f)f.src='https://widget.the-odds-api.com/v1/sports/'+sport+'/events/?accessKey=wk_6d8c6bae1cc247cf6417de162dfe9fcd&bookmakerKeys=draftkings&oddsFormat=american&markets=h2h,spreads,totals&marketNames=h2h:Moneyline,spreads:Spread,totals:Total';
+  ['nba','mlb','nhl','mma','mls'].forEach(function(s){var b=document.getElementById('ow-'+s);if(b){b.style.background='';b.style.border='';}});
+  var a=document.getElementById('ow-'+key);if(a){a.style.background='rgba(59,130,246,0.15)';a.style.border='1px solid #3b82f6';}
+}
 document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){enterApp();}});
 
 // ===== SHARP MONEY TRACKER =====
