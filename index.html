@@ -2497,6 +2497,13 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape')m.style.display='none';
 });
 document.addEventListener('DOMContentLoaded',function(){
+  // ── Owner bypass — skip all auth checks ──────────────────────
+  if(localStorage.getItem('owner_access')==='true'){
+    localStorage.setItem('pep_auth','1');
+    localStorage.setItem('pep_plan_active','pro');
+    setTimeout(function(){try{enterApp();applyPlanRestrictions('pro');}catch(e){}},300);
+    return;
+  }
   if(window.location.hash.includes('type=recovery'))return;
   _supa.auth.getSession().then(function(res){
     if(res.data.session && res.data.session.user && !window.location.hash.includes('type=signup')){
