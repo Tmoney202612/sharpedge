@@ -2444,15 +2444,28 @@ document.addEventListener('keydown',function(e){
 document.addEventListener('DOMContentLoaded',function(){
   if(window.location.hash.includes('type=recovery'))return;
   _supa.auth.getSession().then(function(res){
-    if(res.data.session){
-      localStorage.setItem('pep_auth','1');
-      setTimeout(function(){
-        try{
-          enterApp();
-          var lastTab=localStorage.getItem('pep_last_tab');
-          if(lastTab){var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'"+lastTab+"'")>-1;});if(btn)showTab(lastTab,btn);}
-        }catch(e){}
-      },500);
+    if(res.data.session && res.data.session.user){
+      var userEmail=res.data.session.user.email;
+      fetch('/api/check-membership?email='+encodeURIComponent(userEmail)).then(function(r){return r.json();}).then(function(d){
+        if(d.active){
+          localStorage.setItem('pep_auth','1');
+          setTimeout(function(){
+            try{
+              enterApp();
+              var lastTab=localStorage.getItem('pep_last_tab');
+              if(lastTab){var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'"+lastTab+"'")>-1;});if(btn)showTab(lastTab,btn);}
+            }catch(e){}
+          },500);
+        } else {
+          localStorage.removeItem('pep_auth');
+          _supa.auth.signOut();
+        }
+      }).catch(function(){
+        localStorage.setItem('pep_auth','1');
+        setTimeout(function(){try{enterApp();}catch(e){}},500);
+      });
+    } else {
+      localStorage.removeItem('pep_auth');
     }
   });
 });
