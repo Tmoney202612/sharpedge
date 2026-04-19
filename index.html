@@ -2424,6 +2424,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape')m.style.display='none';
 });
 document.addEventListener('DOMContentLoaded',function(){
+  if(window.location.hash.includes('type=recovery'))return;
   _supa.auth.getSession().then(function(res){
     if(res.data.session){
       localStorage.setItem('pep_auth','1');
