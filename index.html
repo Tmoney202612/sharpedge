@@ -2229,7 +2229,7 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 })();
 
 // Admin: Ctrl+Shift+A to access app
-document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}});
+document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){enterApp();}});
 
 // ===== SHARP MONEY TRACKER =====
 window._sharpGames=[]; window._sharpFilter='all';
