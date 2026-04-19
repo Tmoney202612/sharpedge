@@ -2488,9 +2488,11 @@ document.addEventListener('DOMContentLoaded',function(){
       fetch('/api/check-membership?email='+encodeURIComponent(userEmail)).then(function(r){return r.json();}).then(function(d){
         if(d.active){
           localStorage.setItem('pep_auth','1');
+          localStorage.setItem('pep_plan_active',d.plan||'edge');
           setTimeout(function(){
             try{
               enterApp();
+              setTimeout(function(){applyPlanRestrictions(d.plan||'edge');},600);
               var lastTab=localStorage.getItem('pep_last_tab');
               if(lastTab){var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'"+lastTab+"'")>-1;});if(btn)showTab(lastTab,btn);}
             }catch(e){}
