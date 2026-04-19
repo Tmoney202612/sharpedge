@@ -498,12 +498,12 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
     </nav>
     <div class="live-pill" id="live-pill" style="display:none"><div class="live-dot"></div>LIVE</div>
     <div id="api-status"></div>
-    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Start Free Trial →</button>
+    <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Get Started →</button>
     <button class="btn-ghost" id="header-demo" onclick="showLogin()">🔒 Member Login
   </div>
 </header>
 
-<div id="urgency-bar" style="background:linear-gradient(90deg,#1a0a00,#2d1200,#1a0a00);border-bottom:1px solid rgba(245,200,66,0.3);padding:8px 24px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:12px;font-family:var(--fm);position:relative;z-index:99;"><span style="color:var(--yellow);font-weight:700;">⚡ LIMITED: Only 31 Pro spots remain at $99/mo — price increases to $149 when full</span><span style="color:var(--border)">|</span><span style="color:var(--muted);">🔒 7-Day Free Trial · Cancel Anytime</span></div>
+<div id="urgency-bar" style="background:linear-gradient(90deg,#1a0a00,#2d1200,#1a0a00);border-bottom:1px solid rgba(245,200,66,0.3);padding:8px 24px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:12px;font-family:var(--fm);position:relative;z-index:99;"><span style="color:var(--yellow);font-weight:700;">⚡ LIMITED: Only 31 Pro spots remain at $99/mo — price increases to $149 when full</span><span style="color:var(--border)">|</span><span style="color:var(--muted);">🔒 Join Now · Cancel Anytime</span></div>
 <!-- LANDING -->
 <div id="landing">
 
@@ -513,7 +513,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
     <h1>Stop Guessing.<br><span>Start Winning.</span></h1>
     <p>Expert +EV picks by 9AM. Live arbitrage scanner. Real-time odds comparison across 15 books. We do the math — you collect.</p>
     <div class="hero-btns">
-      <button class="hero-btn-primary" onclick="showLogin()">Start Free Trial — 7 Days →</button>
+      <button class="hero-btn-primary" onclick="showLogin();setTimeout(function(){switchTab('signup');},100)">Get Started →</button>
       <button class="hero-btn-secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">View Plans</button>
     </div>
     <div class="hero-stats-bar">
@@ -611,7 +611,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
           <li>Low Hold, Middles & Promo Finder</li>
           <li>Priority Discord + analyst access</li>
         </ul>
-        <button class="pricing-btn-primary" onclick="showLogin()">Start Free Trial — 7 Days →</button>
+        <button class="pricing-btn-primary" onclick="showLogin();setTimeout(function(){switchTab('signup');},100)">Get Started →</button>
       </div>
     </div>
   </div>
@@ -2447,7 +2447,7 @@ document.addEventListener('keydown',function(e){
 document.addEventListener('DOMContentLoaded',function(){
   if(window.location.hash.includes('type=recovery'))return;
   _supa.auth.getSession().then(function(res){
-    if(res.data.session && res.data.session.user){
+    if(res.data.session && res.data.session.user && !window.location.hash.includes('type=signup')){
       var userEmail=res.data.session.user.email;
       fetch('/api/check-membership?email='+encodeURIComponent(userEmail)).then(function(r){return r.json();}).then(function(d){
         if(d.active){
