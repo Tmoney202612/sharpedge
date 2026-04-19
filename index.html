@@ -479,7 +479,7 @@ h1,h2,.hero h1,.section-header h2{font-family:var(--fd)!important;}
 }
 .pricing-price{font-size:60px!important;}
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
 <body>
 
 <header>
@@ -2329,5 +2329,112 @@ function renderSharpRows(){
   }).join('');
 }
 </script>
-<div id="login-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;"><div style="background:#0c1018;border:1px solid #1e3a5f;border-radius:14px;padding:36px 32px;width:320px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Prime Edge Picks</div><div style="font-size:12px;color:#475569;margin-bottom:24px;">Member access only</div><input id="lpw" type="password" placeholder="Password" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;"/><div id="lerr" style="color:#ff4757;font-size:11px;min-height:16px;margin-bottom:10px;"></div><button onclick="doLogin()" style="width:100%;background:#3b82f6;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">Enter Platform</button><div style="font-size:11px;color:#334155;">Not a member? <a href="https://whop.com/prime-edge-picks/" target="_blank" style="color:#3b82f6;">Join here</a></div></div></div><script>function showLogin(){var m=document.getElementById('login-modal');if(m)m.style.display='flex';setTimeout(function(){var p=document.getElementById('lpw');if(p)p.focus();},100);}function doLogin(){var p=document.getElementById('lpw'),e=document.getElementById('lerr');if(!p)return;if(p.value==='sharpedge2026'){localStorage.setItem('pep_auth','1');var m=document.getElementById('login-modal');if(m)m.style.display='none';try{enterApp();}catch(err){}}else{if(e)e.textContent='Wrong password. Try again.';}}document.addEventListener('keydown',function(e){var m=document.getElementById('login-modal');if(m&&m.style.display==='flex'&&e.key==='Enter')doLogin();});document.addEventListener('DOMContentLoaded',function(){if(localStorage.getItem('pep_auth')==='1'){setTimeout(function(){try{enterApp();var lastTab=localStorage.getItem('pep_last_tab');if(lastTab){var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'"+lastTab+"'")>-1;});if(btn)showTab(lastTab,btn);}}catch(e){}},500);}});</script></body>
+<div id="login-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;">
+  <div style="background:#0c1018;border:1px solid #1e3a5f;border-radius:14px;padding:36px 32px;width:360px;text-align:center;">
+    <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Prime Edge Picks</div>
+    <div id="auth-subtitle" style="font-size:12px;color:#475569;margin-bottom:24px;">Sign in to your account</div>
+    <input id="lpw-email" type="email" placeholder="Email address" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;"/>
+    <input id="lpw" type="password" placeholder="Password" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;"/>
+    <input id="lpw-name" type="text" placeholder="Full name (sign up only)" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;display:none;"/>
+    <div id="lerr" style="color:#ff4757;font-size:11px;min-height:16px;margin-bottom:10px;"></div>
+    <button id="auth-submit-btn" onclick="doLogin()" style="width:100%;background:#3b82f6;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">Sign In</button>
+    <div style="font-size:11px;color:#475569;margin-bottom:8px;">
+      <a href="#" onclick="toggleAuthMode();return false;" id="auth-toggle-link" style="color:#3b82f6;">Don't have an account? Sign up</a>
+    </div>
+    <div style="font-size:11px;color:#334155;">
+      <a href="#" onclick="forgotPassword();return false;" style="color:#64748b;">Forgot password?</a>
+    </div>
+  </div>
+</div>
+<script>
+var _supa = supabase.createClient('https://bajxctlugbewbfwhqnkw.supabase.co', 'sb_publishable_qR4T0no0yjtN9l0o4pdMbg_yQ8COnjB');
+var _authMode = 'signin';
+
+function showLogin(){
+  var m=document.getElementById('login-modal');
+  if(m)m.style.display='flex';
+  setTimeout(function(){var e=document.getElementById('lpw-email');if(e)e.focus();},100);
+}
+
+function toggleAuthMode(){
+  _authMode = _authMode==='signin' ? 'signup' : 'signin';
+  document.getElementById('auth-subtitle').textContent = _authMode==='signup' ? 'Create your account' : 'Sign in to your account';
+  document.getElementById('auth-submit-btn').textContent = _authMode==='signup' ? 'Create Account' : 'Sign In';
+  document.getElementById('auth-toggle-link').textContent = _authMode==='signup' ? 'Already have an account? Sign in' : "Don't have an account? Sign up";
+  document.getElementById('lpw-name').style.display = _authMode==='signup' ? 'block' : 'none';
+  document.getElementById('lerr').textContent = '';
+}
+
+async function doLogin(){
+  var email=document.getElementById('lpw-email').value.trim();
+  var password=document.getElementById('lpw').value;
+  var err=document.getElementById('lerr');
+  if(!email||!password){err.textContent='Please enter email and password.';return;}
+  
+  err.textContent='';
+  document.getElementById('auth-submit-btn').textContent='...';
+  
+  try {
+    var result;
+    if(_authMode==='signup'){
+      var name=document.getElementById('lpw-name').value.trim();
+      result = await _supa.auth.signUp({email:email,password:password,options:{data:{full_name:name}}});
+    } else {
+      result = await _supa.auth.signInWithPassword({email:email,password:password});
+    }
+    
+    if(result.error){
+      err.textContent = result.error.message;
+      document.getElementById('auth-submit-btn').textContent = _authMode==='signup'?'Create Account':'Sign In';
+      return;
+    }
+    
+    if(_authMode==='signup' && result.data.user && !result.data.session){
+      err.style.color='#00e676';
+      err.textContent='Check your email to confirm your account!';
+      document.getElementById('auth-submit-btn').textContent='Email Sent!';
+      return;
+    }
+    
+    // Success
+    localStorage.setItem('pep_auth','1');
+    document.getElementById('login-modal').style.display='none';
+    try{enterApp();}catch(e){}
+  } catch(e){
+    err.textContent='Error: '+e.message;
+    document.getElementById('auth-submit-btn').textContent=_authMode==='signup'?'Create Account':'Sign In';
+  }
+}
+
+async function forgotPassword(){
+  var email=document.getElementById('lpw-email').value.trim();
+  if(!email){document.getElementById('lerr').textContent='Enter your email first.';return;}
+  await _supa.auth.resetPasswordForEmail(email,{redirectTo:'https://www.primeedgepicks.com'});
+  document.getElementById('lerr').style.color='#00e676';
+  document.getElementById('lerr').textContent='Password reset email sent!';
+}
+
+document.addEventListener('keydown',function(e){
+  var m=document.getElementById('login-modal');
+  if(m&&m.style.display==='flex'&&e.key==='Enter')doLogin();
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+  _supa.auth.getSession().then(function(res){
+    if(res.data.session){
+      localStorage.setItem('pep_auth','1');
+      setTimeout(function(){
+        try{
+          enterApp();
+          var lastTab=localStorage.getItem('pep_last_tab');
+          if(lastTab){
+            var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'"+lastTab+"'")>-1;});
+            if(btn)showTab(lastTab,btn);
+          }
+        }catch(e){}
+      },500);
+    }
+  });
+});
+</script></body>
 </html>
