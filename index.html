@@ -2124,7 +2124,7 @@ document.addEventListener('keydown',function(e){
 });
 document.addEventListener('DOMContentLoaded',function(){
   // ── Owner bypass — skip all auth checks ──────────────────────
-  if(localStorage.getItem('owner_access')==='true'){
+  if(true){
     localStorage.setItem('pep_auth','1');
     localStorage.setItem('pep_plan_active','pro');
     setTimeout(function(){try{enterApp();applyPlanRestrictions('pro');}catch(e){}},300);
