@@ -2422,7 +2422,7 @@ async function doSignUp(){
   localStorage.setItem('pep_pending_email', email);
   // Redirect to Whop to subscribe — after paying they come back and sign in
   err.style.color='#00e676';
-  err.textContent='✓ Account created! Taking you to subscribe...';
+  err.textContent='✓ Account created! Taking you to subscribe now...';
   setTimeout(function(){
     window.location.href='https://whop.com/prime-edge-picks/?email='+encodeURIComponent(email);
   }, 1500);
