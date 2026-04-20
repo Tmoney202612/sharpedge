@@ -1124,6 +1124,7 @@ else{filtered=filtered.filter(o=>!o.commenceTime||new Date(o.commenceTime)>_now)
 }
 
 async function loadAllEVSports(){
+  try {
   document.getElementById('ev-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div>Scanning all sports for +EV bets...</div>`;
   const SPORTS_LIST = [{key:'basketball_nba',label:'NBA',emoji:'Ã°ÂÂÂ',color:'#4f8aff'},{key:'baseball_mlb',label:'MLB',emoji:'Ã¢ÂÂ¾',color:'#f5c842'},{key:'icehockey_nhl',label:'NHL',emoji:'Ã°ÂÂÂ',color:'#4f8aff'},{key:'americanfootball_nfl',label:'NFL',emoji:'Ã°ÂÂÂ',color:'#ff6b35'},{key:'americanfootball_ncaaf',label:'NCAAF',emoji:'Ã°ÂÂÂ',color:'#ff6b35'},{key:'basketball_wnba',label:'WNBA',emoji:'Ã°ÂÂÂ',color:'#ff6b7a'},{key:'basketball_ncaab',label:'NCAAB',emoji:'Ã°ÂÂÂ',color:'#a78bfa'},{key:'mma_mixed_martial_arts',label:'MMA',emoji:'Ã°ÂÂ¥Â',color:'#ff4757'},{key:'boxing_boxing',label:'Boxing',emoji:'Ã°ÂÂ¥Â',color:'#ff6b35'},{key:'soccer_epl',label:'EPL',emoji:'Ã¢ÂÂ½',color:'#8b5cf6'},{key:'soccer_spain_la_liga',label:'La Liga',emoji:'Ã¢ÂÂ½',color:'#f5c842'},{key:'soccer_germany_bundesliga',label:'Bundesliga',emoji:'Ã¢ÂÂ½',color:'#ff4757'},{key:'soccer_italy_serie_a',label:'Serie A',emoji:'Ã¢ÂÂ½',color:'#4f8aff'},{key:'soccer_france_ligue_one',label:'Ligue 1',emoji:'Ã¢ÂÂ½',color:'#2ecc71'},{key:'soccer_uefa_champs_league',label:'UCL',emoji:'Ã¢ÂÂ½',color:'#f5c842'},{key:'soccer_uefa_europa_league',label:'Europa',emoji:'Ã¢ÂÂ½',color:'#ff6b35'},{key:'soccer_usa_mls',label:'MLS',emoji:'Ã¢ÂÂ½',color:'#06b6d4'},{key:'soccer_mexico_ligamx',label:'Liga MX',emoji:'Ã¢ÂÂ½',color:'#2ecc71'},{key:'soccer_brazil_campeonato',label:'Brazil',emoji:'Ã¢ÂÂ½',color:'#f5c842'},{key:'soccer_netherlands_eredivisie',label:'Eredivisie',emoji:'Ã¢ÂÂ½',color:'#ff6b35'},{key:'soccer_conmebol_copa_libertadores',label:'Copa Lib',emoji:'Ã¢ÂÂ½',color:'#a78bfa'},{key:'rugbyleague_nrl',label:'NRL',emoji:'Ã°ÂÂÂ',color:'#2ecc71'},{key:'aussierules_afl',label:'AFL',emoji:'Ã°ÂÂÂ',color:'#ff6b35'},{key:'cricket_ipl',label:'IPL',emoji:'Ã°ÂÂÂ',color:'#ff6b35'},{key:'basketball_euroleague',label:'Euroleague',emoji:'Ã°ÂÂÂ',color:'#4f8aff'}];
   aconst results = await Promise.all(SPORTS_LIST.map(s => fetchSportEV(s)));
@@ -1137,9 +1138,12 @@ let allEVResults = results.flat().sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev))
   document.getElementById('ev-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   if(allEVResults.length){const capped=allEVResults.filter(r=>parseFloat(r.ev)<100);document.getElementById('ev-avg').textContent='+'+(capped.length?(capped.reduce((s,r)=>s+parseFloat(r.ev),0)/capped.length).toFixed(1):'0')+'%';}
   renderEVRows();
-  buildPicksFromEV();
-}
+buildPicksFromEV();
 
+  } catch (e) {
+    console.error("EV ERROR:", e);
+  }
+}
 async function fetchSportEV(sportConfig){
   try{
     const data=await fetchSport(sportConfig.key);
