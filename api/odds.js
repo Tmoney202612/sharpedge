@@ -23,8 +23,7 @@ export default async function handler(req, res) {
     'wynnbet',
     'betus',
     'fliff',
-        'ballysports',
-        'betopenly',
+'ballybet',
   ].join(',');
 
   try {
