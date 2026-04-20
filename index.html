@@ -687,9 +687,9 @@ function enterApp(){
   inApp=true;
   try{renderPromos();}catch(e){} try{renderTracker();}catch(e){}
   loadSingleSport();
+  // Lazy: load active tab only, others load on tab switch
   loadAllArbSports();
-  loadAllEVSports();
-  loadAllLiveSports();
+  // EV and Live: loaded lazily on tab switch
   setTimeout(loadSportCounts,3000);
   setTimeout(()=>{
     const sportOrder=['basketball_nba','icehockey_nhl','baseball_mlb','mma_mixed_martial_arts','soccer_usa_mls','soccer_epl'];
@@ -704,9 +704,20 @@ function enterApp(){
   },2000);
 }
 
+// API response cache — prevents duplicate requests within TTL window
+const _apiCache={};
+const _API_CACHE_TTL=300000; // 5 minutes
+async function cachedFetch(url){
+  const now=Date.now();
+  if(_apiCache[url]&&(now-_apiCache[url].ts)<_API_CACHE_TTL){return _apiCache[url].data;}
+  const r=await fetch(url);
+  const data=await r.json();
+  _apiCache[url]={data,ts:now};
+  return data;
+}
 async function fetchSport(key,market='h2h'){
   try{
-    const r=await fetch(`${API_ENDPOINT}?sport=${key}&market=${market}`);
+    const r=await cachedFetch(`${API_ENDPOINT}?sport=${key}&market=${market}`);
     if(!r.ok)return[];
     const data=await r.json();
     if(!Array.isArray(data))return[];
@@ -719,7 +730,7 @@ async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
   window.allArbOpps=[];
-  const sports=['basketball_nba','basketball_ncaab','basketball_wnba','basketball_euroleague','baseball_mlb','baseball_ncaa','icehockey_nhl','icehockey_sweden_allsvenskan','icehockey_sweden_hockey_league','americanfootball_nfl','americanfootball_ncaaf','mma_mixed_martial_arts','boxing_boxing','soccer_epl','soccer_usa_mls','soccer_germany_bundesliga','soccer_spain_la_liga','soccer_italy_serie_a','soccer_france_ligue_one','soccer_uefa_champs_league','soccer_uefa_europa_league','soccer_uefa_conference_league','soccer_brazil_campeonato','soccer_brazil_serie_b','soccer_mexico_ligamx','soccer_netherlands_eredivisie','soccer_portugal_primeira_liga','soccer_turkey_super_league','soccer_australia_aleague','soccer_japan_j_league','soccer_korea_kleague1','soccer_england_efl_champ','soccer_england_league1','soccer_england_league2','soccer_efl_cup','soccer_fa_cup','soccer_scotland_premiership','soccer_belgium_first_div','soccer_switzerland_superleague','soccer_denmark_superliga','soccer_sweden_allsvenskan','soccer_sweden_superettan','soccer_norway_eliteserien','soccer_finland_veikkausliiga','soccer_austria_bundesliga','soccer_poland_ekstraklasa','soccer_czech_czech_liga','soccer_greece_super_league','soccer_argentina_primera_division','soccer_chile_campeonato','soccer_china_superleague','soccer_conmebol_copa_libertadores','soccer_copa_sudamericana','soccer_fifa_world_cup','soccer_germany_dfb_pokal','soccer_france_coupe','soccer_italy_serie_b','soccer_league_of_ireland','soccer_russia_premier_league','soccer_saudi_arabia_pro_league','soccer_spain_segunda_division','tennis_atp_barcelona_open','tennis_wta_stuttgart_open','tennis_atp_munich','rugbyleague_nrl','aussierules_afl','cricket_ipl','cricket_international_t20','cricket_odi','cricket_test_match','lacrosse_ncaa','lacrosse_pll'];
+  const sports=['basketball_nba','baseball_mlb','icehockey_nhl','americanfootball_nfl','mma_mixed_martial_arts','boxing_boxing','soccer_epl','soccer_usa_mls','soccer_germany_bundesliga','soccer_spain_la_liga','soccer_italy_serie_a','soccer_france_ligue_one'];
   const markets=['h2h','spreads','totals'];
   let totalJobs=sports.length*markets.length+1; // +1 for Polymarket
   let done=0;
@@ -1535,7 +1546,7 @@ function isBookAllowed(bookName){
 
 function captureEmail(){const email=document.getElementById('lead-email').value.trim();if(!email||!email.includes('@')){alert('Please enter a valid email');return;}fetch('/api/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'ev-playbook',timestamp:new Date().toISOString()})}).catch(()=>{});document.getElementById('lead-success').style.display='block';document.getElementById('lead-email').value='';window.open('https://github.com/Tmoney202612/sharpedge/raw/main/public/Prime_Edge_EV_Betting_Playbook.pdf','_blank');}
 
-setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports();loadAllLiveSports();}},90000);
+setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();}},90000);
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script>
