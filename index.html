@@ -19,11 +19,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js" defer></script>
 <link rel="stylesheet" href="/css/main.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <script src="/config/api.js"></script>
-  <script src="/utils/validation.js"></script>
-  <script src="/utils/accessibility.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script> <script src="/config/api.js" defer></script>
+  <script src="/utils/validation.js"> defer></script>
+  <script src="/utils/accessibility.js"> defer></script>
+    <link rel="canonical" href="https://www.primeedgepicks.com/">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+            <meta name="twitter:image" content="https://www.primeedgepicks.com/og-image.png">
+                <meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
@@ -1079,14 +1083,14 @@ else{filtered=filtered.filter(o=>!o.commenceTime||new Date(o.commenceTime)>_now)
             ${bookBadge(leg3.book)}
             <div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--yellow);margin-bottom:6px;">${fmt(leg3.odds)}</div>
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+sD+'</div>':'<div style="margin-bottom:10px;"></div>'}
-            <button onclick="openBook('${leg3.book}')" style="background:var(--yellow);color:#000;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →/button>
+            <button onclick="openBook('${leg3.book}')" style="background:var(--yellow);color:#000;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →</button>
           </div>
           <div style="padding:16px;">
             <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
             ${bookBadge(leg2.book)}
             <div style="font-family:var(--fm);font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">${fmt(leg2.odds)}</div>
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+'</div>':'<div style="margin-bottom:10px;"></div>'}
-            <button onclick="openBook('${leg2.book}')" style="background:var(--accent2);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →/button>
+            <button onclick="openBook('${leg2.book}')" style="background:var(--accent2);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →</button>
           </div>
         </div>
       </div>`;
