@@ -73,6 +73,7 @@
     <div id="api-status"></div>
     <button class="btn-primary" id="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="padding:10px 22px;font-size:14px;">Get Started →</button>
     <button class="btn-ghost" id="header-demo" onclick="showLogin()">🔒 Member Login</button>
+    <button class="btn-ghost" id="header-owner-login" onclick="showOwnerLogin()" style="font-size:12px;">Owner Login</button>
   <button class="btn-ghost" id="header-logout" style="display:none;font-size:12px;" onclick="doLogout()">Sign Out</button>
   </div>
 </header>
@@ -666,6 +667,8 @@ function showLanding(){
   document.getElementById('app').style.display='none';
   document.getElementById('header-cta').style.display='block';
   document.getElementById('header-demo').style.display='block';
+  var ownerBtn=document.getElementById('header-owner-login');if(ownerBtn)ownerBtn.style.display='inline-block';
+  var logoutBtn=document.getElementById('header-logout');if(logoutBtn)logoutBtn.style.display='none';
   document.getElementById('live-pill').style.display='none';
   document.getElementById('landing-nav').style.display='flex';
   document.getElementById('sticky-bar').style.transform='translateY(100%)';
@@ -674,12 +677,11 @@ function showLanding(){
 }
 
 function enterApp(){
-  localStorage.setItem('owner_access','true');
   var _s=function(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;};
   _s('landing','display','none');
   _s('app','display','block');
   _s('header-cta','display','none');
-  _s('header-demo','display','none');_s('header-logout','display','inline-block');
+  _s('header-demo','display','none');_s('header-owner-login','display','none');_s('header-logout','display','inline-block');
   _s('live-pill','display','flex');
   _s('landing-nav','display','none');
   _s('sticky-bar','transform','translateY(100%)');
@@ -1673,7 +1675,7 @@ function closeLegalModal(){document.getElementById('legal-modal-overlay').style.
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLegalModal();});
 </script>
 </main>
-<footer style="background:var(--surface);border-top:1px solid var(--border);padding:40px 40px 24px;position:relative;z-index:1;"><div style="max-width:900px;margin:0 auto;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px;"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge <span style="color:var(--accent)">Picks</span></span></div><div style="font-size:12px;color:var(--muted);line-height:1.7;max-width:260px;">Math-based sports betting analytics. We provide data, odds comparisons, and statistical analysis — not gambling advice.</div><div style="margin-top:14px;display:flex;gap:10px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);color:#8b9eff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">💬 Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="background:rgba(79,138,255,0.08);border:1px solid rgba(79,138,255,0.25);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">⚡ Whop</a><a href="https://oddspedia.com" target="_blank" rel="noopener noreferrer" data-old-rel="nofollow" style="background:rgba(15,93,117,0.15);border:1px solid rgba(26,183,172,0.3);color:#1AB7AC;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">📊 Data · Oddspedia</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Product</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Daily Picks</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">+EV Scanner</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Arbitrage</a><a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Pricing</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Community</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Membership</a><a href="mailto:timhendryaz@gmail.com" style="font-size:13px;color:var(--muted);text-decoration:none;">Contact Us</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLegalModal('privacy');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Privacy Policy</a><a href="#" onclick="showLegalModal('terms');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Terms of Service</a><a href="#" onclick="showLegalModal('responsible');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Responsible Gambling</a></div></div></div><div style="border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="font-size:11px;color:var(--muted);">© 2025 Prime Edge Picks. All rights reserved.</div><div style="font-size:11px;color:var(--muted);max-width:600px;line-height:1.6;text-align:right;"><strong style="color:var(--red);">18+ only.</strong> Gambling involves risk. Past results do not guarantee future outcomes. Prime Edge Picks provides statistical analysis only — not financial or gambling advice. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.</div></div></div></footer><div id="legal-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLegalModal()"><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;position:relative;"><button onclick="closeLegalModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;">×</button><div id="legal-modal-body"></div></div></div>
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:40px 40px 24px;position:relative;z-index:1;"><div style="max-width:900px;margin:0 auto;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px;"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge <span style="color:var(--accent)">Picks</span></span></div><div style="font-size:12px;color:var(--muted);line-height:1.7;max-width:260px;">Math-based sports betting analytics. We provide data, odds comparisons, and statistical analysis — not gambling advice.</div><div style="margin-top:14px;display:flex;gap:10px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);color:#8b9eff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">💬 Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="background:rgba(79,138,255,0.08);border:1px solid rgba(79,138,255,0.25);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">⚡ Whop</a><a href="https://oddspedia.com" target="_blank" rel="noopener noreferrer" data-old-rel="nofollow" style="background:rgba(15,93,117,0.15);border:1px solid rgba(26,183,172,0.3);color:#1AB7AC;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">📊 Data · Oddspedia</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Product</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLogin();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Daily Picks</a><a href="#" onclick="showLogin();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">+EV Scanner</a><a href="#" onclick="showLogin();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Arbitrage</a><a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Pricing</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Community</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Membership</a><a href="mailto:timhendryaz@gmail.com" style="font-size:13px;color:var(--muted);text-decoration:none;">Contact Us</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLegalModal('privacy');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Privacy Policy</a><a href="#" onclick="showLegalModal('terms');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Terms of Service</a><a href="#" onclick="showLegalModal('responsible');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Responsible Gambling</a></div></div></div><div style="border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="font-size:11px;color:var(--muted);">© 2025 Prime Edge Picks. All rights reserved.</div><div style="font-size:11px;color:var(--muted);max-width:600px;line-height:1.6;text-align:right;"><strong style="color:var(--red);">18+ only.</strong> Gambling involves risk. Past results do not guarantee future outcomes. Prime Edge Picks provides statistical analysis only — not financial or gambling advice. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.</div></div></div></footer><div id="legal-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLegalModal()"><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;position:relative;"><button onclick="closeLegalModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;">×</button><div id="legal-modal-body"></div></div></div>
 <!-- BOOK SELECTOR MODAL -->
 <div id="book-selector-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2001;align-items:center;justify-content:center;" onclick="if(event.target===this)closeBookSelector()">
 <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:600px;width:92%;max-height:85vh;overflow-y:auto;position:relative;">
@@ -1900,8 +1902,7 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 
 })();
 
-// Admin: Ctrl+Shift+A to access app
-document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}});
+
 
 // ===== SHARP MONEY TRACKER =====
 window._sharpGames=[]; window._sharpFilter='all';
@@ -2007,7 +2008,7 @@ rows.innerHTML=games.slice(0,25).map(g=>{
 }
 </script>
 <div id="login-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);align-items:center;justify-content:center;">
-  <div style="background:#0c1018;border:1px solid #1e3a5f;border-radius:16px;padding:0;width:380px;overflow:hidden;box-shadow:0 0 60px rgba(59,130,246,0.2);">
+  <div style="background:#0c1018;border:1px solid #1e3a5f;border-radius:16px;padding:0;width:420px;overflow:hidden;box-shadow:0 0 60px rgba(59,130,246,0.2);">
     <!-- Header -->
     <div style="padding:28px 32px 0;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
@@ -2020,6 +2021,7 @@ rows.innerHTML=games.slice(0,25).map(g=>{
       <div style="display:flex;border-bottom:1px solid #1a2235;margin:0 -32px;padding:0 32px;">
         <button id="tab-signin" onclick="switchTab('signin')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2px solid #3b82f6;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">Sign In</button>
         <button id="tab-signup" onclick="switchTab('signup')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2px solid transparent;color:#475569;font-weight:600;font-size:14px;cursor:pointer;">Create Account</button>
+        <button id="tab-owner" onclick="switchTab('owner')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2px solid transparent;color:#475569;font-weight:600;font-size:14px;cursor:pointer;">Owner</button>
       </div>
     </div>
     <!-- Form -->
@@ -2039,21 +2041,67 @@ rows.innerHTML=games.slice(0,25).map(g=>{
         <button onclick="doSignUp()" style="width:100%;background:#3b82f6;color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">Create Account →</button>
         <div style="font-size:11px;color:#475569;margin-top:12px;text-align:center;">We'll send a confirmation email to verify your account.</div>
       </div>
+      <div id="auth-owner-form" style="display:none;">
+        <div style="font-size:12px;color:#94a3b8;line-height:1.6;margin-bottom:14px;">Owner access is restricted to the verified Supabase account for <strong style="color:#fff;">timhendryaz@gmail.com</strong>.</div>
+        <input id="owner-email" type="email" value="timhendryaz@gmail.com" readonly style="width:100%;background:#0f172a;border:1px solid #1a2235;border-radius:8px;padding:12px 14px;color:#94a3b8;font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box;"/>
+        <input id="owner-password" type="password" placeholder="Owner password" style="width:100%;background:#080c12;border:1px solid #1a2235;border-radius:8px;padding:12px 14px;color:#fff;font-size:14px;outline:none;margin-bottom:8px;box-sizing:border-box;"/>
+        <div id="owner-err" style="color:#ff4757;font-size:12px;min-height:18px;margin-bottom:12px;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button onclick="doOwnerSignIn()" style="width:100%;background:#3b82f6;color:#fff;border:none;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">Owner Sign In</button>
+          <button onclick="createOwnerAccount()" style="width:100%;background:#111827;color:#fff;border:1px solid #334155;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">Create Owner Account</button>
+        </div>
+        <div style="font-size:11px;color:#64748b;margin-top:12px;line-height:1.5;">Use the create-account flow once for the owner email only. If sign-in says the email is not confirmed, confirm it from the inbox first.</div>
+      </div>
     </div>
   </div>
 </div>
 <script>
 var _supa=supabase.createClient('https://bajxctlugbewbfwhqnkw.supabase.co','sb_publishable_qR4T0no0yjtN9l0o4pdMbg_yQ8COnjB');
+var OWNER_EMAIL='timhendryaz@gmail.com';
+var ownerSessionActive=false;
 function showLogin(){var m=document.getElementById('login-modal');if(m)m.style.display='flex';switchTab('signin');}
+function showOwnerLogin(){var m=document.getElementById('login-modal');if(m)m.style.display='flex';switchTab('owner');}
+function isOwnerEmail(email){return(email||'').trim().toLowerCase()===OWNER_EMAIL;}
+function setOwnerSession(active){
+  ownerSessionActive=!!active;
+  window.__pepOwnerSession=ownerSessionActive;
+  var ownerBtn=document.getElementById('header-owner-login');
+  if(ownerBtn)ownerBtn.style.display=ownerSessionActive?'none':'inline-block';
+}
+function setAuthMessage(id,msg,color,isHtml){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.style.color=color||'#ff4757';
+  if(isHtml)el.innerHTML=msg||'';
+  else el.textContent=msg||'';
+}
+function grantOwnerAccess(user){
+  if(!user||!isOwnerEmail(user.email)){
+    setOwnerSession(false);
+    setAuthMessage('owner-err','Not authorized.','#ff4757');
+    return false;
+  }
+  setOwnerSession(true);
+  localStorage.setItem('pep_auth','1');
+  localStorage.setItem('pep_plan_active','pro');
+  var modal=document.getElementById('login-modal');if(modal)modal.style.display='none';
+  updateBannerAuthState();
+  setTimeout(function(){try{enterApp();applyPlanRestrictions('pro');}catch(e){}},200);
+  return true;
+}
 function switchTab(t){
   document.getElementById('auth-signin-form').style.display=t==='signin'?'block':'none';
   document.getElementById('auth-signup-form').style.display=t==='signup'?'block':'none';
+  document.getElementById('auth-owner-form').style.display=t==='owner'?'block':'none';
   document.getElementById('tab-signin').style.borderBottomColor=t==='signin'?'#3b82f6':'transparent';
   document.getElementById('tab-signin').style.color=t==='signin'?'#fff':'#475569';
   document.getElementById('tab-signup').style.borderBottomColor=t==='signup'?'#3b82f6':'transparent';
   document.getElementById('tab-signup').style.color=t==='signup'?'#fff':'#475569';
+  document.getElementById('tab-owner').style.borderBottomColor=t==='owner'?'#3b82f6':'transparent';
+  document.getElementById('tab-owner').style.color=t==='owner'?'#fff':'#475569';
   if(t==='signin')setTimeout(function(){var e=document.getElementById('si-email');if(e)e.focus();},100);
-  else setTimeout(function(){var e=document.getElementById('su-name');if(e)e.focus();},100);
+  else if(t==='signup')setTimeout(function(){var e=document.getElementById('su-name');if(e)e.focus();},100);
+  else setTimeout(function(){var e=document.getElementById('owner-password');if(e)e.focus();},100);
 }
 async function doSignIn(){
   var email=document.getElementById('si-email').value.trim();
@@ -2107,6 +2155,42 @@ async function doSignUp(){
     window.location.href=whopUrl+'?email='+encodeURIComponent(email);
   }, 1500);
 }
+async function doOwnerSignIn(){
+  var email=document.getElementById('owner-email').value.trim().toLowerCase();
+  var pw=document.getElementById('owner-password').value;
+  if(email!==OWNER_EMAIL){setAuthMessage('owner-err','Not authorized.','#ff4757');return;}
+  if(!pw){setAuthMessage('owner-err','Enter the owner password.','#ff4757');return;}
+  setAuthMessage('owner-err','Signing in...','#94a3b8');
+  var r=await _supa.auth.signInWithPassword({email:email,password:pw});
+  if(r.error){
+    var msg=r.error.message||'Unable to sign in.';
+    if(msg.toLowerCase().indexOf('email not confirmed')>-1)msg='Email not confirmed. Confirm timhendryaz@gmail.com in Supabase before signing in.';
+    setAuthMessage('owner-err',msg,'#ff4757');
+    return;
+  }
+  if(!grantOwnerAccess(r.data&&r.data.user?r.data.user:null)){
+    _supa.auth.signOut();
+    return;
+  }
+  document.getElementById('owner-password').value='';
+}
+async function createOwnerAccount(){
+  var email=document.getElementById('owner-email').value.trim().toLowerCase();
+  var pw=document.getElementById('owner-password').value;
+  if(email!==OWNER_EMAIL){setAuthMessage('owner-err','Not authorized.','#ff4757');return;}
+  if(!pw||pw.length<6){setAuthMessage('owner-err','Owner password must be at least 6 characters.','#ff4757');return;}
+  setAuthMessage('owner-err','Creating owner account...','#94a3b8');
+  var r=await _supa.auth.signUp({email:email,password:pw});
+  if(r.error){
+    setAuthMessage('owner-err',r.error.message||'Unable to create owner account.','#ff4757');
+    return;
+  }
+  if(r.data&&r.data.user&&r.data.session&&grantOwnerAccess(r.data.user)){
+    document.getElementById('owner-password').value='';
+    return;
+  }
+  setAuthMessage('owner-err','Owner account created. Check timhendryaz@gmail.com to confirm the email before signing in.','#00e676');
+}
 async function forgotPassword(){
   var email=document.getElementById('si-email').value.trim();
   if(!email){document.getElementById('si-err').textContent='Enter your email first.';return;}
@@ -2122,7 +2206,7 @@ function showUpgradeModal(feature){
 }
 function applyPlanRestrictions(plan){
   // Owner bypass — always full pro access
-  if(localStorage.getItem('owner_access')==='true') return;
+  if(window.__pepOwnerSession) return;
   if(!plan||plan==='sharp')return;
   var locked=[
     {id:'arb',name:'Arbitrage Finder'},
@@ -2151,16 +2235,17 @@ function applyPlanRestrictions(plan){
 }
 function doLogin(){doSignIn();}
 function doLogout(){
+  localStorage.removeItem('owner_access');
   localStorage.removeItem('pep_auth');
   localStorage.removeItem('pep_plan_active');
   localStorage.removeItem('pep_last_tab');
+  setOwnerSession(false);
   _supa.auth.signOut().then(function(){
-    document.getElementById('app').style.display='none';
-    document.getElementById('landing').style.display='';
-    var lo=document.getElementById('header-logout');if(lo)lo.style.display='none';
+    showLanding();
     var hd=document.getElementById('header-demo');if(hd)hd.style.display='';
     // Show urgency bar sign message
     var ur=document.getElementById('urgency-right');if(ur)ur.textContent='🔒 Join Now · Cancel Anytime';
+    updateBannerAuthState();
   });
 }
 document.addEventListener('keydown',function(e){
@@ -2168,22 +2253,22 @@ document.addEventListener('keydown',function(e){
   if(!m||m.style.display!=='flex')return;
   if(e.key==='Enter'){
     if(document.getElementById('auth-signup-form').style.display==='block')doSignUp();
+    else if(document.getElementById('auth-owner-form').style.display==='block')doOwnerSignIn();
     else doSignIn();
   }
   if(e.key==='Escape')m.style.display='none';
 });
 document.addEventListener('DOMContentLoaded',function(){
-  // ── Owner bypass — skip all auth checks ──────────────────────
-  if(localStorage.getItem('owner_access')==='true'){
-    localStorage.setItem('pep_auth','1');
-    localStorage.setItem('pep_plan_active','pro');
-    setTimeout(function(){try{enterApp();applyPlanRestrictions('pro');}catch(e){}},300);
-    return;
-  }
+  localStorage.removeItem('owner_access');
+  setOwnerSession(false);
   if(window.location.hash.includes('type=recovery'))return;
   _supa.auth.getSession().then(function(res){
     if(res.data.session && res.data.session.user && !window.location.hash.includes('type=signup')){
       var userEmail=res.data.session.user.email;
+      if(isOwnerEmail(userEmail)){
+        grantOwnerAccess(res.data.session.user);
+        return;
+      }
       fetch('/api/check-membership?email='+encodeURIComponent(userEmail)).then(function(r){return r.json();}).then(function(d){
         if(d.active){
           localStorage.setItem('pep_auth','1');
@@ -2203,10 +2288,13 @@ document.addEventListener('DOMContentLoaded',function(){
       }).catch(function(){
         // Fail closed — if check errors, sign them out
         localStorage.removeItem('pep_auth');
+        setOwnerSession(false);
         _supa.auth.signOut();
       });
     } else {
       localStorage.removeItem('pep_auth');
+      setOwnerSession(false);
+      updateBannerAuthState();
     }
   });
 });
@@ -2253,6 +2341,10 @@ window.addEventListener('load',function(){
     _supa.auth.getSession().then(function(res){
       if(res.data.session && res.data.session.user){
         var email=res.data.session.user.email;
+        if(isOwnerEmail(email)){
+          grantOwnerAccess(res.data.session.user);
+          return;
+        }
         fetch('/api/check-membership?email='+encodeURIComponent(email)).then(function(r){return r.json();}).then(function(d){
           if(d.active){
             localStorage.setItem('pep_auth','1');
@@ -2281,39 +2373,13 @@ window.addEventListener('load',function(){
   // Show/hide logout btn based on login state
   function updateBannerAuthState() {
     const logoutBtn = document.getElementById('logout-btn');
-    const isLoggedIn = localStorage.getItem('auth_token') || localStorage.getItem('member_session') || document.cookie.includes('whop');
+    const isLoggedIn = ownerSessionActive || localStorage.getItem('pep_auth')==='1' || localStorage.getItem('auth_token') || localStorage.getItem('member_session') || document.cookie.includes('whop');
     if (logoutBtn) {
       logoutBtn.style.display = isLoggedIn ? 'inline' : 'none';
     }
   }
 
-  // ── Owner backdoor login ─────────────────────────────────────────
-  // Press Shift+Shift+Shift (3x shift) within 1.5s to open admin prompt
-  (function() {
-    let shiftCount = 0;
-    let shiftTimer = null;
-    const OWNER_PASS = 'PrimeEdge2024!';
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Shift') {
-        shiftCount++;
-        clearTimeout(shiftTimer);
-        shiftTimer = setTimeout(() => { shiftCount = 0; }, 1500);
-        if (true) {
-          shiftCount = 0;
-          const pass = OWNER_PASS;
-          if (pass === OWNER_PASS) {
-            localStorage.setItem('owner_access', 'true');
-            alert('✅ Owner access granted. All features unlocked.');
-            window.location.reload();
-          } else if (pass !== null) {
-            alert('❌ Incorrect password.');
-          }
-        }
-      }
-    });
-  })();
-
-  document.addEventListener('DOMContentLoaded', function(){ updateBannerAuthState(); setTimeout(function(){ if(localStorage.getItem('owner_access')==='true'){enterApp();} }, 500); });
+  document.addEventListener('DOMContentLoaded', function(){ localStorage.removeItem('owner_access'); updateBannerAuthState(); });
 
 
 
