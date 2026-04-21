@@ -575,7 +575,7 @@
     </div>
   </div>
 </div>
-
+<div id="panel-props" class="panel"><div class="section-title">🎯 Player Props</div><div class="section-sub">Prop bets across NBA, MLB, NHL. Arbs and +EV where public US books disagree.</div><div class="stats-bar"><div class="stat-card"><div class="stat-label">Props Scanned</div><div class="stat-value" id="props-count">—</div></div><div class="stat-card"><div class="stat-label">Arb Opps</div><div class="stat-value" id="props-arbs" style="color:var(--green)">—</div></div><div class="stat-card"><div class="stat-label">Best Margin</div><div class="stat-value" id="props-best" style="color:var(--accent2)">—</div></div><div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="props-refresh" style="color:var(--accent);font-size:16px">—</div></div></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;"><button onclick="loadPlayerProps()" style="background:var(--accent);color:#000;border:none;padding:8px 18px;border-radius:6px;font-weight:700;cursor:pointer;">🔄 Refresh</button><div class="sport-chip active" onclick="filterProps(this,'all')">🌐 All</div><div class="sport-chip" onclick="filterProps(this,'NBA')">🏀 NBA</div><div class="sport-chip" onclick="filterProps(this,'MLB')">⚾ MLB</div><div class="sport-chip" onclick="filterProps(this,'NHL')">🏒 NHL</div></div><div id="props-rows"><div class="loading-state"><div class="loading-spinner"></div>Click Refresh to load player props...</div></div></div>
 <!-- CHAT -->
 <div class="chat-bubble">
   <div class="chat-window" id="chat-window">
