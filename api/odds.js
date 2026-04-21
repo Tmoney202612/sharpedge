@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     'draftkings',
     'fanduel',
     'betmgm',
-    'caesars',
+    'williamhill_us', // Caesars is williamhill_us in Odds API
     'bet365',
     'betrivers',
     'fanatics',
