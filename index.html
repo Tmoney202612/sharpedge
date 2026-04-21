@@ -1471,7 +1471,7 @@ const US_BOOKS=['DraftKings','FanDuel','BetMGM','Caesars','BetRivers','Fanatics'
 const INTL_BOOKS=['1xBet','Betsson','LeoVegas','Pinnacle','Betway','Unibet','BetOnline','Stake','William Hill','Ladbrokes','Coral','bet105','Betfair','Betsafe','22bet','GGBet','Coolbet','Dafabet','Rivalry','LowVig.ag','BookMaker','Heritage','Jazz Sports','Bovada','BetAnything','MyBookie','Xbet','SportsBetting.ag'];
 const PRED_BOOKS=['Polymarket','Kalshi','PrizePicks','Robinhood'];
 
-let userBooks=JSON.parse(localStorage.getItem('userBooks')||'null');
+let userBooks=JSON.parse(localStorage.getItem('userBooks')||'null'); if(!userBooks){userBooks=['DraftKings','FanDuel','BetMGM','Caesars','BetRivers','Fanatics','ESPN BET','Hard Rock','Unibet','SuperBook','WynnBET','BetUS','Fliff','Bally Bet'];localStorage.setItem('userBooks',JSON.stringify(userBooks));}
 function initBookSelector(){
   renderBookGrid('us-books-grid',US_BOOKS);
   renderBookGrid('intl-books-grid',INTL_BOOKS);
