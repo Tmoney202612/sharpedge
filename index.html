@@ -2150,11 +2150,12 @@ function doLogout(){
   localStorage.removeItem('pep_auth');
   localStorage.removeItem('pep_plan_active');
   localStorage.removeItem('pep_last_tab');
-  document.getElementById('app').style.display='none';
-  document.getElementById('landing').style.display='';
-  var lo=document.getElementById('header-logout');if(lo)lo.style.display='none';
-  var hd=document.getElementById('header-demo');if(hd)hd.style.display='';
-  var ur=document.getElementById('urgency-right');if(ur)ur.textContent='🔒 Join Now · Cancel Anytime';
+  _supa.auth.signOut().then(function(){
+    document.getElementById('app').style.display='none';
+    document.getElementById('landing').style.display='';
+    var lo=document.getElementById('header-logout');if(lo)lo.style.display='none';
+    var hd=document.getElementById('header-demo');if(hd)hd.style.display='';
+  });
 }
 document.addEventListener('keydown',function(e){
   var m=document.getElementById('login-modal');
