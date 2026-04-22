@@ -334,16 +334,11 @@
           <div class="stat-card"><div class="stat-label">Sports Scanned</div><div class="stat-value" id="ev-sports" style="color:var(--yellow)">—</div><div class="stat-sub">live now</div></div>
           <div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="ev-refresh" style="color:var(--accent);font-size:16px">—</div><div class="stat-sub">auto 90s</div></div>
         </div>
-        <div class="mode-toggle" style="display:flex;gap:6px;align-items:center;margin-bottom:12px;">
-<button id="ev-prematch-btn" onclick="setEvMode('prematch')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">Pre-Match</button>
-<button id="ev-live-btn" onclick="setEvMode('live')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">🔴 Live</button>
+        <div class="sport-filters" id="ev-view-filters" style="margin-bottom:12px;">
+<div class="sport-chip active" onclick="setEvView(this,'today')">🔴 Today</div>
+<div class="sport-chip" onclick="setEvView(this,'week')">🗓️ This Week</div>
+<div class="sport-chip" onclick="setEvView(this,'best')">🔥 Best</div>
 </div>
-<div class="sport-filters" id="ev-date-filters" style="margin-bottom:8px;">
-          <div class="sport-chip active" onclick="filterEVDate(this,'today')">📅 Today</div>
-          <div class="sport-chip" onclick="filterEVDate(this,'week')">🗓️ This Week</div>
-          <div class="sport-chip" onclick="filterEVDate(this,'all')">📊 All Upcoming</div>
-          <div class="sport-chip" onclick="filterEVDate(this,'best')">🔥 Best EV</div>
-        </div>
         <div class="sport-filters" id="ev-sport-filters">
           <div class="sport-chip active" onclick="filterEVSport(this,'all')">🌐 All <span class="chip-count" id="ev-chip-all">—</span></div>
           <div class="sport-chip" onclick="filterEVSport(this,'NBA')">🏀 NBA <span class="chip-count" id="ev-chip-NBA">0</span></div>
@@ -373,9 +368,10 @@
           <div class="stat-card"><div class="stat-label">Avg Profit</div><div class="stat-value" id="arb-avg" style="color:var(--yellow)">—</div><div class="stat-sub">per arb</div></div>
           <div class="stat-card"><div class="stat-label">Sports Scanned</div><div class="stat-value" id="arb-sports-count" style="color:var(--accent)">—</div><div class="stat-sub">live now</div></div>
         </div>
-        <div class="mode-toggle" style="display:flex;gap:6px;align-items:center;margin-bottom:12px;">
-<button id="arb-prematch-btn" onclick="setArbMode('prematch')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">Pre-Match</button>
-<button id="arb-live-btn" onclick="setArbMode('live')" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;">🔴 Live</button>
+        <div class="sport-filters" id="arb-view-filters" style="margin-bottom:12px;">
+<div class="sport-chip active" onclick="setArbView(this,'today')">🔴 Today</div>
+<div class="sport-chip" onclick="setArbView(this,'week')">🗓️ This Week</div>
+<div class="sport-chip" onclick="setArbView(this,'best')">🔥 Best</div>
 </div>
 <div class="sport-filters" id="arb-sport-filters">
           <div class="sport-chip active" onclick="filterArbSport(this,'all')">🌐 All <span class="chip-count" id="chip-count-all">—</span></div>
@@ -555,9 +551,10 @@
   <div id="panel-sharp" class="panel">
         <div class="section-title">🔥 Sharp Money Tracker</div>
         <div class="section-sub">Where sharp money is going — Pinnacle vs public books, line gaps, steam moves.</div>
-<div class="mode-toggle" style="display:flex;gap:6px;align-items:center;margin:14px 0;">
-<button id="sharp-prematch-btn" onclick="setSharpMode('prematch')" class="mode-btn active" style="padding:6px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;">Pre-Match</button>
-<button id="sharp-live-btn" onclick="setSharpMode('live')" class="mode-btn" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;">🔴 Live</button>
+<div class="sport-filters" id="sharp-view-filters" style="margin:14px 0;">
+<div class="sport-chip active" onclick="setSharpView(this,'today')">🔴 Today</div>
+<div class="sport-chip" onclick="setSharpView(this,'week')">🗓️ This Week</div>
+<div class="sport-chip" onclick="setSharpView(this,'best')">🔥 Best</div>
 </div>
         <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:8px;padding:16px;margin-bottom:16px;font-size:13px;color:#94a3b8;line-height:1.8;">
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;">💡 How this works — in plain English</div>
@@ -585,7 +582,7 @@
     </div>
   </div>
 </div>
-<div id="panel-props" class="panel"><div class="section-title">🎯 Player Props</div><div class="section-sub">Prop bets across NFL, NBA, WNBA, MLB, NHL, and major soccer leagues. Arbs and +EV where public US books disagree.</div><div class="stats-bar"><div class="stat-card"><div class="stat-label">Props Scanned</div><div class="stat-value" id="props-count">—</div></div><div class="stat-card"><div class="stat-label">Arb Opps</div><div class="stat-value" id="props-arbs" style="color:var(--green)">—</div></div><div class="stat-card"><div class="stat-label">Best Margin</div><div class="stat-value" id="props-best" style="color:var(--accent2)">—</div></div><div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="props-refresh" style="color:var(--accent);font-size:16px">—</div></div></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;"><button onclick="loadPlayerProps()" style="background:var(--accent);color:#000;border:none;padding:8px 18px;border-radius:6px;font-weight:700;cursor:pointer;">🔄 Refresh</button><div class="sport-chip active" onclick="filterProps(this,'all')">🌐 All</div><div class="sport-chip" onclick="filterProps(this,'NBA')">🏀 NBA</div><div class="sport-chip" onclick="filterProps(this,'MLB')">⚾ MLB</div><div class="sport-chip" onclick="filterProps(this,'NHL')">🏒 NHL</div><div class="sport-chip" onclick="filterProps(this,'NFL')">🏈 NFL</div><div class="sport-chip" onclick="filterProps(this,'WNBA')">🏀 WNBA</div><div class="sport-chip" onclick="filterProps(this,'EPL')">⚽ EPL</div><div class="sport-chip" onclick="filterProps(this,'La Liga')">⚽ La Liga</div><div class="sport-chip" onclick="filterProps(this,'Bundesliga')">⚽ Bundesliga</div><div class="sport-chip" onclick="filterProps(this,'Serie A')">⚽ Serie A</div><div class="sport-chip" onclick="filterProps(this,'Ligue 1')">⚽ Ligue 1</div><div class="sport-chip" onclick="filterProps(this,'MLS')">⚽ MLS</div></div><div id="props-rows"><div class="loading-state"><div class="loading-spinner"></div>Click Refresh to load player props...</div></div></div>
+<div id="panel-props" class="panel"><div class="section-title">🎯 Player Props</div><div class="section-sub">Prop bets across NFL, NBA, WNBA, MLB, NHL, and major soccer leagues. Arbs and +EV where public US books disagree.</div><div class="stats-bar"><div class="stat-card"><div class="stat-label">Props Scanned</div><div class="stat-value" id="props-count">—</div></div><div class="stat-card"><div class="stat-label">Arb Opps</div><div class="stat-value" id="props-arbs" style="color:var(--green)">—</div></div><div class="stat-card"><div class="stat-label">Best Margin</div><div class="stat-value" id="props-best" style="color:var(--accent2)">—</div></div><div class="stat-card"><div class="stat-label">Updated</div><div class="stat-value" id="props-refresh" style="color:var(--accent);font-size:16px">—</div></div></div><div class="sport-filters" id="props-view-filters" style="margin-bottom:12px;"><div class="sport-chip active" onclick="setPropsView(this,'today')">🔴 Today</div><div class="sport-chip" onclick="setPropsView(this,'week')">🗓️ This Week</div><div class="sport-chip" onclick="setPropsView(this,'best')">🔥 Best</div></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;"><button onclick="loadPlayerProps()" style="background:var(--accent);color:#000;border:none;padding:8px 18px;border-radius:6px;font-weight:700;cursor:pointer;">🔄 Refresh</button><div class="sport-chip active" onclick="filterProps(this,'all')">🌐 All</div><div class="sport-chip" onclick="filterProps(this,'NBA')">🏀 NBA</div><div class="sport-chip" onclick="filterProps(this,'MLB')">⚾ MLB</div><div class="sport-chip" onclick="filterProps(this,'NHL')">🏒 NHL</div><div class="sport-chip" onclick="filterProps(this,'NFL')">🏈 NFL</div><div class="sport-chip" onclick="filterProps(this,'WNBA')">🏀 WNBA</div><div class="sport-chip" onclick="filterProps(this,'EPL')">⚽ EPL</div><div class="sport-chip" onclick="filterProps(this,'La Liga')">⚽ La Liga</div><div class="sport-chip" onclick="filterProps(this,'Bundesliga')">⚽ Bundesliga</div><div class="sport-chip" onclick="filterProps(this,'Serie A')">⚽ Serie A</div><div class="sport-chip" onclick="filterProps(this,'Ligue 1')">⚽ Ligue 1</div><div class="sport-chip" onclick="filterProps(this,'MLS')">⚽ MLS</div></div><div id="props-rows"><div class="loading-state"><div class="loading-spinner"></div>Click Refresh to load player props...</div></div></div>
 <!-- CHAT -->
 <div class="chat-bubble">
   <div class="chat-window" id="chat-window">
@@ -1232,12 +1229,13 @@ function filterEVSport(el,sport){document.querySelectorAll('#ev-sport-filters .s
 function renderEVRows(){
   const now=Date.now();
   let filtered=evFilter==='all'?[...allEVResults]:allEVResults.filter(r=>r.sport===evFilter);
-  if(evDateFilter==='today'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+86400000);}
-  else if(evDateFilter==='week'){filtered=filtered.filter(r=>r.time&&new Date(r.time).getTime()>now&&new Date(r.time).getTime()<=now+604800000);}
-  else if(evDateFilter==='best'){filtered=filtered.sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev)).slice(0,30);}
-  // Pre-Match / Live toggle filter
-if(evMode==='live'){filtered=filtered.filter(r=>r.commenceTime&&new Date(r.commenceTime)<=new Date());}
-else{filtered=filtered.filter(r=>!r.commenceTime||new Date(r.commenceTime)>new Date());}
+  if(evView==='today'){
+    filtered=filtered.filter(o=>{if(o.isLive)return true;const dt=new Date(o.commence_time||o.commence||0);return(dt-new Date())<=86400000&&(dt-new Date())>=0;});
+  }else if(evView==='week'){
+    filtered=filtered.filter(o=>{const dt=new Date(o.commence_time||o.commence||0);const diff=dt-new Date();return diff>=0&&diff<=604800000;});
+  }else if(evView==='best'){
+    filtered=filtered.slice().sort((a,b)=>(b.ev||-999)-(a.ev||-999));
+  }
 if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "All Upcoming" for more results.</div>';return;}
   document.getElementById('ev-rows').innerHTML=filtered.map(r=>`
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
