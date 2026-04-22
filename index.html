@@ -513,6 +513,11 @@
           <div class="stat-card"><div class="stat-label">Best Hold</div><div class="stat-value" id="lh-best" style="color:var(--yellow)">—</div></div>
           <div class="stat-card"><div class="stat-label">Games</div><div class="stat-value" id="lh-games" style="color:var(--accent)">—</div></div>
         </div>
+        <div class="sport-filters" id="lh-view-filters" style="margin-bottom:12px;">
+          <div class="sport-chip active" onclick="setLowHoldView(this,'today')">🔴 Today</div>
+          <div class="sport-chip" onclick="setLowHoldView(this,'week')">🗓️ This Week</div>
+          <div class="sport-chip" onclick="setLowHoldView(this,'best')">🔥 Best</div>
+        </div>
         <div class="table-header" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr"><span>Game</span><span class="col-c">Book</span><span class="col-c">Side A</span><span class="col-c">Side B</span><span class="col-c">Hold %</span><span class="col-c">Bet</span></div>
         <div id="lh-rows"><div class="loading-state"><div class="loading-spinner"></div>Finding low hold markets...</div></div>
       </div>
@@ -526,6 +531,11 @@
           <div class="stat-card"><div class="stat-label">Avg Window</div><div class="stat-value" id="mid-window" style="color:var(--yellow)">—</div></div>
           <div class="stat-card"><div class="stat-label">Best Window</div><div class="stat-value" id="mid-best" style="color:var(--accent2)">—</div></div>
           <div class="stat-card"><div class="stat-label">Books</div><div class="stat-value" id="mid-books" style="color:var(--accent)">—</div></div>
+        </div>
+        <div class="sport-filters" id="mid-view-filters" style="margin-bottom:12px;">
+          <div class="sport-chip active" onclick="setMiddlesView(this,'today')">🔴 Today</div>
+          <div class="sport-chip" onclick="setMiddlesView(this,'week')">🗓️ This Week</div>
+          <div class="sport-chip" onclick="setMiddlesView(this,'best')">🔥 Best</div>
         </div>
         <div id="mid-rows"><div class="loading-state"><div class="loading-spinner"></div>Scanning for middles...</div></div>
       </div>
@@ -591,7 +601,6 @@
 const API_ENDPOINT='/api/odds';
 let currentSport='basketball_nba',currentMarket='h2h',inApp=false,chatOpen=false;
 let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all';
-let evDateFilter='today';
 let allArbResults=[],allEVResults=[],allLiveResults=[],allPicksResults=[];
 let parlayLegs=[];
 
@@ -1019,37 +1028,43 @@ async function fetchSportArbs(sport,market='h2h'){
 
 function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');arbFilter=sport;renderArbRows();}
 
-// Pre-Match / Live toggle state
-let arbMode='prematch';
-let evMode='prematch';
-let sharpMode='prematch';
+// Unified scanner view state
+let arbView='today';
+let evView='today';
+let lowHoldView='today';
+let middlesView='today';
+let sharpView='today';
+let lowHoldSourceData=[];
+let middlesSourceData=[];
 
-function setArbMode(mode){
-  arbMode=mode;
-  document.getElementById('arb-prematch-btn').style.background=mode==='prematch'?'var(--accent)':'transparent';
-  document.getElementById('arb-prematch-btn').style.color=mode==='prematch'?'#fff':'var(--muted)';
-  document.getElementById('arb-prematch-btn').style.borderColor=mode==='prematch'?'var(--accent)':'var(--border)';
-  document.getElementById('arb-live-btn').style.background=mode==='live'?'#ff4757':'transparent';
-  document.getElementById('arb-live-btn').style.color=mode==='live'?'#fff':'var(--muted)';
-  document.getElementById('arb-live-btn').style.borderColor=mode==='live'?'#ff4757':'var(--border)';
+function setArbView(el,view){
+  document.querySelectorAll('#arb-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  arbView=view;
   renderArbRows();
 }
-function setEvMode(mode){
-  evMode=mode;
-  document.getElementById('ev-prematch-btn').style.background=mode==='prematch'?'var(--accent)':'transparent';
-  document.getElementById('ev-prematch-btn').style.color=mode==='prematch'?'#fff':'var(--muted)';
-  document.getElementById('ev-prematch-btn').style.borderColor=mode==='prematch'?'var(--accent)':'var(--border)';
-  document.getElementById('ev-live-btn').style.background=mode==='live'?'#ff4757':'transparent';
-  document.getElementById('ev-live-btn').style.color=mode==='live'?'#fff':'var(--muted)';
-  document.getElementById('ev-live-btn').style.borderColor=mode==='live'?'#ff4757':'var(--border)';
+function setEvView(el,view){
+  document.querySelectorAll('#ev-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  evView=view;
   renderEVRows();
 }
-function setSharpMode(mode){
-  sharpMode=mode;
-  const spb=document.getElementById('sharp-prematch-btn');
-  const slb=document.getElementById('sharp-live-btn');
-  if(spb){spb.style.background=mode==='prematch'?'var(--accent)':'transparent';spb.style.color=mode==='prematch'?'#fff':'var(--muted)';spb.style.borderColor=mode==='prematch'?'var(--accent)':'var(--border)';}
-  if(slb){slb.style.background=mode==='live'?'#ff4757':'transparent';slb.style.color=mode==='live'?'#fff':'var(--muted)';slb.style.borderColor=mode==='live'?'#ff4757':'var(--border)';}
+function setLowHoldView(el,view){
+  document.querySelectorAll('#lh-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  lowHoldView=view;
+  renderLowHold(lowHoldSourceData,!lowHoldSourceData.length);
+}
+function setMiddlesView(el,view){
+  document.querySelectorAll('#mid-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  middlesView=view;
+  renderMiddles(middlesSourceData,!middlesSourceData.length);
+}
+function setSharpView(el,view){
+  document.querySelectorAll('#sharp-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  sharpView=view;
   renderSharpRows();
 }
 
@@ -1058,9 +1073,22 @@ function renderArbRows(){
   if(arbFilter==='all')filtered=allArbOpps;
   else if(arbFilter==='polymarket')filtered=allArbOpps.filter(o=>o.isPolymarket);
   else filtered=allArbOpps.filter(o=>o.sportLabel===arbFilter);
-const _now=new Date();
-if(arbMode==='live'){filtered=filtered.filter(o=>o.commenceTime&&new Date(o.commenceTime)<=_now);}
-else{filtered=filtered.filter(o=>!o.commenceTime||new Date(o.commenceTime)>_now);}
+const now=Date.now();
+if(arbView==='today'){
+  filtered=filtered.filter(o=>{
+    if(!o.commenceTime)return true;
+    const t=new Date(o.commenceTime).getTime();
+    return t<=now||t<=now+86400000;
+  });
+}else if(arbView==='week'){
+  filtered=filtered.filter(o=>{
+    if(!o.commenceTime)return false;
+    const t=new Date(o.commenceTime).getTime();
+    return t>now&&t<=now+604800000;
+  });
+}else if(arbView==='best'){
+  filtered=[...filtered].sort((a,b)=>a.margin-b.margin).slice(0,30);
+}
   // Apply book filter
   if(userBooks){
     filtered=filtered.filter(o=>{
@@ -1200,8 +1228,6 @@ async function fetchSportEV(sportConfig){
 }
 
 function filterEVSport(el,sport){document.querySelectorAll('#ev-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');evFilter=sport;renderEVRows();}
-
-function filterEVDate(el,range){document.querySelectorAll('#ev-date-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');evDateFilter=range;renderEVRows();}
 
 function renderEVRows(){
   const now=Date.now();
@@ -1367,7 +1393,7 @@ async function loadSingleSport(){
   ss('fetching...');
   const data=await fetchSport(currentSport,currentMarket);
   if(data.length){ss(`✓ ${data.length} games`);const el=document.getElementById('count-'+currentSport);if(el){const soon=data.filter(g=>new Date(g.commence_time).getTime()<=Date.now()+14400000).length;el.textContent=soon||'';}}else{ss('no data');}
-  renderOdds(data,!data.length);renderLowHold(data,!data.length);renderMiddles(data,!data.length);
+  lowHoldSourceData=data;middlesSourceData=data;renderOdds(data,!data.length);renderLowHold(data,!data.length);renderMiddles(data,!data.length);
 }
 
 function renderOdds(data,isDemo){
@@ -1416,8 +1442,23 @@ function selectMarket(el,market){el.closest('.sidebar-section').querySelectorAll
 
 function renderLowHold(data,isDemo){
   if(isDemo||!data.length){document.getElementById('lh-count').textContent='0';document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';document.getElementById('lh-games').textContent='0';document.getElementById('lh-rows').innerHTML='<div class="info-box">ℹ️ No live games for this sport. Switch to NBA or MLB.</div>';return;}
-  const rows=[];data.forEach(g=>{const books=g.bookmakers||[];books.forEach(bm=>{(bm.markets||[]).forEach(mk=>{if(mk.outcomes.length<2)return;const oA=mk.outcomes[0],oB=mk.outcomes[1];if(!validOdds(oA.price)||!validOdds(oB.price))return;const hold=(ip(oA.price)+ip(oB.price)-1)*100;if(hold>=0&&hold<=4)rows.push({game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,book:bm.title,sideA:oA.name,oddsA:oA.price,sideB:oB.name,oddsB:oB.price,hold:hold.toFixed(2)});});});});
+  const now=Date.now();
+  if(lowHoldView==='today'){
+    data=data.filter(g=>{
+      if(!g.commence_time)return false;
+      const t=new Date(g.commence_time).getTime();
+      return t<=now||t<=now+86400000;
+    });
+  }else if(lowHoldView==='week'){
+    data=data.filter(g=>{
+      if(!g.commence_time)return false;
+      const t=new Date(g.commence_time).getTime();
+      return t>now&&t<=now+604800000;
+    });
+  }
+  let rows=[];data.forEach(g=>{const books=g.bookmakers||[];books.forEach(bm=>{(bm.markets||[]).forEach(mk=>{if(mk.outcomes.length<2)return;const oA=mk.outcomes[0],oB=mk.outcomes[1];if(!validOdds(oA.price)||!validOdds(oB.price))return;const hold=(ip(oA.price)+ip(oB.price)-1)*100;if(hold>=0&&hold<=4)rows.push({game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,book:bm.title,sideA:oA.name,oddsA:oA.price,sideB:oB.name,oddsB:oB.price,hold:hold.toFixed(2)});});});});
   rows.sort((a,b)=>parseFloat(a.hold)-parseFloat(b.hold));
+  if(lowHoldView==='best')rows=rows.slice(0,30);
   document.getElementById('lh-count').textContent=rows.length;document.getElementById('lh-games').textContent=data.length;
   if(rows.length){document.getElementById('lh-avg').textContent=(rows.reduce((s,r)=>s+parseFloat(r.hold),0)/rows.length).toFixed(2)+'%';document.getElementById('lh-best').textContent=rows[0].hold+'%';}else{document.getElementById('lh-avg').textContent='—';document.getElementById('lh-best').textContent='—';}
   if(!rows.length){document.getElementById('lh-rows').innerHTML='<div class="info-box">ℹ️ No low hold markets found.</div>';return;}
@@ -1426,9 +1467,24 @@ function renderLowHold(data,isDemo){
 
 function renderMiddles(data,isDemo){
   if(isDemo||!data.length){document.getElementById('mid-count').textContent='0';document.getElementById('mid-window').textContent='—';document.getElementById('mid-best').textContent='—';document.getElementById('mid-books').textContent='—';document.getElementById('mid-rows').innerHTML='<div class="info-box">ℹ️ Switch to Spreads market and try NBA or NFL.</div>';return;}
+  const now=Date.now();
+  if(middlesView==='today'){
+    data=data.filter(g=>{
+      if(!g.commence_time)return false;
+      const t=new Date(g.commence_time).getTime();
+      return t<=now||t<=now+86400000;
+    });
+  }else if(middlesView==='week'){
+    data=data.filter(g=>{
+      if(!g.commence_time)return false;
+      const t=new Date(g.commence_time).getTime();
+      return t>now&&t<=now+604800000;
+    });
+  }
   const middles=[];const allBooks=new Set();
   data.forEach(g=>{const books=g.bookmakers||[];books.forEach(b=>allBooks.add(b.key));const sbo={};books.forEach(bm=>{(bm.markets||[]).forEach(mk=>{if(mk.key!=='spreads')return;mk.outcomes.forEach(o=>{if(!sbo[o.name])sbo[o.name]=[];sbo[o.name].push({book:bm.title,point:o.point,odds:o.price});});});});const teams=Object.keys(sbo);if(teams.length<2)return;const[teamA,teamB]=teams;const oA=sbo[teamA],oB=sbo[teamB];if(!oA||!oB)return;oA.forEach(a=>{oB.forEach(b=>{if(a.book===b.book)return;const w=Math.abs(a.point-(-b.point));if(w>=1.5&&w<=6)middles.push({game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,teamA,bookA:a.book,lineA:a.point,oddsA:a.odds,teamB,bookB:b.book,lineB:b.point,oddsB:b.odds,window:w.toFixed(1)});});});});
-  const seen=new Set();const unique=middles.filter(m=>{const k=m.game+m.window;if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>parseFloat(b.window)-parseFloat(a.window));
+  const seen=new Set();let unique=middles.filter(m=>{const k=m.game+m.window;if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>parseFloat(b.window)-parseFloat(a.window));
+  if(middlesView==='best')unique=unique.slice(0,30);
   document.getElementById('mid-count').textContent=unique.length;document.getElementById('mid-books').textContent=allBooks.size;
   if(unique.length){document.getElementById('mid-window').textContent=(unique.reduce((s,m)=>s+parseFloat(m.window),0)/unique.length).toFixed(1)+' pts';document.getElementById('mid-best').textContent=unique[0].window+' pts';}else{document.getElementById('mid-window').textContent='—';document.getElementById('mid-best').textContent='—';}
   if(!unique.length){document.getElementById('mid-rows').innerHTML='<div class="info-box">ℹ️ No middles found.</div>';return;}
@@ -1904,7 +1960,7 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 // ===== SHARP MONEY TRACKER =====
 window._sharpGames=[]; window._sharpFilter='all';
 function filterSharp(t,btn){window._sharpFilter=t;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSharpRows();}
-let propsResults=[],propsFilter='all';const PROPS_SPORTS={basketball_nba:{label:'NBA',emoji:'🏀',markets:['player_points','player_rebounds','player_assists','player_threes','player_blocks','player_steals','player_turnovers','player_points_rebounds_assists','player_points_rebounds','player_points_assists','player_rebounds_assists','player_double_double']},basketball_wnba:{label:'WNBA',emoji:'🏀',markets:['player_points','player_rebounds','player_assists','player_threes','player_blocks','player_steals','player_points_rebounds_assists']},baseball_mlb:{label:'MLB',emoji:'⚾',markets:['batter_home_runs','batter_hits','batter_total_bases','batter_rbis','batter_runs_scored','batter_strikeouts','batter_stolen_bases','pitcher_strikeouts','pitcher_hits_allowed','pitcher_walks','pitcher_outs','pitcher_record_a_win']},icehockey_nhl:{label:'NHL',emoji:'🏒',markets:['player_points','player_goals','player_assists','player_shots_on_goal','player_blocked_shots','player_power_play_points','player_total_saves','player_goal_scorer_anytime']},americanfootball_nfl:{label:'NFL',emoji:'🏈',markets:['player_pass_yds','player_pass_tds','player_pass_completions','player_pass_interceptions','player_rush_yds','player_rush_tds','player_reception_yds','player_receptions','player_reception_tds','player_anytime_td','player_kicking_points']},soccer_epl:{label:'EPL',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_spain_la_liga:{label:'La Liga',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_italy_serie_a:{label:'Serie A',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_germany_bundesliga:{label:'Bundesliga',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_france_ligue_one:{label:'Ligue 1',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_usa_mls:{label:'MLS',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']}};async function loadPlayerProps(){document.getElementById('props-rows').innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Loading player props across all sports...</div>';propsResults=[];for(const[sport,config] of Object.entries(PROPS_SPORTS)){try{const games=await fetchSport(sport,'h2h');const now=Date.now();const upcoming=games.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+86400000);for(const game of upcoming.slice(0,5)){try{const r=await fetch(`/api/props?sport=${sport}&eventId=${game.id}&markets=${config.markets.join(',')}`);if(!r.ok)continue;const propData=await r.json();if(!propData.bookmakers)continue;const playerMap={};propData.bookmakers.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{const key=mk.key+'|'+(o.description||o.name)+'|'+o.point;if(!playerMap[key])playerMap[key]={market:mk.key,player:o.description||o.name,point:o.point,offers:[]};playerMap[key].offers.push({book:bm.title,name:o.name,odds:o.price});})));Object.values(playerMap).forEach(p=>{const overs=p.offers.filter(o=>o.name==='Over');const unders=p.offers.filter(o=>o.name==='Under');overs.forEach(ov=>{unders.forEach(un=>{if(ov.book===un.book)return;if(!validOdds(ov.odds)||!validOdds(un.odds))return;const d1=atod(ov.odds),d2=atod(un.odds);const margin=(1/d1+1/d2-1)*100;if(margin>3)return;propsResults.push({sport:config.label,emoji:config.emoji,game:game.home_team+' vs '+game.away_team,player:p.player,market:p.market,point:p.point,overBook:ov.book,overOdds:ov.odds,underBook:un.book,underOdds:un.odds,margin,isArb:margin<0});});});});}catch(e){continue;}}}catch(e){continue;}}propsResults.sort((a,b)=>a.margin-b.margin);const arbs=propsResults.filter(p=>p.isArb);document.getElementById('props-count').textContent=propsResults.length;document.getElementById('props-arbs').textContent=arbs.length;document.getElementById('props-best').textContent=arbs.length?'+'+(-arbs[0].margin).toFixed(2)+'%':'—';document.getElementById('props-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});renderPropsRows();}function filterProps(el,sport){document.querySelectorAll('#panel-props .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');propsFilter=sport;renderPropsRows();}function renderPropsRows(){const filtered=propsFilter==='all'?propsResults:propsResults.filter(p=>p.sport===propsFilter);if(!filtered.length){document.getElementById('props-rows').innerHTML='<div class="info-box">No prop opportunities under 3% margin right now.</div>';return;}document.getElementById('props-rows').innerHTML=filtered.map(p=>{const marketLabel=p.market.replace('player_','').replace('batter_','').replace('pitcher_','').replace(/_/g,' ');const badge=p.isArb?'<span style="background:rgba(46,204,113,0.15);color:#2ecc71;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">✓ ARB</span>':'<span style="background:rgba(245,200,66,0.1);color:#f5c842;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">TIGHT</span>';const profitStr=p.isArb?'<div style="font-size:16px;font-weight:800;color:var(--green)">+'+(-p.margin).toFixed(2)+'%</div>':'<div style="font-size:16px;font-weight:800;color:var(--yellow)">'+p.margin.toFixed(2)+'%</div>';return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;padding:14px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${p.emoji} ${p.sport}</span><span style="font-size:13px;font-weight:700;color:#fff;">${p.player}</span><span style="font-size:11px;color:var(--muted);">${marketLabel} ${p.point}</span></div>${profitStr}</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">${p.game}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Over ${p.point}</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(p.overOdds)}</div>${bookBadge(p.overBook)}<button onclick="openBook('${p.overBook}')" style="margin-top:8px;background:var(--accent);color:#000;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">BET →</button></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Under ${p.point}</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(p.underOdds)}</div>${bookBadge(p.underBook)}<button onclick="openBook('${p.underBook}')" style="margin-top:8px;background:var(--accent);color:#000;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">BET →</button></div></div></div>`;}).join('');}
+let propsResults=[],propsFilter='all',propsView='today';const PROPS_SPORTS={basketball_nba:{label:'NBA',emoji:'🏀',markets:['player_points','player_rebounds','player_assists','player_threes','player_blocks','player_steals','player_turnovers','player_points_rebounds_assists','player_points_rebounds','player_points_assists','player_rebounds_assists','player_double_double']},basketball_wnba:{label:'WNBA',emoji:'🏀',markets:['player_points','player_rebounds','player_assists','player_threes','player_blocks','player_steals','player_points_rebounds_assists']},baseball_mlb:{label:'MLB',emoji:'⚾',markets:['batter_home_runs','batter_hits','batter_total_bases','batter_rbis','batter_runs_scored','batter_strikeouts','batter_stolen_bases','pitcher_strikeouts','pitcher_hits_allowed','pitcher_walks','pitcher_outs','pitcher_record_a_win']},icehockey_nhl:{label:'NHL',emoji:'🏒',markets:['player_points','player_goals','player_assists','player_shots_on_goal','player_blocked_shots','player_power_play_points','player_total_saves','player_goal_scorer_anytime']},americanfootball_nfl:{label:'NFL',emoji:'🏈',markets:['player_pass_yds','player_pass_tds','player_pass_completions','player_pass_interceptions','player_rush_yds','player_rush_tds','player_reception_yds','player_receptions','player_reception_tds','player_anytime_td','player_kicking_points']},soccer_epl:{label:'EPL',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_spain_la_liga:{label:'La Liga',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_italy_serie_a:{label:'Serie A',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_germany_bundesliga:{label:'Bundesliga',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_france_ligue_one:{label:'Ligue 1',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']},soccer_usa_mls:{label:'MLS',emoji:'⚽',markets:['player_goal_scorer_anytime','player_shots_on_target','player_shots','player_assists','player_to_receive_card']}};async function loadPlayerProps(){document.getElementById('props-rows').innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Loading player props across all sports...</div>';propsResults=[];for(const[sport,config] of Object.entries(PROPS_SPORTS)){try{const games=await fetchSport(sport,'h2h');const now=Date.now();const upcoming=games.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+604800000);for(const game of upcoming.slice(0,10)){try{const r=await fetch(`/api/props?sport=${sport}&eventId=${game.id}&markets=${config.markets.join(',')}`);if(!r.ok)continue;const propData=await r.json();if(!propData.bookmakers)continue;const playerMap={};propData.bookmakers.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{const key=mk.key+'|'+(o.description||o.name)+'|'+o.point;if(!playerMap[key])playerMap[key]={market:mk.key,player:o.description||o.name,point:o.point,offers:[]};playerMap[key].offers.push({book:bm.title,name:o.name,odds:o.price});})));Object.values(playerMap).forEach(p=>{const overs=p.offers.filter(o=>o.name==='Over');const unders=p.offers.filter(o=>o.name==='Under');overs.forEach(ov=>{unders.forEach(un=>{if(ov.book===un.book)return;if(!validOdds(ov.odds)||!validOdds(un.odds))return;const d1=atod(ov.odds),d2=atod(un.odds);const margin=(1/d1+1/d2-1)*100;if(margin>3)return;propsResults.push({sport:config.label,emoji:config.emoji,game:game.home_team+' vs '+game.away_team,gameTime:game.commence_time,player:p.player,market:p.market,point:p.point,overBook:ov.book,overOdds:ov.odds,underBook:un.book,underOdds:un.odds,margin,isArb:margin<0});});});});}catch(e){continue;}}}catch(e){continue;}}propsResults.sort((a,b)=>a.margin-b.margin);const arbs=propsResults.filter(p=>p.isArb);document.getElementById('props-count').textContent=propsResults.length;document.getElementById('props-arbs').textContent=arbs.length;document.getElementById('props-best').textContent=arbs.length?'+'+(-arbs[0].margin).toFixed(2)+'%':'—';document.getElementById('props-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});renderPropsRows();}function setPropsView(el,view){document.querySelectorAll('#props-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');propsView=view;renderPropsRows();}function filterProps(el,sport){document.querySelectorAll('#panel-props .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');propsFilter=sport;renderPropsRows();}function renderPropsRows(){let filtered=propsFilter==='all'?propsResults:propsResults.filter(p=>p.sport===propsFilter);const now=Date.now();if(propsView==='today'){filtered=filtered.filter(p=>{if(!p.gameTime)return false;const t=new Date(p.gameTime).getTime();return t<=now||t<=now+86400000;});}else if(propsView==='week'){filtered=filtered.filter(p=>{if(!p.gameTime)return false;const t=new Date(p.gameTime).getTime();return t>now&&t<=now+604800000;});}else if(propsView==='best'){filtered=[...filtered].sort((a,b)=>a.margin-b.margin).slice(0,30);}if(!filtered.length){document.getElementById('props-rows').innerHTML='<div class="info-box">No prop opportunities under 3% margin right now.</div>';return;}document.getElementById('props-rows').innerHTML=filtered.map(p=>{const marketLabel=p.market.replace('player_','').replace('batter_','').replace('pitcher_','').replace(/_/g,' ');const badge=p.isArb?'<span style="background:rgba(46,204,113,0.15);color:#2ecc71;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">✓ ARB</span>':'<span style="background:rgba(245,200,66,0.1);color:#f5c842;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">TIGHT</span>';const profitStr=p.isArb?'<div style="font-size:16px;font-weight:800;color:var(--green)">+'+(-p.margin).toFixed(2)+'%</div>':'<div style="font-size:16px;font-weight:800;color:var(--yellow)">'+p.margin.toFixed(2)+'%</div>';return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;padding:14px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${p.emoji} ${p.sport}</span><span style="font-size:13px;font-weight:700;color:#fff;">${p.player}</span><span style="font-size:11px;color:var(--muted);">${marketLabel} ${p.point}</span></div>${profitStr}</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">${p.game}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Over ${p.point}</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(p.overOdds)}</div>${bookBadge(p.overBook)}<button onclick="openBook('${p.overBook}')" style="margin-top:8px;background:var(--accent);color:#000;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">BET →</button></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Under ${p.point}</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(p.underOdds)}</div>${bookBadge(p.underBook)}<button onclick="openBook('${p.underBook}')" style="margin-top:8px;background:var(--accent);color:#000;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">BET →</button></div></div></div>`;}).join('');}
 async function loadSharpMoney(){
   var rows=document.getElementById('sharp-rows');
   if(!rows){console.log('SHARP: rows div not found');return;}
@@ -1947,10 +2003,22 @@ function renderSharpRows(){
   if(window._sharpFilter==='heavy')games=games.filter(g=>g.isHeavy);
   else if(window._sharpFilter==='reverse')games=games.filter(g=>g.isReverse);
   if(!games.length){rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;">NO SIGNALS FOR THIS FILTER</div>';return;}
-  // Pre-Match / Live toggle filter
-const _now=new Date();
-if(sharpMode==='live'){games=games.filter(g=>g.commence_time&&new Date(g.commence_time)<=_now);}
-else{games=games.filter(g=>!g.commence_time||new Date(g.commence_time)>_now);}
+  const now=Date.now();
+  if(sharpView==='today'){
+    games=games.filter(g=>{
+      if(!g.commence_time)return false;
+      const t=new Date(g.commence_time).getTime();
+      return t<=now||t<=now+86400000;
+    });
+  }else if(sharpView==='week'){
+    games=games.filter(g=>{
+      if(!g.commence_time)return false;
+      const t=new Date(g.commence_time).getTime();
+      return t>now&&t<=now+604800000;
+    });
+  }else if(sharpView==='best'){
+    games=[...games].sort((a,b)=>b.diff-a.diff);
+  }
 rows.innerHTML=games.slice(0,25).map(g=>{
     // Recalculate signal based on correct interpretation
     var pinAbs2=Math.abs(g.pin), dkAbs2=Math.abs(g.dk);
