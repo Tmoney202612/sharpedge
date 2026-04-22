@@ -2117,17 +2117,16 @@ function showUpgradeModal(feature){
   m.style.display='flex';
 }
 function applyPlanRestrictions(plan){
-  // Owner bypass — always full pro access
-  if(!plan||plan==='sharp')return;
-  var locked=[
+  if(plan==='sharp')return;
+  var lockedForEdge=[
+    {id:'ev',name:'Full +EV Scanner'},
     {id:'arb',name:'Arbitrage Finder'},
+    {id:'lowhold',name:'Low Hold'},
     {id:'middles',name:'Middles'},
-    {id:'parlay',name:'Parlay Builder'},
-    {id:'odds',name:'Odds Compare'},
-    {id:'tracker',name:'Bet Tracker'},
+    {id:'promos',name:'Promo Finder'},
     {id:'sharp',name:'Sharp Money Tracker'}
   ];
-  locked.forEach(function(item){
+  lockedForEdge.forEach(function(item){
     var btn=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){
       return b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+item.id+"'");
     });
