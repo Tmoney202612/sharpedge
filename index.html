@@ -1070,6 +1070,8 @@ else{filtered=filtered.filter(o=>!o.commenceTime||new Date(o.commenceTime)>_now)
       return isBookAllowed(b1)&&isBookAllowed(b2)&&(b3?isBookAllowed(b3):true);
     });
   }
+  // Only show true arbs with at least 5% guaranteed profit
+  filtered=filtered.filter(o=>o.margin<=-5);
   const container=document.getElementById('arb-rows');
   if(!container)return;
   if(!filtered.length){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';return;}
