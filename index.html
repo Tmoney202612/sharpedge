@@ -1098,7 +1098,6 @@ if(arbView==='today'){
     });
   }
   // Only show true arbs with at least 5% guaranteed profit
-  filtered=filtered.filter(o=>o.margin<=-5);
   const container=document.getElementById('arb-rows');
   if(!container)return;
   if(!filtered.length){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';return;}
