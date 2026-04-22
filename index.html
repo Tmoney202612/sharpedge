@@ -674,7 +674,6 @@ function showLanding(){
 }
 
 function enterApp(){
-  localStorage.setItem('owner_access','true');
   var _s=function(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;};
   _s('landing','display','none');
   _s('app','display','block');
@@ -1673,7 +1672,7 @@ function closeLegalModal(){document.getElementById('legal-modal-overlay').style.
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLegalModal();});
 </script>
 </main>
-<footer style="background:var(--surface);border-top:1px solid var(--border);padding:40px 40px 24px;position:relative;z-index:1;"><div style="max-width:900px;margin:0 auto;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px;"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge <span style="color:var(--accent)">Picks</span></span></div><div style="font-size:12px;color:var(--muted);line-height:1.7;max-width:260px;">Math-based sports betting analytics. We provide data, odds comparisons, and statistical analysis — not gambling advice.</div><div style="margin-top:14px;display:flex;gap:10px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);color:#8b9eff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">💬 Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="background:rgba(79,138,255,0.08);border:1px solid rgba(79,138,255,0.25);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">⚡ Whop</a><a href="https://oddspedia.com" target="_blank" rel="noopener noreferrer" data-old-rel="nofollow" style="background:rgba(15,93,117,0.15);border:1px solid rgba(26,183,172,0.3);color:#1AB7AC;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">📊 Data · Oddspedia</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Product</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Daily Picks</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">+EV Scanner</a><a href="#" onclick="enterApp();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Arbitrage</a><a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Pricing</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Community</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Membership</a><a href="mailto:timhendryaz@gmail.com" style="font-size:13px;color:var(--muted);text-decoration:none;">Contact Us</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLegalModal('privacy');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Privacy Policy</a><a href="#" onclick="showLegalModal('terms');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Terms of Service</a><a href="#" onclick="showLegalModal('responsible');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Responsible Gambling</a></div></div></div><div style="border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="font-size:11px;color:var(--muted);">© 2025 Prime Edge Picks. All rights reserved.</div><div style="font-size:11px;color:var(--muted);max-width:600px;line-height:1.6;text-align:right;"><strong style="color:var(--red);">18+ only.</strong> Gambling involves risk. Past results do not guarantee future outcomes. Prime Edge Picks provides statistical analysis only — not financial or gambling advice. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.</div></div></div></footer><div id="legal-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLegalModal()"><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;position:relative;"><button onclick="closeLegalModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;">×</button><div id="legal-modal-body"></div></div></div>
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:40px 40px 24px;position:relative;z-index:1;"><div style="max-width:900px;margin:0 auto;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px;"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:15px;font-weight:800;color:#fff;">Prime Edge <span style="color:var(--accent)">Picks</span></span></div><div style="font-size:12px;color:var(--muted);line-height:1.7;max-width:260px;">Math-based sports betting analytics. We provide data, odds comparisons, and statistical analysis — not gambling advice.</div><div style="margin-top:14px;display:flex;gap:10px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);color:#8b9eff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">💬 Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="background:rgba(79,138,255,0.08);border:1px solid rgba(79,138,255,0.25);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">⚡ Whop</a><a href="https://oddspedia.com" target="_blank" rel="noopener noreferrer" data-old-rel="nofollow" style="background:rgba(15,93,117,0.15);border:1px solid rgba(26,183,172,0.3);color:#1AB7AC;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;text-decoration:none;">📊 Data · Oddspedia</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Product</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLogin();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Daily Picks</a><a href="#" onclick="showLogin();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">+EV Scanner</a><a href="#" onclick="showLogin();return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Arbitrage</a><a href="#" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Pricing</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Community</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://discord.gg/2VVwzNrp8W" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Discord</a><a href="#" onclick="showLogin();return false;" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--muted);text-decoration:none;">Membership</a><a href="mailto:timhendryaz@gmail.com" style="font-size:13px;color:var(--muted);text-decoration:none;">Contact Us</a></div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" onclick="showLegalModal('privacy');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Privacy Policy</a><a href="#" onclick="showLegalModal('terms');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Terms of Service</a><a href="#" onclick="showLegalModal('responsible');return false;" style="font-size:13px;color:var(--muted);text-decoration:none;">Responsible Gambling</a></div></div></div><div style="border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;"><div style="font-size:11px;color:var(--muted);">© 2025 Prime Edge Picks. All rights reserved.</div><div style="font-size:11px;color:var(--muted);max-width:600px;line-height:1.6;text-align:right;"><strong style="color:var(--red);">18+ only.</strong> Gambling involves risk. Past results do not guarantee future outcomes. Prime Edge Picks provides statistical analysis only — not financial or gambling advice. If you or someone you know has a gambling problem, call <strong>1-800-GAMBLER</strong>.</div></div></div></footer><div id="legal-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLegalModal()"><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;position:relative;"><button onclick="closeLegalModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;">×</button><div id="legal-modal-body"></div></div></div>
 <!-- BOOK SELECTOR MODAL -->
 <div id="book-selector-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2001;align-items:center;justify-content:center;" onclick="if(event.target===this)closeBookSelector()">
 <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:600px;width:92%;max-height:85vh;overflow-y:auto;position:relative;">
@@ -1900,9 +1899,6 @@ _scoreObs.observe(document.getElementById("app")||document.body,{childList:true,
 
 })();
 
-// Admin: Ctrl+Shift+A to access app
-document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.shiftKey&&e.key==='A'){enterApp();}});
-
 // ===== SHARP MONEY TRACKER =====
 window._sharpGames=[]; window._sharpFilter='all';
 function filterSharp(t,btn){window._sharpFilter=t;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSharpRows();}
@@ -2122,7 +2118,6 @@ function showUpgradeModal(feature){
 }
 function applyPlanRestrictions(plan){
   // Owner bypass — always full pro access
-  if(localStorage.getItem('owner_access')==='true') return;
   if(!plan||plan==='sharp')return;
   var locked=[
     {id:'arb',name:'Arbitrage Finder'},
@@ -2151,17 +2146,15 @@ function applyPlanRestrictions(plan){
 }
 function doLogin(){doSignIn();}
 function doLogout(){
+  localStorage.removeItem('owner_access');
   localStorage.removeItem('pep_auth');
   localStorage.removeItem('pep_plan_active');
   localStorage.removeItem('pep_last_tab');
-  _supa.auth.signOut().then(function(){
-    document.getElementById('app').style.display='none';
-    document.getElementById('landing').style.display='';
-    var lo=document.getElementById('header-logout');if(lo)lo.style.display='none';
-    var hd=document.getElementById('header-demo');if(hd)hd.style.display='';
-    // Show urgency bar sign message
-    var ur=document.getElementById('urgency-right');if(ur)ur.textContent='🔒 Join Now · Cancel Anytime';
-  });
+  document.getElementById('app').style.display='none';
+  document.getElementById('landing').style.display='';
+  var lo=document.getElementById('header-logout');if(lo)lo.style.display='none';
+  var hd=document.getElementById('header-demo');if(hd)hd.style.display='';
+  var ur=document.getElementById('urgency-right');if(ur)ur.textContent='🔒 Join Now · Cancel Anytime';
 }
 document.addEventListener('keydown',function(e){
   var m=document.getElementById('login-modal');
@@ -2173,13 +2166,6 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape')m.style.display='none';
 });
 document.addEventListener('DOMContentLoaded',function(){
-  // ── Owner bypass — skip all auth checks ──────────────────────
-  if(localStorage.getItem('owner_access')==='true'){
-    localStorage.setItem('pep_auth','1');
-    localStorage.setItem('pep_plan_active','pro');
-    setTimeout(function(){try{enterApp();applyPlanRestrictions('pro');}catch(e){}},300);
-    return;
-  }
   if(window.location.hash.includes('type=recovery'))return;
   _supa.auth.getSession().then(function(res){
     if(res.data.session && res.data.session.user && !window.location.hash.includes('type=signup')){
@@ -2287,33 +2273,7 @@ window.addEventListener('load',function(){
     }
   }
 
-  // ── Owner backdoor login ─────────────────────────────────────────
-  // Press Shift+Shift+Shift (3x shift) within 1.5s to open admin prompt
-  (function() {
-    let shiftCount = 0;
-    let shiftTimer = null;
-    const OWNER_PASS = 'PrimeEdge2024!';
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Shift') {
-        shiftCount++;
-        clearTimeout(shiftTimer);
-        shiftTimer = setTimeout(() => { shiftCount = 0; }, 1500);
-        if (true) {
-          shiftCount = 0;
-          const pass = OWNER_PASS;
-          if (pass === OWNER_PASS) {
-            localStorage.setItem('owner_access', 'true');
-            alert('✅ Owner access granted. All features unlocked.');
-            window.location.reload();
-          } else if (pass !== null) {
-            alert('❌ Incorrect password.');
-          }
-        }
-      }
-    });
-  })();
-
-  document.addEventListener('DOMContentLoaded', function(){ updateBannerAuthState(); setTimeout(function(){ if(localStorage.getItem('owner_access')==='true'){enterApp();} }, 500); });
+  document.addEventListener('DOMContentLoaded', function(){ localStorage.removeItem('owner_access'); updateBannerAuthState(); });
 
 
 
