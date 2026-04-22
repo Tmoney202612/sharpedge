@@ -1075,7 +1075,9 @@ if(arbView==='today'){
   filtered=filtered.filter(o=>{
     if(!o.commenceTime)return true;
     const t=new Date(o.commenceTime).getTime();
-    return t<=now||t<=now+86400000;
+    const inNext24h=t<=now+86400000&&t>=now-3600000;
+    const highValue=o.margin<=-5;
+    return inNext24h||highValue;
   });
 }else if(arbView==='week'){
   filtered=filtered.filter(o=>{
@@ -1230,13 +1232,13 @@ function renderEVRows(){
   const now=Date.now();
   let filtered=evFilter==='all'?[...allEVResults]:allEVResults.filter(r=>r.sport===evFilter);
   if(evView==='today'){
-    filtered=filtered.filter(o=>{if(o.isLive)return true;const dt=new Date(o.commence_time||o.commence||0);return(dt-new Date())<=86400000&&(dt-new Date())>=0;});
+    filtered=filtered.filter(o=>{if(o.isLive)return true;const dt=new Date(o.time||0);return(dt-new Date())<=86400000&&(dt-new Date())>=0;});
   }else if(evView==='week'){
-    filtered=filtered.filter(o=>{const dt=new Date(o.commence_time||o.commence||0);const diff=dt-new Date();return diff>=0&&diff<=604800000;});
+    filtered=filtered.filter(o=>{const dt=new Date(o.time||0);const diff=dt-new Date();return diff>=0&&diff<=604800000;});
   }else if(evView==='best'){
     filtered=filtered.slice().sort((a,b)=>(b.ev||-999)-(a.ev||-999));
   }
-if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "All Upcoming" for more results.</div>';return;}
+if(!filtered.length){document.getElementById('ev-rows').innerHTML='<div class="info-box">ℹ️ No +EV bets found for this time range. Try "This Week" or "Best" for more results.</div>';return;}
   document.getElementById('ev-rows').innerHTML=filtered.map(r=>`
     <div class="bet-row"><div class="bet-row-inner" style="grid-template-columns:auto 2fr 1fr 1fr 1fr 1fr 1fr">
       <div><div class="arb-sport-badge" style="background:${r.sportBg};color:${r.sportColor};border:1px solid ${r.sportColor}40;font-size:8px;">${r.sportEmoji} ${r.sport}</div></div>
@@ -2004,14 +2006,14 @@ function renderSharpRows(){
   const now=Date.now();
   if(sharpView==='today'){
     games=games.filter(g=>{
-      if(!g.commence_time)return false;
-      const t=new Date(g.commence_time).getTime();
+      if(!g.time)return false;
+      const t=new Date(g.time).getTime();
       return t<=now||t<=now+86400000;
     });
   }else if(sharpView==='week'){
     games=games.filter(g=>{
-      if(!g.commence_time)return false;
-      const t=new Date(g.commence_time).getTime();
+      if(!g.time)return false;
+      const t=new Date(g.time).getTime();
       return t>now&&t<=now+604800000;
     });
   }else if(sharpView==='best'){
