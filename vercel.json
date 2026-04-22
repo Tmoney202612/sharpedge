@@ -12,7 +12,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.whop.com https://collector.github.com https://*.supabase.co wss://*.supabase.co https://api.the-odds-api.com https://gamma-api.polymarket.com; frame-src https://whop.com; object-src 'none'; base-uri 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://cdn.jsdelivr.net https://api.whop.com https://collector.github.com https://*.supabase.co wss://*.supabase.co https://api.the-odds-api.com https://gamma-api.polymarket.com; frame-src https://whop.com; object-src 'none'; base-uri 'self';"
         },
         {
           "key": "X-Content-Type-Options",
