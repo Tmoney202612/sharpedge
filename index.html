@@ -1121,6 +1121,12 @@ if(arbView==='today'){
       const d1=atod(leg1.odds),d2=atod(leg2.odds),dD=atod(leg3.odds);
       const totalInv=1/d1+1/d2+1/dD;
       const s1=(STAKE*(1/d1)/totalInv).toFixed(2),s2=(STAKE*(1/d2)/totalInv).toFixed(2),sD=(STAKE*(1/dD)/totalInv).toFixed(2);
+      const fairLeg1_3w=(1/d1)/totalInv;
+      const fairLeg2_3w=(1/d2)/totalInv;
+      const fairLegD_3w=(1/dD)/totalInv;
+      const edgeLeg1_3w=calcEdge(leg1.odds,fairLeg1_3w);
+      const edgeLeg2_3w=calcEdge(leg2.odds,fairLeg2_3w);
+      const edgeLegD_3w=calcEdge(leg3.odds,fairLegD_3w);
       return `<div style="background:var(--card);border:1px solid ${o.isArb?'rgba(59,130,246,0.2)':'var(--border)'};border-radius:12px;margin-bottom:12px;overflow:hidden;">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:10px;background:rgba(139,92,246,0.1);color:#8b5cf6;padding:2px 8px;border-radius:4px;font-weight:700;">3-WAY</span><span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${o.sportLabel}</span><span style="font-size:13px;font-weight:700;color:#fff;">${o.game}</span><span style="font-size:11px;color:var(--muted);">${gameDate}</span>${liveBadge}</div>
@@ -1131,6 +1137,7 @@ if(arbView==='today'){
             <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">${leg1.name}</div>
             ${bookBadge(leg1.book)}
             <div style="font-family:var(--fm);font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">${fmt(leg1.odds)}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Fair: ${(fairLeg1_3w*100).toFixed(1)}%</div><div style="font-size:10px;color:${edgeLeg1_3w>=0?'var(--green)':'var(--red)'};font-weight:700;">Edge: ${edgeLeg1_3w>=0?'+':''}${edgeLeg1_3w.toFixed(1)}%</div>
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s1+'</div>':'<div style="margin-bottom:10px;"></div>'}
             <button onclick="openBook('${leg1.book}')" style="background:var(--accent2);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →</button>
           </div>
@@ -1138,6 +1145,7 @@ if(arbView==='today'){
             <div style="font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:4px;">Draw</div>
             ${bookBadge(leg3.book)}
             <div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--yellow);margin-bottom:6px;">${fmt(leg3.odds)}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Fair: ${(fairLegD_3w*100).toFixed(1)}%</div><div style="font-size:10px;color:${edgeLegD_3w>=0?'var(--green)':'var(--red)'};font-weight:700;">Edge: ${edgeLegD_3w>=0?'+':''}${edgeLegD_3w.toFixed(1)}%</div>
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+sD+'</div>':'<div style="margin-bottom:10px;"></div>'}
             <button onclick="openBook('${leg3.book}')" style="background:var(--yellow);color:#000;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →</button>
           </div>
@@ -1145,6 +1153,7 @@ if(arbView==='today'){
             <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
             ${bookBadge(leg2.book)}
             <div style="font-family:var(--fm);font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">${fmt(leg2.odds)}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Fair: ${(fairLeg2_3w*100).toFixed(1)}%</div><div style="font-size:10px;color:${edgeLeg2_3w>=0?'var(--green)':'var(--red)'};font-weight:700;">Edge: ${edgeLeg2_3w>=0?'+':''}${edgeLeg2_3w.toFixed(1)}%</div>
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+'</div>':'<div style="margin-bottom:10px;"></div>'}
             <button onclick="openBook('${leg2.book}')" style="background:var(--accent2);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;">BET →</button>
           </div>
