@@ -2013,6 +2013,7 @@ let propsResults=[],middlesResults=[],yesValueResults=[],yesOffers=[],propsFilte
           </div>
         </div>
       </div>`;}).join('');return;}let filtered=propsFilter==='all'?propsResults:propsResults.filter(p=>p.sport===propsFilter);const now=Date.now();if(propsView==='today'){filtered=filtered.filter(p=>{if(!p.gameTime)return false;const t=new Date(p.gameTime).getTime();return t>=now-3600000&&t<=now+86400000;});}else if(propsView==='week'){filtered=filtered.filter(p=>{if(!p.gameTime)return false;const t=new Date(p.gameTime).getTime();return t>now&&t<=now+604800000;});}else if(propsView==='best'){filtered=[...filtered].sort((a,b)=>a.margin-b.margin).slice(0,30);}if(!filtered.length){document.getElementById('props-rows').innerHTML='<div class="info-box">No prop opportunities under 3% margin right now.</div>';return;}document.getElementById('props-rows').innerHTML=filtered.map(p=>{const marketLabel=p.market.replace('player_','').replace('batter_','').replace('pitcher_','').replace(/_/g,' ');const badge=p.isArb?'<span style="background:rgba(46,204,113,0.15);color:#2ecc71;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">✓ ARB</span>':'<span style="background:rgba(245,200,66,0.1);color:#f5c842;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">TIGHT</span>';const profitStr=p.isArb?'<div style="font-size:16px;font-weight:800;color:var(--green)">+'+(-p.margin).toFixed(2)+'%</div>':'<div style="font-size:16px;font-weight:800;color:var(--yellow)">'+p.margin.toFixed(2)+'%</div>';return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;padding:14px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${badge}<span style="font-size:11px;background:rgba(255,255,255,0.05);color:var(--muted);padding:2px 8px;border-radius:4px;font-weight:700;">${p.emoji} ${p.sport}</span><span style="font-size:13px;font-weight:700;color:#fff;">${p.player}</span><span style="font-size:11px;color:var(--muted);">${marketLabel} ${p.point}</span></div>${profitStr}</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">${p.game}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Over ${p.point}</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(p.overOdds)}</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">Fair: ${(p.fairOverProb*100).toFixed(1)}%</div><div style="font-size:10px;color:${p.overEdge>=0?'var(--green)':'var(--red)'};font-weight:700;margin-top:2px;">Edge: ${p.overEdge>=0?'+':''}${p.overEdge.toFixed(1)}%</div>${bookBadge(p.overBook)}<button onclick="openBook('${p.overBook}')" style="margin-top:8px;background:var(--accent);color:#000;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">BET →</button></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Under ${p.point}</div><div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--accent)">${fmt(p.underOdds)}</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">Fair: ${(p.fairUnderProb*100).toFixed(1)}%</div><div style="font-size:10px;color:${p.underEdge>=0?'var(--green)':'var(--red)'};font-weight:700;margin-top:2px;">Edge: ${p.underEdge>=0?'+':''}${p.underEdge.toFixed(1)}%</div>${bookBadge(p.underBook)}<button onclick="openBook('${p.underBook}')" style="margin-top:8px;background:var(--accent);color:#000;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">BET →</button></div></div></div>`;}).join('');}
+function impliedProb(odds){return odds>0?100/(odds+100):(-odds)/((-odds)+100);}
 async function loadSharpMoney(){
   var rows=document.getElementById('sharp-rows');
   if(!rows){console.log('SHARP: rows div not found');return;}
@@ -2035,17 +2036,25 @@ async function loadSharpMoney(){
           var d=do_.find(o=>o.name===p.name);
           var f=fd?.markets?.[0]?.outcomes?.find(o=>o.name===p.name);
           if(!d)return;
+          var pinOpp=po.find(o=>o.name!==p.name);
+          if(!pinOpp)return;
+          var bestUsBook='DraftKings',bestUsOdds=d.price;
+          if(f&&f.price>bestUsOdds){bestUsBook='FanDuel';bestUsOdds=f.price;}
+          var pinImplied=impliedProb(p.price),pinOppImplied=impliedProb(pinOpp.price);
+          var pinFair=pinImplied/(pinImplied+pinOppImplied);
+          var bestImplied=impliedProb(bestUsOdds);
+          var edge=(pinFair-bestImplied)*100;
           var diff=Math.abs(p.price-d.price);
-          if(diff>=8 && diff<=500){all.push({game:g.home_team+' vs '+g.away_team,sport:s.split('_')[0].substring(0,4).toUpperCase(),team:p.name,pin:p.price,dk:d.price,fd:f?.price,diff,isHeavy:diff>=25,isReverse:diff>=15&&Math.abs(p.price)<Math.abs(d.price),time:g.commence_time});}
+          if(edge>=0.5){all.push({game:g.home_team+' vs '+g.away_team,sport:s.split('_')[0].substring(0,4).toUpperCase(),team:p.name,pin:p.price,dk:d.price,fd:f?.price,diff,edge,bestUsBook,bestUsOdds,isHeavy:edge>=2,isReverse:edge>=1,time:g.commence_time});}
         });
       });
     }catch(e){}
   }));
-  all.sort((a,b)=>b.diff-a.diff);
+  all.sort((a,b)=>b.edge-a.edge);
   window._sharpGames=all;
   var tot=document.getElementById('sharp-total'),avg=document.getElementById('sharp-avg'),hvy=document.getElementById('sharp-heavy');
   if(tot)tot.textContent=all.length;
-  if(avg)avg.textContent=all.length?Math.round(all.reduce((s,g)=>s+g.diff,0)/all.length)+' pts':'—';
+  if(avg)avg.textContent=all.length?'+'+(all.reduce((s,g)=>s+g.edge,0)/all.length).toFixed(1)+'%':'—';
   if(hvy)hvy.textContent=all.filter(g=>g.isHeavy).length;
   renderSharpRows();
 }
@@ -2069,41 +2078,18 @@ function renderSharpRows(){
       return t>now&&t<=now+604800000;
     });
   }else if(sharpView==='best'){
-    games=[...games].sort((a,b)=>b.diff-a.diff);
+    games=[...games].sort((a,b)=>b.edge-a.edge);
   }
 rows.innerHTML=games.slice(0,25).map(g=>{
-    // Recalculate signal based on correct interpretation
-    var pinAbs2=Math.abs(g.pin), dkAbs2=Math.abs(g.dk);
-    var isRealSharp = (g.pin<0 && g.dk<0 && pinAbs2<dkAbs2) || (g.pin>0 && g.dk>0 && g.pin>g.dk);
-    var sig=isRealSharp?(g.diff>=25?'💰 HEAVY SHARP':'📊 SHARP SIGNAL'):'⚠️ PUBLIC OVERLOAD';
-    var sc=isRealSharp?(g.diff>=25?'var(--green)':'var(--accent)'):'var(--muted)';
+    var edge=g.edge||0;
+    var sig=edge>=2?'💰 STRONG EDGE':edge>=1?'📊 SHARP EDGE':'📊 SMALL EDGE';
+    var sc=edge>=2?'var(--green)':edge>=1?'var(--accent)':'var(--muted)';
     var t=new Date(g.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    var pinAbs=Math.abs(g.pin), dkAbs=Math.abs(g.dk);
-    var note, thePlay;
-    var bestPublicBook = Math.abs(g.dk) <= Math.abs(g.fd||g.dk) ? 'DraftKings' : 'FanDuel';
-    var bestPublicOdds = Math.abs(g.dk) <= Math.abs(g.fd||g.dk) ? g.dk : (g.fd||g.dk);
-    var bestPublicStr = (bestPublicOdds>0?'+':'')+bestPublicOdds;
-    if(g.pin<0 && g.dk<0){
-      if(pinAbs < dkAbs){
-        note = 'Sharp money on '+g.team+' — Pinnacle has less juice than public books';
-        thePlay = '🎯 Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+') — sharps are on this side';
-      } else {
-        // Find the other team name - it's the opposite outcome
-        note = 'Public books overpriced on '+g.team+' — sharp money may be on the other side';
-        thePlay = '🎯 Consider the opposing team — public is inflating '+g.team+' price at DK/FD';
-      }
-    } else if(g.pin>0 && g.dk>0){
-      if(g.pin > g.dk){
-        note = 'Sharp money on '+g.team+' — Pinnacle offering better underdog price';
-        thePlay = '🎯 Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+') — Pinnacle likes them more than public does';
-      } else {
-        note = 'Public books giving more on '+g.team+' — Pinnacle sees less value here';
-        thePlay = '🎯 Skip '+g.team+' — public books are inflating the odds, Pinnacle disagrees';
-      }
-    } else {
-      note = 'Mixed signals on '+g.team+' — Pinnacle and public books disagree on side';
-      thePlay = '🎯 Avoid — unclear signal, books are split on which side wins';
-    }
+    var note='Pinnacle no-vig fair line shows value on '+g.team+' vs the best available US book price';
+    var bestPublicBook=g.bestUsBook||'DraftKings';
+    var bestPublicOdds=g.bestUsOdds||g.dk;
+    var bestPublicStr=(bestPublicOdds>0?'+':'')+bestPublicOdds;
+    var thePlay=edge>=2?'💰 STRONG EDGE — Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+')':edge>=1?'📊 SHARP EDGE — Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+')':'📊 SMALL EDGE — Bet '+g.team+' at '+bestPublicBook+' ('+bestPublicStr+')';
     return '<div class="pick-card" style="border-left:3px solid '+sc+';margin-bottom:8px;">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'+
         '<div><span style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-right:6px;">'+g.sport+'</span>'+
@@ -2116,7 +2102,7 @@ rows.innerHTML=games.slice(0,25).map(g=>{
         '<div><div style="font-family:var(--fm);font-size:9px;color:var(--yellow);letter-spacing:1px;margin-bottom:3px;">PINNACLE</div><div style="font-family:var(--fm);font-size:22px;font-weight:700;color:var(--yellow);">'+(g.pin>0?'+':'')+g.pin+'</div></div>'+
         '<div><div style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">DRAFTKINGS</div><div style="font-family:var(--fm);font-size:22px;font-weight:700;color:#fff;">'+(g.dk>0?'+':'')+g.dk+'</div></div>'+
         (g.fd?'<div><div style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">FANDUEL</div><div style="font-family:var(--fm);font-size:22px;font-weight:700;color:#fff;">'+(g.fd>0?'+':'')+g.fd+'</div></div>':'')+
-        '<div style="margin-left:auto;text-align:right;"><div style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">LINE GAP</div><div style="font-family:var(--fm);font-size:26px;font-weight:700;color:'+sc+';">'+g.diff+' pts</div></div>'+
+        '<div style="margin-left:auto;text-align:right;"><div style="font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">EDGE</div><div style="font-family:var(--fm);font-size:26px;font-weight:700;color:'+sc+';">+'+edge.toFixed(1)+'%</div></div>'+
       '</div>'+
       '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:#94a3b8;">'+note+'</div>'+
       '<div style="margin-top:6px;font-size:12px;font-weight:600;color:#fff;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);border-radius:6px;padding:7px 12px;">'+thePlay+'</div>'+
