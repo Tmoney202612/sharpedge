@@ -2020,7 +2020,7 @@ async function loadSharpMoney(){
   rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;letter-spacing:1px;">⟳ SCANNING...</div>';
   const sports=['basketball_nba','baseball_mlb','icehockey_nhl','americanfootball_nfl','americanfootball_ncaaf','basketball_wnba','basketball_ncaab','mma_mixed_martial_arts','boxing_boxing','soccer_epl','soccer_spain_la_liga','soccer_germany_bundesliga','soccer_italy_serie_a','soccer_france_ligue_one','soccer_uefa_champs_league','soccer_uefa_europa_league','soccer_usa_mls','soccer_mexico_ligamx','soccer_brazil_campeonato','soccer_netherlands_eredivisie','soccer_conmebol_copa_libertadores','rugbyleague_nrl','aussierules_afl','cricket_ipl','basketball_euroleague'];
   var all=[];
-  var isoDateSixHoursAgo=new Date(Date.now()-21600000).toISOString();
+  var isoDateSixHoursAgo=new Date(Date.now()-21600000).toISOString().replace(/\.\d{3}Z$/,'Z');
   await Promise.all(sports.map(async function(s){
     try{
       var r=await fetch('/api/odds?sport='+s+'&markets=h2h&oddsFormat=american');
