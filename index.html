@@ -2036,12 +2036,11 @@ async function loadSharpMoney(){
           var d=do_.find(o=>o.name===p.name);
           var f=fd?.markets?.[0]?.outcomes?.find(o=>o.name===p.name);
           if(!d)return;
-          var pinOpp=po.find(o=>o.name!==p.name);
-          if(!pinOpp)return;
           var bestUsBook='DraftKings',bestUsOdds=d.price;
           if(f&&f.price>bestUsOdds){bestUsBook='FanDuel';bestUsOdds=f.price;}
-          var pinImplied=impliedProb(p.price),pinOppImplied=impliedProb(pinOpp.price);
-          var pinFair=pinImplied/(pinImplied+pinOppImplied);
+          var pinImplied=impliedProb(p.price);
+          var totalPinImplied=po.reduce((s,o)=>s+impliedProb(o.price),0);
+          var pinFair=pinImplied/totalPinImplied;
           var bestImplied=impliedProb(bestUsOdds);
           var edge=(pinFair-bestImplied)*100;
           var diff=Math.abs(p.price-d.price);
