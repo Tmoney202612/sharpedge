@@ -1106,6 +1106,7 @@ if(arbView==='today'){
   const STAKE=200;
   container.innerHTML=filtered.map(o=>{
     const leg1=o.leg1,leg2=o.leg2,leg3=o.leg3;if(!leg1||!leg2)return'';
+    const fairLeg1=calcFairLine(leg1.odds,leg2.odds),fairLeg2=calcFairLine(leg2.odds,leg1.odds),edgeLeg1=calcEdge(leg1.odds,fairLeg1),edgeLeg2=calcEdge(leg2.odds,fairLeg2);
     const gameDate=o.commenceTime?new Date(o.commenceTime).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
     const isLive=o.commenceTime&&new Date(o.commenceTime)<new Date();
     const liveBadge=isLive?'<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;color:var(--red);font-family:var(--fm);"><div style="width:5px;height:5px;background:var(--red);border-radius:50%;animation:pulse 1.5s infinite;"></div>LIVE</span>':'';    const badge=o.isArb?
@@ -1164,6 +1165,7 @@ if(arbView==='today'){
             <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg1.name}</div>
             ${leg1.book==='Polymarket'?'<span style="font-size:11px;font-weight:800;color:#818cf8;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);padding:2px 7px;border-radius:5px;font-family:var(--fm);">Polymarket</span>':bookBadge(leg1.book)}
             <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};margin-bottom:2px;">${fmt(leg1.odds)}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Fair: ${(fairLeg1*100).toFixed(1)}%</div><div style="font-size:10px;color:${edgeLeg1>=0?'var(--green)':'var(--red)'};font-weight:700;">Edge: ${edgeLeg1>=0?'+':''}${edgeLeg1.toFixed(1)}%</div>
             ${leg1.centPrice?'<div style="font-size:11px;color:#818cf8;font-family:var(--fm);margin-bottom:4px;">'+Math.round(leg1.centPrice*100)+'¢'+(leg1.liquidity?' · Liq $'+formatLiq(leg1.liquidity):'')+'</div>':''}
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s1+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
             <button onclick="${leg1.book==='Polymarket'?'window.open(&quot;https://polymarket.com/sports&quot;,&quot;_blank&quot;)':'openBook(&quot;'+leg1.book+'&quot;)'}" style="background:${leg1.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg1.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
@@ -1172,6 +1174,7 @@ if(arbView==='today'){
             <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">${leg2.name}</div>
             ${leg2.book==='Polymarket'?'<span style="font-size:11px;font-weight:800;color:#818cf8;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);padding:2px 7px;border-radius:5px;font-family:var(--fm);">Polymarket</span>':bookBadge(leg2.book)}
             <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};margin-bottom:2px;">${fmt(leg2.odds)}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Fair: ${(fairLeg2*100).toFixed(1)}%</div><div style="font-size:10px;color:${edgeLeg2>=0?'var(--green)':'var(--red)'};font-weight:700;">Edge: ${edgeLeg2>=0?'+':''}${edgeLeg2.toFixed(1)}%</div>
             ${leg2.centPrice?'<div style="font-size:11px;color:#818cf8;font-family:var(--fm);margin-bottom:4px;">'+Math.round(leg2.centPrice*100)+'¢'+(leg2.liquidity?' · Liq $'+formatLiq(leg2.liquidity):'')+'</div>':''}
             ${o.isArb?'<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Stake: $'+s2+' of $'+STAKE+'</div>':'<div style="margin-bottom:10px;"></div>'}
             <button onclick="${leg2.book==='Polymarket'?'window.open(&quot;https://polymarket.com/sports&quot;,&quot;_blank&quot;)':'openBook(&quot;'+leg2.book+'&quot;)'}" style="background:${leg2.book==='Polymarket'?'#818cf8':'var(--accent)'};color:${leg2.book==='Polymarket'?'#fff':'#000'};border:none;padding:7px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">BET →</button>
