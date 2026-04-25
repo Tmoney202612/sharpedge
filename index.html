@@ -2101,8 +2101,8 @@ function renderSharpRows(){
 rows.innerHTML=games.slice(0,25).map(g=>{
     var edge=g.edge||0;
     var sig=edge>=2?'💰 STRONG EDGE':edge>=1?'📊 SHARP EDGE':'📊 SMALL EDGE';
-    if(g.isSteam)sig+='<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px;">?? STEAM</span>';
-    if(g.isReverseLine)sig+='<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px;">? REVERSE</span>';
+    if(g.isSteam)sig+='<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px;">📈 STEAM</span>';
+    if(g.isReverseLine)sig+='<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px;">↩ REVERSE</span>';
     var sc=edge>=2?'var(--green)':edge>=1?'var(--accent)':'var(--muted)';
     var t=new Date(g.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     var note='Pinnacle no-vig fair line shows value on '+g.team+' vs the best available US book price';
