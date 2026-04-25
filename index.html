@@ -1108,7 +1108,7 @@ if(arbView==='today'){
   // Only show true arbs with at least 5% guaranteed profit
   const container=document.getElementById('arb-rows');
   if(!container)return;
-  if(!filtered.length){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';return;}
+  if(!filtered.length){const rawCount=arbFilter==='all'?allArbOpps.length:arbFilter==='polymarket'?allArbOpps.filter(o=>o.isPolymarket).length:allArbOpps.filter(o=>o.sportLabel===arbFilter).length;if(rawCount===0){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';}else{const sportLabel=arbFilter==='all'?'total':arbFilter;container.innerHTML='<div class="loading-state"><div>No arbitrage opportunities under 3% margin right now.</div><div style="margin-top:8px;color:var(--muted);font-size:12px;">There are '+rawCount+' wider-margin '+sportLabel+' opportunities available, but they are outside the current playable threshold.</div></div>';}return;}
   const STAKE=200;
   container.innerHTML=filtered.map(o=>{
     const leg1=o.leg1,leg2=o.leg2,leg3=o.leg3;if(!leg1||!leg2)return'';
