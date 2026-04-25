@@ -750,18 +750,7 @@ async function loadAllArbSports(){
     if(avgEl&&window.allArbOpps.length)avgEl.textContent=(window.allArbOpps.reduce((s,o)=>s+o.margin,0)/window.allArbOpps.length).toFixed(2)+'%';
     const sportsEl=document.getElementById('arb-sports-count');
     if(sportsEl)sportsEl.textContent=new Set(window.allArbOpps.map(o=>o.sportLabel)).size;
-    // Update sport chip counts and hide empty ones
-    const sportCounts={};
-    window.allArbOpps.forEach(o=>{if(o.sportLabel)sportCounts[o.sportLabel]=(sportCounts[o.sportLabel]||0)+1;});
-    const polyCount=window.allArbOpps.filter(o=>o.isPolymarket).length;
-    ['NBA','NCAAB','WNBA','EURO','MLB','NCAAB⚾','NHL','SHL2','SHL','NFL','NCAAF','UFC','BOX','EPL','MLS','BUN','LIGA','SERA','L1','UCL','UEL','UECL','BRA','BRA2','LMX','ERE','PRI','TUR','ALE','JPL','KOR','EFL','EL1','EL2','EFLC','FAC','SCO','BEL','SUI','DEN','SWE','SWE2','NOR','FIN','AUT','POL','CZE','GRE','ARG','CHI','CHN','LIB','SUD','WC','DFB','CDF','SEB','IRL','RUS','SAU','SEG','ATP','WTA','ATP2','NRL','AFL','IPL','T20','ODI','TEST','LAX','PLL'].forEach(s=>{
-      const chip=document.getElementById('chip-count-'+s);
-      if(chip){chip.textContent=sportCounts[s]||0;chip.parentElement.style.display=(sportCounts[s]||0)>0?'':'none';}
-    });
-    const polyChip=document.getElementById('chip-count-polymarket');
-    if(polyChip){polyChip.textContent=polyCount;polyChip.parentElement.style.display=polyCount>0?'':'none';}
-    const allChip=document.getElementById('chip-count-all');
-    if(allChip)allChip.textContent=window.allArbOpps.length;
+    updateArbChipCounts();
   }
 
   // Standard sportsbook arbs
@@ -1033,6 +1022,38 @@ async function fetchSportArbs(sport,market='h2h'){
 }
 
 function filterArbSport(el,sport){document.querySelectorAll('#arb-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');arbFilter=sport;renderArbRows();}
+function applyArbViewFilter(opps){
+  let filtered=[...opps];
+  const now=Date.now();
+  if(arbView==='today'){
+    const _now=new Date();const start=new Date(_now.getFullYear(),_now.getMonth(),_now.getDate()).getTime();const end=start+86400000;
+    filtered=filtered.filter(o=>{if(!o.commenceTime)return false;const t=new Date(o.commenceTime).getTime();return t>=start&&t<end;});
+  }else if(arbView==='week'){
+    filtered=filtered.filter(o=>{if(!o.commenceTime)return false;const t=new Date(o.commenceTime).getTime();return t>now&&t<=now+604800000;});
+  }else if(arbView==='best'){
+    filtered=[...filtered].sort((a,b)=>a.margin-b.margin).slice(0,30);
+  }
+  return filtered;
+}
+function applyArbBookFilter(opps){
+  if(!userBooks)return opps;
+  return opps.filter(o=>{const b1=o.leg1?.book||'';const b2=o.leg2?.book||'';const b3=o.leg3?.book||'';return isBookAllowed(b1)&&isBookAllowed(b2)&&(b3?isBookAllowed(b3):true);});
+}
+function getArbCountableOpps(){return applyArbBookFilter(applyArbViewFilter(window.allArbOpps||[]));}
+function updateArbChipCounts(){
+  const countable=getArbCountableOpps();
+  const sportCounts={};
+  countable.forEach(o=>{if(o.sportLabel)sportCounts[o.sportLabel]=(sportCounts[o.sportLabel]||0)+1;});
+  const polyCount=countable.filter(o=>o.isPolymarket).length;
+  ['NBA','NCAAB','WNBA','EURO','MLB','NCAAB⚾','NHL','SHL2','SHL','NFL','NCAAF','UFC','BOX','EPL','MLS','BUN','LIGA','SERA','L1','UCL','UEL','UECL','BRA','BRA2','LMX','ERE','PRI','TUR','ALE','JPL','KOR','EFL','EL1','EL2','EFLC','FAC','SCO','BEL','SUI','DEN','SWE','SWE2','NOR','FIN','AUT','POL','CZE','GRE','ARG','CHI','CHN','LIB','SUD','WC','DFB','CDF','SEB','IRL','RUS','SAU','SEG','ATP','WTA','ATP2','NRL','AFL','IPL','T20','ODI','TEST','LAX','PLL'].forEach(s=>{
+    const chip=document.getElementById('chip-count-'+s);
+    if(chip){chip.textContent=sportCounts[s]||0;chip.parentElement.style.display=(sportCounts[s]||0)>0?'':'none';}
+  });
+  const polyChip=document.getElementById('chip-count-polymarket');
+  if(polyChip){polyChip.textContent=polyCount;polyChip.parentElement.style.display=polyCount>0?'':'none';}
+  const allChip=document.getElementById('chip-count-all');
+  if(allChip)allChip.textContent=countable.length;
+}
 
 // Unified scanner view state
 let arbView='today';
@@ -1047,6 +1068,7 @@ function setArbView(el,view){
   document.querySelectorAll('#arb-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   arbView=view;
+  updateArbChipCounts();
   renderArbRows();
 }
 function setEvView(el,view){
@@ -1075,40 +1097,16 @@ function setSharpView(el,view){
 }
 
 function renderArbRows(){
+  const countable=getArbCountableOpps();
   let filtered;
-  if(arbFilter==='all')filtered=allArbOpps;
-  else if(arbFilter==='polymarket')filtered=allArbOpps.filter(o=>o.isPolymarket);
-  else filtered=allArbOpps.filter(o=>o.sportLabel===arbFilter);
-const now=Date.now();
-if(arbView==='today'){
-  const _now=new Date();const start=new Date(_now.getFullYear(),_now.getMonth(),_now.getDate()).getTime();const end=start+86400000;
-  filtered=filtered.filter(o=>{
-    if(!o.commenceTime)return false;
-    const t=new Date(o.commenceTime).getTime();
-    return t>=start&&t<end;
-  });
-}else if(arbView==='week'){
-  filtered=filtered.filter(o=>{
-    if(!o.commenceTime)return false;
-    const t=new Date(o.commenceTime).getTime();
-    return t>now&&t<=now+604800000;
-  });
-}else if(arbView==='best'){
-  filtered=[...filtered].sort((a,b)=>a.margin-b.margin).slice(0,30);
-}
-  // Apply book filter
-  if(userBooks){
-    filtered=filtered.filter(o=>{
-      const b1=o.leg1?.book||'';
-      const b2=o.leg2?.book||'';
-      const b3=o.leg3?.book||'';
-      return isBookAllowed(b1)&&isBookAllowed(b2)&&(b3?isBookAllowed(b3):true);
-    });
-  }
+  if(arbFilter==='all')filtered=countable;
+  else if(arbFilter==='polymarket')filtered=countable.filter(o=>o.isPolymarket);
+  else filtered=countable.filter(o=>o.sportLabel===arbFilter);
+  const preMarginCount=filtered.length;
   // Only show true arbs with at least 5% guaranteed profit
   const container=document.getElementById('arb-rows');
   if(!container)return;
-  if(!filtered.length){const rawCount=arbFilter==='all'?allArbOpps.length:arbFilter==='polymarket'?allArbOpps.filter(o=>o.isPolymarket).length:allArbOpps.filter(o=>o.sportLabel===arbFilter).length;if(rawCount===0){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';}else{const sportLabel=arbFilter==='all'?'total':arbFilter;container.innerHTML='<div class="loading-state"><div>No arbitrage opportunities under 3% margin right now.</div><div style="margin-top:8px;color:var(--muted);font-size:12px;">There are '+rawCount+' wider-margin '+sportLabel+' opportunities available, but they are outside the current playable threshold.</div></div>';}return;}
+  if(!filtered.length){const rawCount=preMarginCount;if(rawCount===0){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';}else{const sportLabel=arbFilter==='all'?'total':arbFilter;container.innerHTML='<div class="loading-state"><div>No arbitrage opportunities under 3% margin right now.</div><div style="margin-top:8px;color:var(--muted);font-size:12px;">There are '+rawCount+' wider-margin '+sportLabel+' opportunities available, but they are outside the current playable threshold.</div></div>';}return;}
   const STAKE=200;
   container.innerHTML=filtered.map(o=>{
     const leg1=o.leg1,leg2=o.leg2,leg3=o.leg3;if(!leg1||!leg2)return'';
@@ -1594,6 +1592,7 @@ function saveBookSelection(){
   localStorage.setItem('userBooks',JSON.stringify(selected));
   updateBookCount();
   closeBookSelector();
+  updateArbChipCounts();
   renderArbRows();
 }
 function updateBookCount(){
