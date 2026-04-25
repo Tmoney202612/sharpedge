@@ -560,18 +560,18 @@
 </div>
         <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:8px;padding:16px;margin-bottom:16px;font-size:13px;color:#94a3b8;line-height:1.8;">
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;">💡 How this works — in plain English</div>
-          <p style="margin-bottom:8px;">Pinnacle is a sportsbook that <strong style="color:#fff">never limits sharp bettors</strong>. That means when their odds look different from DraftKings or FanDuel, it's because <strong style="color:#fff">professional bettors have already bet that line</strong>.</p>
-          <p style="margin-bottom:8px;">The <strong style="color:var(--green)">LINE GAP</strong> tells you how different Pinnacle's odds are from the public books. A big gap = strong signal that sharp money is on one side.</p>
-          <p style="margin-bottom:12px;"><strong style="color:#fff">What to do:</strong> Find a game with a big gap. Check which team Pinnacle has at a much lower number (closer to -100). That's the side sharp money is on. Bet it at DraftKings or FanDuel where the odds are better.</p>
+          <p style="margin-bottom:8px;">Pinnacle is a sportsbook that <strong style="color:#fff">never limits sharp bettors</strong>. Their no-vig fair line reveals the TRUE probability of each outcome. When a US book offers better odds than that fair line, you have <strong style="color:var(--green)">+EV</strong>.</p>
+          <p style="margin-bottom:8px;"><strong style="color:var(--green)">EDGE %</strong> is how much value you're getting vs Pinnacle's fair line. The "was" number under each book shows where the line was 6 hours ago ? watch for books moving against each other (sharp action).</p>
+          <p style="margin-bottom:12px;"><strong style="color:#fff">What to do:</strong> Find a card with high EDGE %. Bet that team at the book listed in the play box. Strong edges (2%+) are rare ? take them when they appear.</p>
           <div style="display:flex;gap:16px;flex-wrap:wrap;padding-top:10px;border-top:1px solid rgba(59,130,246,0.15);font-size:12px;">
-            <span>💰 <strong style="color:var(--green)">Heavy Sharp</strong> = 25+ point gap between books</span>
-            <span>↩ <strong style="color:var(--yellow)">Reverse Line</strong> = sharp money going against the public</span>
+            <span>?? <strong style="color:var(--green)">Strong Edge</strong> = 2%+ above Pinnacle fair line</span>
+            <span>? <strong style="color:var(--yellow)">Sharp Edge</strong> = 1%+ above Pinnacle fair line</span>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
           <div class="stat-card"><div class="stat-label">SIGNALS FOUND</div><div class="stat-value" id="sharp-total" style="color:var(--accent)">—</div></div>
-          <div class="stat-card"><div class="stat-label">AVG LINE GAP</div><div class="stat-value" id="sharp-avg" style="color:var(--yellow)">—</div></div>
-          <div class="stat-card"><div class="stat-label">HEAVY SHARP</div><div class="stat-value" id="sharp-heavy" style="color:var(--green)">—</div></div>
+          <div class="stat-card"><div class="stat-label">AVG EDGE</div><div class="stat-value" id="sharp-avg" style="color:var(--yellow)">—</div></div>
+          <div class="stat-card"><div class="stat-label">STRONG EDGES</div><div class="stat-value" id="sharp-heavy" style="color:var(--green)">—</div></div>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
           <button class="filter-btn active" onclick="filterSharp('all',this)">All</button>
