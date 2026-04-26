@@ -4,7 +4,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
 
   const API_KEY = process.env.ODDS_API_KEY;
-  const { sport = 'basketball_nba', markets = 'h2h', oddsFormat = 'american' } = req.query;
+  const { sport = 'basketball_nba', market, markets, oddsFormat = 'american' } = req.query;
+  const marketParam = markets || market || 'h2h';
 
   // Top 15 books - Pinnacle as sharp benchmark + major US books
   const TOP_BOOKS = [
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
   ].join(',');
 
   try {
-    const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${API_KEY}&regions=us,us2,eu,uk,au&markets=${markets}&oddsFormat=${oddsFormat}&bookmakers=${TOP_BOOKS}`;
+    const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${API_KEY}&regions=us,us2,eu,uk,au&markets=${marketParam}&oddsFormat=${oddsFormat}&bookmakers=${TOP_BOOKS}`;
     const r = await fetch(url);
     const data = await r.json();
     res.setHeader('x-requests-remaining', r.headers.get('x-requests-remaining') || '');
