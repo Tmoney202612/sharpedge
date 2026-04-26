@@ -259,8 +259,9 @@
       <div class="sidebar-section">
         <div class="sidebar-title">Market</div>
         <div class="sidebar-item active" onclick="selectMarket(this,'h2h')">Moneyline</div>
-        <div class="sidebar-item" onclick="selectMarket(this,'spreads')">Spread</div>
-        <div class="sidebar-item" onclick="selectMarket(this,'totals')">Total O/U</div>
+        <!-- TEMP: spreads/totals hidden until renderOdds() is rebuilt for non-h2h markets. See cbe419f. -->
+        <div class="sidebar-item" onclick="selectMarket(this,'spreads')" style="display:none">Spread</div>
+        <div class="sidebar-item" onclick="selectMarket(this,'totals')" style="display:none">Total O/U</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-title">Sportsbooks</div>
@@ -1408,6 +1409,7 @@ function renderLiveRows(){
 }
 
 async function loadSingleSport(){
+  if(currentMarket!=='h2h')currentMarket='h2h';
   ss('fetching...');
   const data=await fetchSport(currentSport,currentMarket);
   if(data.length){ss(`✓ ${data.length} games`);const el=document.getElementById('count-'+currentSport);if(el){const soon=data.filter(g=>new Date(g.commence_time).getTime()<=Date.now()+14400000).length;el.textContent=soon||'';}}else{ss('no data');}
