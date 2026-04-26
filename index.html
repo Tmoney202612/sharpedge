@@ -1239,6 +1239,13 @@ async function loadAllEVSports(){
   try {
   document.getElementById('ev-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div>Scanning all sports for +EV bets...</div>`;
   const SPORTS_LIST = [{key:'basketball_nba',label:'NBA',emoji:'🏀',color:'#4f8aff'},{key:'baseball_mlb',label:'MLB',emoji:'⚾',color:'#f5c842'},{key:'icehockey_nhl',label:'NHL',emoji:'🏒',color:'#4f8aff'},{key:'americanfootball_nfl',label:'NFL',emoji:'🏈',color:'#ff6b35'},{key:'americanfootball_ncaaf',label:'NCAAF',emoji:'🏈',color:'#ff6b35'},{key:'basketball_wnba',label:'WNBA',emoji:'🏀',color:'#ff6b7a'},{key:'basketball_ncaab',label:'NCAAB',emoji:'🏀',color:'#a78bfa'},{key:'mma_mixed_martial_arts',label:'MMA',emoji:'🥊',color:'#ff4757'},{key:'boxing_boxing',label:'Boxing',emoji:'🥊',color:'#ff6b35'},{key:'soccer_epl',label:'EPL',emoji:'⚽',color:'#8b5cf6'},{key:'soccer_spain_la_liga',label:'La Liga',emoji:'⚽',color:'#f5c842'},{key:'soccer_germany_bundesliga',label:'Bundesliga',emoji:'⚽',color:'#ff4757'},{key:'soccer_italy_serie_a',label:'Serie A',emoji:'⚽',color:'#4f8aff'},{key:'soccer_france_ligue_one',label:'Ligue 1',emoji:'⚽',color:'#2ecc71'},{key:'soccer_uefa_champs_league',label:'UCL',emoji:'⚽',color:'#f5c842'},{key:'soccer_uefa_europa_league',label:'Europa',emoji:'⚽',color:'#ff6b35'},{key:'soccer_usa_mls',label:'MLS',emoji:'⚽',color:'#06b6d4'},{key:'soccer_mexico_ligamx',label:'Liga MX',emoji:'⚽',color:'#2ecc71'},{key:'soccer_brazil_campeonato',label:'Brazil',emoji:'⚽',color:'#f5c842'},{key:'soccer_netherlands_eredivisie',label:'Eredivisie',emoji:'⚽',color:'#ff6b35'},{key:'soccer_conmebol_copa_libertadores',label:'Copa Lib',emoji:'⚽',color:'#a78bfa'},{key:'rugbyleague_nrl',label:'NRL',emoji:'🏉',color:'#2ecc71'},{key:'aussierules_afl',label:'AFL',emoji:'🏉',color:'#ff6b35'},{key:'cricket_ipl',label:'IPL',emoji:'🏏',color:'#ff6b35'},{key:'basketball_euroleague',label:'Euroleague',emoji:'🏀',color:'#4f8aff'}];
+  SPORTS_LIST.push({key:'americanfootball_ufl',label:'UFL',emoji:'🏈',color:'#ff6b35'});
+  SPORTS_LIST.push({key:'baseball_milb',label:'MiLB',emoji:'⚾',color:'#4f8aff'});
+  SPORTS_LIST.push({key:'baseball_ncaa',label:'NCABB',emoji:'⚾',color:'#4f8aff'});
+  SPORTS_LIST.push({key:'soccer_saudi_arabia_pro_league',label:'SAU',emoji:'⚽',color:'#2ecc71'});
+  SPORTS_LIST.push({key:'lacrosse_ncaa',label:'LAX',emoji:'🥍',color:'#a78bfa'});
+  SPORTS_LIST.push({key:'tennis_atp_madrid_open',label:'ATP',emoji:'🎾',color:'#f5c842'});
+  SPORTS_LIST.push({key:'tennis_wta_madrid_open',label:'WTA',emoji:'🎾',color:'#ff6b7a'});
  const results = await Promise.all(SPORTS_LIST.map(s => fetchSportEV(s)));
 allEVResults = results.flat().sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev));
   const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
@@ -1364,6 +1371,13 @@ function renderPicksRows(){
 async function loadAllLiveSports(){
   document.getElementById('live-rows').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div>Scanning all sports for live games...</div>`;
   const SPORTS_LIST=[{key:'basketball_nba',label:'NBA',emoji:'🏀',color:'#4f8aff'},{key:'baseball_mlb',label:'MLB',emoji:'⚾',color:'#f5c842'},{key:'icehockey_nhl',label:'NHL',emoji:'🏒',color:'#4f8aff'},{key:'americanfootball_nfl',label:'NFL',emoji:'🏈',color:'#ff6b35'},{key:'americanfootball_ncaaf',label:'NCAAF',emoji:'🏈',color:'#ff6b35'},{key:'basketball_wnba',label:'WNBA',emoji:'🏀',color:'#ff6b7a'},{key:'basketball_ncaab',label:'NCAAB',emoji:'🏀',color:'#a78bfa'},{key:'mma_mixed_martial_arts',label:'MMA',emoji:'🥊',color:'#ff4757'},{key:'boxing_boxing',label:'Boxing',emoji:'🥊',color:'#ff6b35'},{key:'soccer_epl',label:'EPL',emoji:'⚽',color:'#8b5cf6'},{key:'soccer_spain_la_liga',label:'La Liga',emoji:'⚽',color:'#f5c842'},{key:'soccer_germany_bundesliga',label:'Bundesliga',emoji:'⚽',color:'#ff4757'},{key:'soccer_italy_serie_a',label:'Serie A',emoji:'⚽',color:'#4f8aff'},{key:'soccer_france_ligue_one',label:'Ligue 1',emoji:'⚽',color:'#2ecc71'},{key:'soccer_uefa_champs_league',label:'UCL',emoji:'⚽',color:'#f5c842'},{key:'soccer_uefa_europa_league',label:'Europa',emoji:'⚽',color:'#ff6b35'},{key:'soccer_usa_mls',label:'MLS',emoji:'⚽',color:'#06b6d4'},{key:'soccer_mexico_ligamx',label:'Liga MX',emoji:'⚽',color:'#2ecc71'},{key:'soccer_brazil_campeonato',label:'Brazil',emoji:'⚽',color:'#f5c842'},{key:'soccer_netherlands_eredivisie',label:'Eredivisie',emoji:'⚽',color:'#ff6b35'},{key:'soccer_conmebol_copa_libertadores',label:'Copa Lib',emoji:'⚽',color:'#a78bfa'},{key:'rugbyleague_nrl',label:'NRL',emoji:'🏉',color:'#2ecc71'},{key:'aussierules_afl',label:'AFL',emoji:'🏉',color:'#ff6b35'},{key:'cricket_ipl',label:'IPL',emoji:'🏏',color:'#ff6b35'},{key:'basketball_euroleague',label:'Euroleague',emoji:'🏀',color:'#4f8aff'}];
+  SPORTS_LIST.push({key:'americanfootball_ufl',label:'UFL',emoji:'🏈',color:'#ff6b35'});
+  SPORTS_LIST.push({key:'baseball_milb',label:'MiLB',emoji:'⚾',color:'#4f8aff'});
+  SPORTS_LIST.push({key:'baseball_ncaa',label:'NCABB',emoji:'⚾',color:'#4f8aff'});
+  SPORTS_LIST.push({key:'soccer_saudi_arabia_pro_league',label:'SAU',emoji:'⚽',color:'#2ecc71'});
+  SPORTS_LIST.push({key:'lacrosse_ncaa',label:'LAX',emoji:'🥍',color:'#a78bfa'});
+  SPORTS_LIST.push({key:'tennis_atp_madrid_open',label:'ATP',emoji:'🎾',color:'#f5c842'});
+  SPORTS_LIST.push({key:'tennis_wta_madrid_open',label:'WTA',emoji:'🎾',color:'#ff6b7a'});
   const results = new Array(SPORTS_LIST.length).fill(null);
   let done = 0;
   await new Promise(resolve => {
@@ -2072,6 +2086,13 @@ async function loadSharpMoney(){
   if(!rows){console.log('SHARP: rows div not found');return;}
   rows.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--fm);font-size:11px;letter-spacing:1px;">⟳ SCANNING...</div>';
   const sports=['basketball_nba','baseball_mlb','icehockey_nhl','americanfootball_nfl','americanfootball_ncaaf','basketball_wnba','basketball_ncaab','mma_mixed_martial_arts','boxing_boxing','soccer_epl','soccer_spain_la_liga','soccer_germany_bundesliga','soccer_italy_serie_a','soccer_france_ligue_one','soccer_uefa_champs_league','soccer_uefa_europa_league','soccer_usa_mls','soccer_mexico_ligamx','soccer_brazil_campeonato','soccer_netherlands_eredivisie','soccer_conmebol_copa_libertadores','rugbyleague_nrl','aussierules_afl','cricket_ipl','basketball_euroleague'];
+  sports.push('americanfootball_ufl');
+  sports.push('baseball_milb');
+  sports.push('baseball_ncaa');
+  sports.push('soccer_saudi_arabia_pro_league');
+  sports.push('lacrosse_ncaa');
+  sports.push('tennis_atp_madrid_open');
+  sports.push('tennis_wta_madrid_open');
   var all=[];
   var isoDateSixHoursAgo=new Date(Date.now()-21600000).toISOString().replace(/\.\d{3}Z$/,'Z');
   await Promise.all(sports.map(async function(s){
