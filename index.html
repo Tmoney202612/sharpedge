@@ -1226,6 +1226,7 @@ async function fetchSportEV(sportConfig){
     if(!data.length)return[];
     const rows=[];
     data.forEach(g=>{
+      if(g.commence_time&&new Date(g.commence_time).getTime()<=Date.now())return;
       const books=g.bookmakers||[];if(books.length<2)return;
       const om={};
       books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});})));
