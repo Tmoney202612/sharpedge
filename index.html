@@ -1395,10 +1395,10 @@ function renderLiveRows(){
     let gameEV=0;const om={};
     books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({odds:o.price});})));
     Object.values(om).forEach(offers=>{if(offers.length<2)return;const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);if(isFinite(ev)&&ev>gameEV)gameEV=ev;});
-    return`<div class="arb-card">
+    return`<div class="arb-card" data-game-id="${g.id||''}">
       <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;padding:16px 20px;align-items:center;">
         <div class="arb-sport-badge" style="background:${g.sportBg};color:${g.sportColor};border:1px solid ${g.sportColor}40">${g.sportEmoji} ${g.sportLabel}</div>
-        <div><div class="arb-game-name">${g.home_team} vs ${g.away_team}</div><div class="arb-game-time">${timeLabel} · ${books.length} books</div></div>
+        <div><div class="arb-game-name" data-game-id="${g.id||''}">${g.home_team} vs ${g.away_team}</div><div class="arb-game-time">${timeLabel} · ${books.length} books</div></div>
         ${gameEV>0?`<div style="text-align:center;min-width:70px;"><div style="font-size:14px;font-weight:800;color:var(--green);font-family:var(--fm);">+${(gameEV*100).toFixed(1)}%</div><div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Best EV</div></div>`:''}
         <div><button class="bet-btn" onclick="openBook('${books[0]?.title||'DraftKings'}')">BET →</button></div>
       </div>
@@ -1783,12 +1783,10 @@ window._scoresCache={};
 window._scoresGames=[];
 var scoresLastFetch=0,CACHE_MS=90000;
 
-// Lookup score for a game by team names
-window.getGameScore=function(homeTeam,awayTeam){
-  if(!homeTeam||!awayTeam)return null;
-  var k1=homeTeam.toLowerCase()+"|"+awayTeam.toLowerCase();
-  var k2=awayTeam.toLowerCase()+"|"+homeTeam.toLowerCase();
-  return window._scoresCache[k1]||window._scoresCache[k2]||null;
+// Lookup score for a game by Odds API event ID
+window.getGameScore=function(gameId){
+  if(!gameId)return null;
+  return window._scoresCache[gameId]||null;
 };
 
 // Get score display data from a scores API game object
@@ -1807,8 +1805,8 @@ window.getScoreDisplay=function(g){
 };
 
 // Build an inline score badge HTML string for a game
-window.scoreBadge=function(homeTeam,awayTeam){
-  var g=window.getGameScore(homeTeam,awayTeam);
+window.scoreBadge=function(gameId){
+  var g=window.getGameScore(gameId);
   if(!g)return"";
   var sd=window.getScoreDisplay(g);
   if(!sd.hasScore)return"";
@@ -1820,8 +1818,8 @@ window.scoreBadge=function(homeTeam,awayTeam){
 };
 
 // Build a full scoreboard block (for Live Now panel cards)
-window.scoreBlock=function(homeTeam,awayTeam){
-  var g=window.getGameScore(homeTeam,awayTeam);
+window.scoreBlock=function(gameId,homeTeam,awayTeam){
+  var g=window.getGameScore(gameId);
   if(!g)return"";
   var sd=window.getScoreDisplay(g);
   if(!sd.hasScore)return"";
@@ -1842,10 +1840,7 @@ function fetchScores(cb){
     window._scoresCache={};
     window._scoresGames=games;
     games.forEach(function(g){
-      var k1=(g.home_team||"").toLowerCase()+"|"+(g.away_team||"").toLowerCase();
-      var k2=(g.away_team||"").toLowerCase()+"|"+(g.home_team||"").toLowerCase();
-      window._scoresCache[k1]=g;
-      window._scoresCache[k2]=g;
+      if(g.id)window._scoresCache[g.id]=g;
     });
     scoresLastFetch=now;
     if(cb)cb();
@@ -1866,7 +1861,8 @@ function injectScoreBadges(){
     if(parts.length<2)return;
     var home=parts[0].trim();
     var away=parts[1].trim();
-    var badge=window.scoreBadge(home,away);
+    var gameId=el.getAttribute("data-game-id")||(el.closest("[data-game-id]")?el.closest("[data-game-id]").getAttribute("data-game-id"):"");
+    var badge=window.scoreBadge(gameId);
     if(badge)el.insertAdjacentHTML("beforeend",badge);
   });
 
@@ -1877,7 +1873,8 @@ function injectScoreBadges(){
     if(parts.length<2)return;
     var home=parts[0].trim();
     var away=parts[1].trim();
-    var badge=window.scoreBadge(home,away);
+    var gameId=el.getAttribute("data-game-id")||(el.closest("[data-game-id]")?el.closest("[data-game-id]").getAttribute("data-game-id"):"");
+    var badge=window.scoreBadge(gameId);
     if(badge)el.insertAdjacentHTML("beforeend",badge);
   });
 
@@ -1891,7 +1888,8 @@ function injectScoreBadges(){
     var home=parts[0].trim();
     var away=parts[1].trim();
     if(nameEl.querySelector(".live-score-badge"))return;
-    var badge=window.scoreBadge(home,away);
+    var gameId=row.getAttribute("data-game-id")||(row.closest("[data-game-id]")?row.closest("[data-game-id]").getAttribute("data-game-id"):"");
+    var badge=window.scoreBadge(gameId);
     if(badge)nameEl.insertAdjacentHTML("beforeend",badge);
   });
 
@@ -1905,7 +1903,8 @@ function injectScoreBadges(){
     if(parts.length<2)return;
     var home=parts[0].trim();
     var away=parts[1].trim();
-    var block=window.scoreBlock(home,away);
+    var gameId=card.getAttribute("data-game-id")||"";
+    var block=window.scoreBlock(gameId,home,away);
     if(block){
       var wrapper=document.createElement("div");
       wrapper.className="live-score-block";
@@ -1930,7 +1929,8 @@ function injectScoreBadges(){
     if(parts.length<2)return;
     var home=parts[0].trim();
     var away=parts[1].trim();
-    var badge=window.scoreBadge(home,away);
+    var gameId=card.getAttribute("data-game-id")||"";
+    var badge=window.scoreBadge(gameId);
     if(badge)el.insertAdjacentHTML("beforeend",badge);
   });
 }
