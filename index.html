@@ -2101,10 +2101,11 @@ function renderSharpRows(){
   const now=Date.now();
   if(sharpView==='today'){
     const _now=new Date();const start=new Date(_now.getFullYear(),_now.getMonth(),_now.getDate()).getTime();const end=start+86400000;
+    const minStart=Date.now()-10800000; // 3 hours ago
     games=games.filter(g=>{
       if(!g.time)return false;
       const t=new Date(g.time).getTime();
-      return t>=start&&t<end;
+      return t>=Math.max(start,minStart)&&t<end;
     });
   }else if(sharpView==='week'){
     games=games.filter(g=>{
