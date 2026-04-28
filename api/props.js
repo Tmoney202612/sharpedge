@@ -14,7 +14,10 @@ export default async function handler(req, res) {
     const r = await fetch(url);
     const data = await r.json();
     res.setHeader('x-requests-remaining', r.headers.get('x-requests-remaining') || '');
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
     res.status(200).json(data);
   } catch (e) {
     res.status(500).json({ error: e.message });
