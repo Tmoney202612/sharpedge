@@ -1370,8 +1370,8 @@ function renderPicksRows(){
           <div class="pick-sport">${p.game}</div>
         </div>
         <div class="pick-confidence">
-          <div class="conf-bar"><div class="conf-fill" style="width:${Math.min(95,60+parseFloat(p.ev)*3)}%"></div></div>
-          <span class="conf-label">${Math.min(95,Math.round(60+parseFloat(p.ev)*3))}%</span>
+          <div class="conf-bar"><div class="conf-fill" style="width:${(ip(p.fair)*100).toFixed(1)}%"></div></div>
+          <span class="conf-label">${Math.round(ip(p.fair)*100)}%</span>
           <span class="pick-result pick-pending">PENDING</span>
         </div>
       </div>
