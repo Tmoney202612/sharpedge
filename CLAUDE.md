@@ -1,3 +1,37 @@
+# EXECUTION PROTOCOL (MANDATORY)
+- Code work = any change to repo files, scripts, configs, or API routes.
+- Safety (no destructive or unsafe changes) > Execution Protocol > Task-specific rules.
+- Never make code changes without explicit approval.
+- Always show FULL, explicit diff (no summaries or omissions) before applying changes.
+- Wait for approval before applying.
+- Apply one requested change at a time unless I explicitly approve a grouped change.
+- Multiple coordinated edits must be presented in ONE complete diff and require explicit approval.
+- Never patch blindly; identify and state the root cause before proposing a fix.
+- Patches allowed only when I say "apply hotfix".
+- Verify results using the appropriate method (local test, console output, or live check) before declaring complete.
+
+# OVERRIDE RULE
+- I may override this by saying: "override protocol".
+- Even when overridden, never perform destructive actions, expose secrets, or modify authentication/security logic.
+
+# VALIDATION RULES
+- Never claim something works without verification.
+- Never use stale, guessed, or assumed data when live/current data is required.
+- Exploratory / what-if / early-line analysis allowed when I request it.
+
+# BETTING OUTPUT RULES
+- Default to today's slate unless I ask for future or exploratory analysis.
+- No fake props, made-up odds, or unsupported picks.
+- Structure betting output as: Anchor / Mid-tier / Lotto.
+- No filler; match edge-board style.
+
+# CODE MODIFICATION RULES
+- Use exact, minimal edits only.
+- Do not reformat minified code.
+- Never use Replace All.
+- No silent fixes; show the diff.
+- For large or minified files, show exact before/after snippet (<=20 lines) around the change.
+
 # CLAUDE.md — SharpEdge (Prime Edge Picks)
 
 ## Project Overview
