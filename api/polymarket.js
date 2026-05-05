@@ -10,6 +10,7 @@ export default async function handler(req, res) {
   // Accept either a sport key or specific team search
   const sport = req.query.sport || 'all';
   const oddsGames = req.query.games; // JSON array of {home, away} from frontend
+  const stats = { rejected: 0 };
 
   try {
     let allMarkets = [];
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
       // Mode 1: Frontend passes specific games to search for
       const games = JSON.parse(oddsGames);
       for (const game of games.slice(0, 15)) { // Limit to 15 games to avoid rate limits
-        const markets = await searchGame(game.home, game.away, game.sport);
+        const markets = await searchGame(game.home, game.away, game.sport, stats);
         allMarkets.push(...markets);
       }
     } else {
@@ -40,7 +41,7 @@ export default async function handler(req, res) {
       }
 
       for (const query of searches) {
-        const markets = await searchPolymarket(query, 20);
+        const markets = await searchPolymarket(query, 20, undefined, stats);
         allMarkets.push(...markets);
         // Small delay to avoid rate limiting
         await new Promise(r => setTimeout(r, 200));
@@ -59,6 +60,8 @@ export default async function handler(req, res) {
     // Sort by volume
     unique.sort((a, b) => b.volume - a.volume);
 
+    console.log(`[polymarket-filter] rejected ${stats.rejected} pairs this scan`);
+
     return res.status(200).json({
       count: unique.length,
       source: 'polymarket',
@@ -72,16 +75,16 @@ export default async function handler(req, res) {
 }
 
 // Search for a specific game matchup
-async function searchGame(homeTeam, awayTeam, sport) {
+async function searchGame(homeTeam, awayTeam, sport, stats) {
   // Extract last word of team name (e.g., "Los Angeles Lakers" -> "Lakers")
   const home = homeTeam.split(' ').pop();
   const away = awayTeam.split(' ').pop();
   const query = `${away} ${home}`;
-  return searchPolymarket(query, 5, sport);
+  return searchPolymarket(query, 5, sport, stats);
 }
 
 // Search Polymarket's public search endpoint
-async function searchPolymarket(query, limit, sport) {
+async function searchPolymarket(query, limit, sport, stats) {
   try {
     const url = `https://gamma-api.polymarket.com/public-search?q=${encodeURIComponent(query)}&limit=${limit || 10}`;
     const resp = await fetch(url, {
@@ -103,13 +106,13 @@ async function searchPolymarket(query, limit, sport) {
       const eventTitle = event.title || '';
 
       markets.forEach(market => {
-        const parsed = parseMarket(market, eventTitle, sport);
+        const parsed = parseMarket(market, eventTitle, sport, stats);
         if (parsed) results.push(parsed);
       });
 
       // If no nested markets, try parsing the event itself as a market
       if (markets.length === 0) {
-        const parsed = parseMarket(event, eventTitle, sport);
+        const parsed = parseMarket(event, eventTitle, sport, stats);
         if (parsed) results.push(parsed);
       }
     });
@@ -122,8 +125,16 @@ async function searchPolymarket(query, limit, sport) {
 }
 
 // Parse a market object into normalized format
-function parseMarket(market, eventTitle, sport) {
+function parseMarket(market, eventTitle, sport, stats) {
   try {
+    // Reject futures, series-winners, MVP markets, championship markets etc.
+    // Single-game markets always carry gameStartTime (actual tipoff/puck-drop);
+    // futures/series markets do not. This is the cleanest discriminator.
+    if (!market.gameStartTime) {
+      if (stats) stats.rejected++;
+      return null;
+    }
+
     // Get outcomes
     let outcomes = market.outcomes || [];
     if (typeof outcomes === 'string') {
@@ -193,7 +204,7 @@ function parseMarket(market, eventTitle, sport) {
     }
 
     const gameSlug = market.slug || slug;
-    const gameDate = market.startDate || market.gameStartDate || '';
+    const gameDate = market.gameStartTime;
     const league = gameSlug.split('-')[0] || '';
 
     return {
