@@ -172,6 +172,8 @@ Pre-combo input cap: top 30 scored legs by per-leg hit probability feed combo ge
 
 Per-leg consensus floor: 3+ books quoting both Over and Under at the same line.
 
+Per-leg hit probability ceiling: legs with `hitProb > 0.65` are excluded from `scoreLegs` output. Filters near-lock legs (typically heavy Unders on Under-dominated slates like MLB/NHL) whose product math cannot clear the Safe tier 2.0x payout floor.
+
 Same-game exclusion: combos cannot contain more than one leg from the same `event_id`.
 
 ---
