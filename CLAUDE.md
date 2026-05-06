@@ -201,6 +201,16 @@ Tiers are bucketed on **combined parlay hit probability** (product of leg hit pr
 - **Balanced:** combined hit probability 0.20 – 0.34
 - **Longshot:** combined hit probability 0.10 – 0.19
 
+Payout floors (best-line combined decimal odds across allowed books):
+
+- **Safe:** ≥ 2.0x
+- **Balanced:** ≥ 2.5x
+- **Longshot:** ≥ 5.0x
+
+Tier suppression: if the Best (highest combined hit probability) combo in a tier fails its payout floor, the entire tier is suppressed and the UI renders "no qualifying play today."
+
+Data freshness window: 15 minutes from `slate.fetchedAt`. Stale slates render "updating" instead of parlays.
+
 Pre-combo input cap: top 30 scored legs by per-leg hit probability feed combo generation.
 
 Per-leg consensus floor: 3+ books quoting both Over and Under at the same line.

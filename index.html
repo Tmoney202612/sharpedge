@@ -906,6 +906,28 @@ function pickGrades(rankedCombos){
   return {best:arr[0],better:arr[Math.floor(n/2)],good:arr[n-1]};
 }
 
+const PAYOUT_FLOORS={safe:2.0,balanced:2.5,longshot:5.0};
+const FRESHNESS_WINDOW_MS=15*60*1000;
+
+function applyPayoutFloor(picks,floor){
+  const dec=picks?.best?.combinedDecimal;
+  if(!Number.isFinite(dec)||dec<floor)return {best:null,better:null,good:null};
+  return picks;
+}
+
+function applyAllPayoutFloors(allPicks){
+  return {
+    safe:applyPayoutFloor(allPicks?.safe,PAYOUT_FLOORS.safe),
+    balanced:applyPayoutFloor(allPicks?.balanced,PAYOUT_FLOORS.balanced),
+    longshot:applyPayoutFloor(allPicks?.longshot,PAYOUT_FLOORS.longshot)
+  };
+}
+
+function isStale(slate,maxAgeMs=FRESHNESS_WINDOW_MS){
+  if(!slate?.fetchedAt)return true;
+  return (Date.now()-slate.fetchedAt)>maxAgeMs;
+}
+
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
