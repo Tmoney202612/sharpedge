@@ -825,6 +825,7 @@ function scoreLegs(slate){
   events.forEach(ev=>(ev.legs||[]).forEach(leg=>{
     const r=computeLegHitProb(leg,pairOf);
     if(r==null)return;
+    if(r.hitProb>MAX_LEG_HIT_PROB)return;
     scored.push({...leg,event_id:ev.event_id,home:ev.home,away:ev.away,commence_time:ev.commence_time,hitProb:r.hitProb,consensusBookCount:r.consensusBookCount});
   }));
   return scored;
@@ -895,6 +896,7 @@ function pickGrades(rankedCombos){
 
 const PAYOUT_FLOORS={safe:2.0,balanced:2.5,longshot:5.0};
 const FRESHNESS_WINDOW_MS=15*60*1000;
+const MAX_LEG_HIT_PROB=0.65;
 
 function applyPayoutFloor(picks,floor){
   const dec=picks?.best?.combinedDecimal;
