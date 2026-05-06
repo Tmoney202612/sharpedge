@@ -843,16 +843,20 @@ function scoreLegs(slate){
   return scored;
 }
 
-function bucketLegs(scoredLegs){
+function capLegs(legs,limit=30){
+  return [...(legs||[])].sort((a,b)=>b.hitProb-a.hitProb).slice(0,limit);
+}
+
+function bucketCombos(combos){
   const safe=[],balanced=[],longshot=[];
-  (scoredLegs||[]).forEach(l=>{
-    if(l.hitProb==null)return;
-    if(l.hitProb>=0.60)safe.push(l);
-    else if(l.hitProb>=0.45)balanced.push(l);
-    else if(l.hitProb>=0.25)longshot.push(l);
+  (combos||[]).forEach(c=>{
+    const p=c?.combinedHitProb;
+    if(p==null)return;
+    if(p>=0.35)safe.push(c);
+    else if(p>=0.20)balanced.push(c);
+    else if(p>=0.10)longshot.push(c);
   });
-  const cap=arr=>arr.sort((a,b)=>b.hitProb-a.hitProb).slice(0,30);
-  return {safe:cap(safe),balanced:cap(balanced),longshot:cap(longshot)};
+  return {safe,balanced,longshot};
 }
 
 function buildCombo(legs){
