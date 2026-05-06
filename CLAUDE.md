@@ -193,6 +193,22 @@ SharpEdge is a sports betting analytics dashboard (primeedgepicks.com) that surf
 
 ---
 
+## Parlay Builder — Tier Definitions
+
+Tiers are bucketed on **combined parlay hit probability** (product of leg hit probabilities), not per-leg probabilities.
+
+- **Safe:** combined hit probability ≥ 0.35
+- **Balanced:** combined hit probability 0.20 – 0.34
+- **Longshot:** combined hit probability 0.10 – 0.19
+
+Pre-combo input cap: top 30 scored legs by per-leg hit probability feed combo generation.
+
+Per-leg consensus floor: 3+ books quoting both Over and Under at the same line.
+
+Same-game exclusion: combos cannot contain more than one leg from the same `event_id`.
+
+---
+
 ## Important Context
 
 - The Odds API key: `ODDS_API_KEY (set in Vercel env, not stored in repo)`
