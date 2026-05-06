@@ -855,6 +855,53 @@ function bucketLegs(scoredLegs){
   return {safe:cap(safe),balanced:cap(balanced),longshot:cap(longshot)};
 }
 
+function buildCombo(legs){
+  let prob=1,dec=1;
+  legs.forEach(l=>{
+    prob*=l.hitProb;
+    let best=0;
+    l.prices.forEach(p=>{if(validOdds(p.price))best=Math.max(best,atod(p.price));});
+    dec*=best||1;
+  });
+  return {legs,combinedHitProb:prob,combinedDecimal:dec};
+}
+
+function generateCombos(legs){
+  const combos=[];
+  const arr=legs||[];
+  const n=arr.length;
+  if(n<2)return combos;
+  for(let i=0;i<n-1;i++){
+    for(let j=i+1;j<n;j++){
+      if(arr[i].event_id===arr[j].event_id)continue;
+      combos.push(buildCombo([arr[i],arr[j]]));
+    }
+  }
+  if(n<3)return combos;
+  for(let i=0;i<n-2;i++){
+    for(let j=i+1;j<n-1;j++){
+      if(arr[i].event_id===arr[j].event_id)continue;
+      for(let k=j+1;k<n;k++){
+        if(arr[i].event_id===arr[k].event_id)continue;
+        if(arr[j].event_id===arr[k].event_id)continue;
+        combos.push(buildCombo([arr[i],arr[j],arr[k]]));
+      }
+    }
+  }
+  return combos;
+}
+
+function rankCombos(combos){
+  return [...(combos||[])].sort((a,b)=>b.combinedHitProb-a.combinedHitProb);
+}
+
+function pickGrades(rankedCombos){
+  const arr=rankedCombos||[];
+  const n=arr.length;
+  if(n===0)return {best:null,better:null,good:null};
+  return {best:arr[0],better:arr[Math.floor(n/2)],good:arr[n-1]};
+}
+
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
