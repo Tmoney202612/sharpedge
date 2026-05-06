@@ -480,27 +480,15 @@
       <!-- PARLAY BUILDER -->
       <div id="panel-parlay" class="panel">
         <div class="section-title">🎲 Parlay Builder</div>
-        <div class="section-sub">AI-generated best parlay from live +EV picks. Click a sport to rebuild.</div>
+        <div class="section-sub">Tiered parlay cards from de-vigged consensus lines. Click a sport to rebuild.</div>
         <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-          <button onclick="buildBestParlay('basketball_nba',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NBA</button>
-          <button onclick="buildBestParlay('baseball_mlb',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">MLB</button>
-          <button onclick="buildBestParlay('icehockey_nhl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NHL</button>
-          <button onclick="buildBestParlay('americanfootball_nfl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NFL</button>
-          <button onclick="buildBestParlay('soccer_epl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">EPL</button>
+          <button onclick="buildParlay('basketball_nba',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NBA</button>
+          <button onclick="buildParlay('baseball_mlb',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">MLB</button>
+          <button onclick="buildParlay('icehockey_nhl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NHL</button>
+          <button onclick="buildParlay('americanfootball_nfl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NFL</button>
+          <button onclick="buildParlay('soccer_epl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">EPL</button>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;" id="parlay-grid">
-          <div id="parlay-slip"><div class="info-box">👆 Click a sport above to build a parlay from today's best +EV picks.</div></div>
-          <div id="parlay-calc" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;">
-            <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:16px;">Your Bet</div>
-            <div class="calc-field"><label class="calc-label">Wager ($)</label><input class="calc-input" id="pl-wager" type="number" value="100" oninput="updateParlayCalc()"/></div>
-            <div class="calc-result show" style="margin-top:12px;">
-              <div class="result-row"><span class="result-key">Parlay Odds</span><span class="result-val" id="pl-r-odds">—</span></div>
-              <div class="result-row"><span class="result-key">Potential Profit</span><span class="result-val" id="pl-r-profit">—</span></div>
-              <div class="result-row"><span class="result-key">Win Probability</span><span class="result-val" id="pl-r-prob">—</span></div>
-              <div class="result-row"><span class="result-key">Expected Value</span><span class="result-val" id="pl-r-ev">—</span></div>
-            </div>
-          </div>
-        </div>
+        <div id="parlay-slip"><div class="info-box">👆 Click a sport above to build today's tiered parlay cards.</div></div>
       </div>
 
       <!-- FIX 4: Added missing <div tag -->
@@ -652,7 +640,6 @@ const API_ENDPOINT='/api/odds';
 let currentSport='basketball_nba',currentMarket='h2h',inApp=false,chatOpen=false;
 let arbFilter='all',evFilter='all',liveFilter='all',picksFilter='all';
 let allArbResults=[],allEVResults=[],allLiveResults=[],allPicksResults=[];
-let parlayLegs=[];
 
 const ARB_SPORTS=[
   {key:'basketball_nba',label:'NBA',emoji:'🏀',color:'#4f8aff',bg:'rgba(79,138,255,0.1)'},
@@ -764,10 +751,10 @@ function enterApp(){
   setTimeout(()=>{
     const sportOrder=['basketball_nba','icehockey_nhl','baseball_mlb','mma_mixed_martial_arts','soccer_usa_mls','soccer_epl'];
     async function tryParlay(i){
-      if(i>=sportOrder.length){const slip=document.getElementById('parlay-slip');if(slip)slip.innerHTML='<div class="info-box">No +EV parlays available for today\'s games. Click a sport above to check manually.</div>';return;}
+      if(i>=sportOrder.length){const slip=document.getElementById('parlay-slip');if(slip)slip.innerHTML='<div class="info-box">No qualifying parlay cards for today\'s games. Click a sport above to check manually.</div>';return;}
       const data=await fetchSport(sportOrder[i],'h2h');
       const now=Date.now();const todayGames=data.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+86400000);
-      if(todayGames.length>=2){buildBestParlay(sportOrder[i],document.querySelector('[onclick*="'+sportOrder[i]+'"]'));}
+      if(todayGames.length>=2){buildParlay(sportOrder[i],document.querySelector('[onclick*="'+sportOrder[i]+'"]'));}
       else{tryParlay(i+1);}
     }
     tryParlay(0);
@@ -926,6 +913,65 @@ function applyAllPayoutFloors(allPicks){
 function isStale(slate,maxAgeMs=FRESHNESS_WINDOW_MS){
   if(!slate?.fetchedAt)return true;
   return (Date.now()-slate.fetchedAt)>maxAgeMs;
+}
+
+async function buildParlay(sport,btn){
+  document.querySelectorAll('[onclick*="buildParlay"]').forEach(b=>{b.style.background='var(--card)';b.style.color='var(--text)';b.style.border='1px solid var(--border)';});
+  if(btn){btn.style.background='var(--accent)';btn.style.color='#000';btn.style.border='none';}
+  const slip=document.getElementById('parlay-slip');
+  if(!slip)return;
+  slip.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Building parlay cards...</div>';
+  const slate=await fetchParlaySlate(sport);
+  if(!slate){slip.innerHTML='<div class="info-box">Could not load slate. Try again.</div>';return;}
+  if(isStale(slate)){slip.innerHTML='<div class="info-box">⏳ Updating odds — try again in a moment.</div>';return;}
+  const hasLegs=(slate.events||[]).some(e=>(e.legs||[]).length>0);
+  if(!hasLegs){slip.innerHTML='<div class="info-box">No upcoming games for this sport in the next 24 hours.</div>';return;}
+  const scored=scoreLegs(slate);
+  const top30=capLegs(scored);
+  const allCombos=rankCombos(generateCombos(top30));
+  const buckets=bucketCombos(allCombos);
+  const rawPicks={safe:pickGrades(buckets.safe),balanced:pickGrades(buckets.balanced),longshot:pickGrades(buckets.longshot)};
+  const finalPicks=applyAllPayoutFloors(rawPicks);
+  renderParlayCards(slip,sport,finalPicks);
+}
+
+function renderParlayCards(slip,sport,finalPicks){
+  if(!slip)return;
+  const sportName={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL'}[sport]||sport;
+  const tiers=[{key:'safe',label:'Safe'},{key:'balanced',label:'Balanced'},{key:'longshot',label:'Longshot'}];
+  const grades=[{key:'best',label:'Best'},{key:'better',label:'Better'},{key:'good',label:'Good'}];
+  const decToAmerican=dec=>dec>=2?Math.round((dec-1)*100):Math.round(-100/(dec-1));
+  const bestPriceFor=leg=>{
+    let bp=null,bd=0;
+    (leg.prices||[]).forEach(p=>{if(!validOdds(p.price))return;const d=atod(p.price);if(d>bd){bd=d;bp=p;}});
+    return bp;
+  };
+  const parts=[`<div style="font-size:11px;color:var(--muted);margin-bottom:14px;">${sportName} · best-line combined odds across allowed books</div>`];
+  tiers.forEach(t=>{
+    const picks=finalPicks?.[t.key];
+    parts.push(`<div style="font-size:13px;font-weight:800;color:#fff;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase;">${t.label}</div>`);
+    if(!picks?.best){parts.push(`<div class="info-box">No qualifying ${t.label.toLowerCase()} play today.</div>`);return;}
+    grades.forEach(g=>{
+      const combo=picks[g.key];
+      if(!combo)return;
+      const american=decToAmerican(combo.combinedDecimal);
+      const legHtml=(combo.legs||[]).map(l=>{
+        const bp=bestPriceFor(l);
+        const bookColor=bp?(BOOK_COLORS[bp.book]||'var(--accent)'):'var(--muted)';
+        const bookLabel=bp?`<span style="color:${bookColor};font-weight:700;">${bp.book}</span> ${fmt(bp.price)}`:'<span style="color:var(--muted);">no price</span>';
+        const desc=`${l.player||''} ${l.side||''} ${l.point??''} ${l.market||''}`.replace(/\s+/g,' ').trim();
+        return `<div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;font-size:12px;"><span style="color:var(--text);">${desc}</span><span>${bookLabel}</span></div>`;
+      }).join('');
+      parts.push(`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;">
+        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:0.5px;text-transform:uppercase;">${t.label} · ${g.label}</div>
+          <div style="font-size:11px;color:var(--muted);">${(combo.combinedHitProb*100).toFixed(1)}% hit · ${combo.combinedDecimal.toFixed(2)}x · ${fmt(american)}</div>
+        </div>
+        ${legHtml}
+      </div>`);
+    });
+  });
+  slip.innerHTML=parts.join('');
 }
 
 async function loadAllArbSports(){
@@ -1830,125 +1876,6 @@ setInterval(()=>{if(inApp){loadSingleSport();loadAllArbSports();loadAllEVSports(
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script>
-var _parlayLegs=[];
-var _parlayBook='';
-async function buildBestParlay(sport,btn){
-  document.querySelectorAll('[onclick*="buildBestParlay"]').forEach(b=>{b.style.background='var(--card)';b.style.color='var(--text)';b.style.border='1px solid var(--border)';});
-  if(btn){btn.style.background='var(--accent)';btn.style.color='#000';btn.style.border='none';}
-  const slip=document.getElementById('parlay-slip');
-  const calc=document.getElementById('parlay-calc');
-  if(slip)slip.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Finding best single-book parlay...</div>';
-  if(calc)calc.style.display='none';
-  const data=await fetchSport(sport,'h2h');
-  const now=Date.now();const todayCutoff=now+86400000;
-  const todayData=data.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=todayCutoff);
-  if(!todayData||!todayData.length){if(slip)slip.innerHTML='<div class="info-box">No games today for this sport. Try another.</div>';return;}
-
-  // Build per-book data: for each game, find the best +EV pick at EACH book
-  const allBooks=new Set();
-  const gamePicksByBook={};
-  todayData.forEach(g=>{
-    const books=g.bookmakers||[];
-    books.forEach(bm=>{
-      allBooks.add(bm.title);
-      (bm.markets||[]).forEach(mk=>{
-        // Find the best outcome for this game at this book
-        let bestOutcome=null,bestEV=-Infinity;
-        mk.outcomes.forEach(o=>{
-          if(!validOdds(o.price))return;
-          // Calculate EV vs consensus
-          const allOffers=[];
-          books.forEach(bm2=>(bm2.markets||[]).forEach(mk2=>mk2.outcomes.forEach(o2=>{
-            if(o2.name===o.name&&validOdds(o2.price))allOffers.push(o2.price);
-          })));
-          if(allOffers.length<2)return;
-          const avgIp=allOffers.reduce((s,p)=>s+ip(p),0)/allOffers.length;
-          const ev=avgIp*(atod(o.price)-1)-(1-avgIp);
-          if(isFinite(ev)&&ev>bestEV&&ev>0){
-            bestEV=ev;
-            bestOutcome={name:o.name,odds:o.price,ev:(ev*100).toFixed(1),game:g.home_team+' vs '+g.away_team,time:g.commence_time};
-          }
-        });
-        if(bestOutcome){
-          if(!gamePicksByBook[bm.title])gamePicksByBook[bm.title]=[];
-          // Avoid duplicate games at same book
-          if(!gamePicksByBook[bm.title].find(p=>p.game===bestOutcome.game)){
-            gamePicksByBook[bm.title].push(bestOutcome);
-          }
-        }
-      });
-    });
-  });
-
-  // For each book, build best 3-leg parlay and calculate combined odds
-  let bestBook=null,bestLegs=[],bestParlayDec=0,bestParlayEV=-Infinity;
-  Object.entries(gamePicksByBook).forEach(([book,picks])=>{
-    if(picks.length<2)return;
-    // Sort by EV descending, take top 3
-    const sorted=[...picks].sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev));
-    const legs=sorted.slice(0,3);
-    const parlayDec=legs.reduce((p,l)=>p*atod(l.odds),1);
-    const parlayProb=legs.reduce((p,l)=>p*ip(l.odds),1);
-    const parlayEV=parlayProb*(parlayDec-1)-(1-parlayProb);
-    if(parlayDec>bestParlayDec){
-      bestParlayDec=parlayDec;bestBook=book;bestLegs=legs;bestParlayEV=parlayEV;
-    }
-  });
-
-  if(!bestBook||!bestLegs.length){if(slip)slip.innerHTML='<div class="info-box">No +EV parlays available at any single book. Try another sport.</div>';return;}
-
-  _parlayLegs=bestLegs;
-  _parlayBook=bestBook;
-  const totalDec=bestParlayDec;
-  const totalProb=_parlayLegs.reduce((p,l)=>p*ip(l.odds),1);
-  const parlayOdds=totalDec>=2?Math.round((totalDec-1)*100):Math.round(-100/(totalDec-1));
-  const sportName={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL'}[sport]||sport;
-  const bc=BOOK_COLORS[bestBook]||'#3b82f6';
-
-  if(slip)slip.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
-    <div style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.04));padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <div><div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;">${_parlayLegs.length}-Leg Bet Slip · ${sportName}</div><div style="font-size:26px;font-weight:800;color:var(--accent);font-family:var(--fm);">${fmt(parlayOdds)}</div></div>
-      <div style="text-align:right;"><div style="font-size:11px;color:var(--muted);">Best Book</div><div style="font-size:16px;font-weight:800;color:${bc};">${bestBook}</div></div>
-    </div>
-    <div style="display:flex;justify-content:space-around;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface);">
-      <div style="text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Win Probability</div><div style="font-size:22px;font-weight:900;color:var(--accent2);font-family:var(--fm);">${(totalProb*100).toFixed(1)}%</div></div>
-      <div style="text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Parlay Odds</div><div style="font-size:22px;font-weight:900;color:var(--accent);font-family:var(--fm);">${fmt(parlayOdds)}</div></div>
-      <div style="text-align:center;"><div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">$100 Payout</div><div style="font-size:22px;font-weight:900;color:var(--green);font-family:var(--fm);">+$${(100*(totalDec-1)).toFixed(0)}</div></div>
-    </div>
-    ${_parlayLegs.map((l,i)=>`<div style="padding:16px 20px;${i<_parlayLegs.length-1?'border-bottom:1px solid var(--border)':''};display:flex;align-items:center;gap:16px;">
-      <div style="width:30px;height:30px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">${i+1}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:700;color:#fff;">${l.name}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${l.game}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:1px;">${new Date(l.time).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;">
-        <div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--accent);">${fmt(l.odds)}</div>
-        <div style="font-size:10px;color:var(--green);margin-top:2px;">+${l.ev}% EV</div>
-      </div>
-    </div>`).join('')}
-    <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:10px;color:var(--muted);font-family:var(--fm);">All legs at <span style="color:${bc};font-weight:700;">${bestBook}</span> · Best combined odds</span>
-      <button onclick="openBook('${bestBook}')" style="background:var(--accent);color:#000;border:none;padding:8px 18px;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">Place at ${bestBook} →</button>
-    </div>
-  </div>
-  <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center;">Best single-book parlay from today's +EV picks · Click sport to rebuild</div>`;
-  if(calc){calc.style.display='block';updateParlayCalc();}
-}
-function updateParlayCalc(){
-  if(!_parlayLegs.length)return;
-  const w=parseFloat(document.getElementById('pl-wager')?.value)||100;
-  const totalDec=_parlayLegs.reduce((p,l)=>p*atod(l.odds),1);
-  const totalProb=_parlayLegs.reduce((p,l)=>p*ip(l.odds),1);
-  const parlayOdds=totalDec>=2?Math.round((totalDec-1)*100):Math.round(-100/(totalDec-1));
-  const profit=w*(totalDec-1);
-  const ev=(totalProb*(totalDec-1)-(1-totalProb))*w;
-  const el=id=>document.getElementById(id);
-  if(el('pl-r-odds'))el('pl-r-odds').textContent=fmt(parlayOdds);
-  if(el('pl-r-profit'))el('pl-r-profit').textContent='+$'+profit.toFixed(2);
-  if(el('pl-r-prob'))el('pl-r-prob').textContent=(totalProb*100).toFixed(2)+'%';
-  if(el('pl-r-ev')){el('pl-r-ev').textContent=(ev>=0?'+$':'-$')+Math.abs(ev).toFixed(2);el('pl-r-ev').style.color=ev>=0?'var(--green)':'var(--red)';}
-}
 
 function showLegalModal(t){
   const c={
