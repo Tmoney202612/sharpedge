@@ -800,6 +800,61 @@ async function fetchParlaySlate(sport){
   }catch(e){return null;}
 }
 
+function buildLegPairs(events){
+  const byKey=new Map();
+  (events||[]).forEach(ev=>(ev.legs||[]).forEach(l=>byKey.set(l.leg_key,l)));
+  const pairOf=new Map();
+  byKey.forEach((leg,key)=>{
+    const flip=leg.side==='Over'?'Under':leg.side==='Under'?'Over':null;
+    if(!flip){pairOf.set(key,null);return;}
+    const parts=key.split('|');
+    parts[3]=flip;
+    pairOf.set(key,byKey.get(parts.join('|'))||null);
+  });
+  return pairOf;
+}
+
+function computeLegHitProb(leg,pairOf){
+  const opp=pairOf.get(leg.leg_key);
+  if(!opp)return null;
+  const oppByBook=new Map(opp.prices.map(p=>[p.book,p.price]));
+  const probs=[];
+  leg.prices.forEach(p=>{
+    const oppPrice=oppByBook.get(p.book);
+    if(oppPrice==null)return;
+    if(!validOdds(p.price)||!validOdds(oppPrice))return;
+    const a=ip(p.price),b=ip(oppPrice),sum=a+b;
+    if(sum<=0)return;
+    probs.push(a/sum);
+  });
+  if(probs.length===0)return null;
+  return probs.reduce((s,x)=>s+x,0)/probs.length;
+}
+
+function scoreLegs(slate){
+  const events=slate?.events||[];
+  const pairOf=buildLegPairs(events);
+  const scored=[];
+  events.forEach(ev=>(ev.legs||[]).forEach(leg=>{
+    const hitProb=computeLegHitProb(leg,pairOf);
+    if(hitProb==null)return;
+    scored.push({...leg,event_id:ev.event_id,home:ev.home,away:ev.away,commence_time:ev.commence_time,hitProb});
+  }));
+  return scored;
+}
+
+function bucketLegs(scoredLegs){
+  const safe=[],balanced=[],longshot=[];
+  (scoredLegs||[]).forEach(l=>{
+    if(l.hitProb==null)return;
+    if(l.hitProb>=0.60)safe.push(l);
+    else if(l.hitProb>=0.45)balanced.push(l);
+    else if(l.hitProb>=0.25)longshot.push(l);
+  });
+  const cap=arr=>arr.sort((a,b)=>b.hitProb-a.hitProb).slice(0,30);
+  return {safe:cap(safe),balanced:cap(balanced),longshot:cap(longshot)};
+}
+
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
