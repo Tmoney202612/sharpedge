@@ -15,13 +15,14 @@ export default async function handler(req, res) {
   };
 
   res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Access-Control-Expose-Headers', 'x-requests-remaining');
 
   if (!sport || !PROP_MARKETS[sport]) {
     res.status(400).json({ error: 'Missing or unsupported sport', supported: Object.keys(PROP_MARKETS) });
     return;
   }
 
-  const PROPS_BOOKS = ['draftkings','fanduel','betmgm','williamhill_us','betrivers','fanatics','espnbet','hardrockbet'].join(',');
+  const PROPS_BOOKS = ['ballybet','betmgm','betonlineag','betparx','betrivers','bovada','draftkings','espnbet','fanatics','fanduel','fliff','hardrockbet_fl','williamhill_us'].join(',');
   const markets = PROP_MARKETS[sport];
 
   try {
@@ -48,6 +49,7 @@ export default async function handler(req, res) {
     let lastRemaining = eventsRes.headers.get('x-requests-remaining') || '';
 
     if (upcoming.length === 0) {
+      res.setHeader('x-requests-remaining', lastRemaining);
       res.status(200).json({ sport, fetchedAt: Date.now(), requestsRemaining: lastRemaining, events: [] });
       return;
     }
@@ -107,6 +109,7 @@ export default async function handler(req, res) {
       return out;
     });
 
+    res.setHeader('x-requests-remaining', lastRemaining);
     res.status(200).json({ sport, fetchedAt: Date.now(), requestsRemaining: lastRemaining, events });
   } catch (e) {
     res.status(500).json({ error: e.message });
