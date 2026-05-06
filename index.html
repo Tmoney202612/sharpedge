@@ -785,6 +785,21 @@ async function fetchSport(key,market='h2h'){
   }catch(e){return[];}
 }
 
+const _parlaySlateCache={};
+const PARLAY_SLATE_TTL_MS=120000;
+async function fetchParlaySlate(sport){
+  const now=Date.now();
+  const cached=_parlaySlateCache[sport];
+  if(cached&&cached.expiresAt>now)return cached.slate;
+  try{
+    const r=await fetch(`/api/parlay-slate?sport=${sport}`);
+    if(!r.ok)return null;
+    const slate=await r.json();
+    _parlaySlateCache[sport]={slate,expiresAt:now+PARLAY_SLATE_TTL_MS};
+    return slate;
+  }catch(e){return null;}
+}
+
 async function loadAllArbSports(){
   const container=document.getElementById('arb-rows');
   if(container)container.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Scanning all markets + Polymarket for arbitrage...</div>';
