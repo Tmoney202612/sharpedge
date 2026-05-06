@@ -827,8 +827,8 @@ function computeLegHitProb(leg,pairOf){
     if(sum<=0)return;
     probs.push(a/sum);
   });
-  if(probs.length===0)return null;
-  return probs.reduce((s,x)=>s+x,0)/probs.length;
+  if(probs.length<3)return null;
+  return {hitProb:probs.reduce((s,x)=>s+x,0)/probs.length,consensusBookCount:probs.length};
 }
 
 function scoreLegs(slate){
@@ -836,9 +836,9 @@ function scoreLegs(slate){
   const pairOf=buildLegPairs(events);
   const scored=[];
   events.forEach(ev=>(ev.legs||[]).forEach(leg=>{
-    const hitProb=computeLegHitProb(leg,pairOf);
-    if(hitProb==null)return;
-    scored.push({...leg,event_id:ev.event_id,home:ev.home,away:ev.away,commence_time:ev.commence_time,hitProb});
+    const r=computeLegHitProb(leg,pairOf);
+    if(r==null)return;
+    scored.push({...leg,event_id:ev.event_id,home:ev.home,away:ev.away,commence_time:ev.commence_time,hitProb:r.hitProb,consensusBookCount:r.consensusBookCount});
   }));
   return scored;
 }
