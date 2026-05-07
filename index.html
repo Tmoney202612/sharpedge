@@ -994,7 +994,17 @@ function renderParlayCards(slip,sport,finalPicks,selectedBook){
         const bookColor=bp?(BOOK_COLORS[bp.book]||'var(--accent)'):'var(--muted)';
         const bookLabel=bp?`<span style="color:${bookColor};font-weight:700;">${bp.book}</span> ${fmt(bp.price)}`:'<span style="color:var(--muted);">no price</span>';
         const desc=`${l.player||''} ${l.side||''} ${l.point??''} ${l.market||''}`.replace(/\s+/g,' ').trim();
-        return `<div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;font-size:12px;"><span style="color:var(--text);">${desc}</span><span>${bookLabel}</span></div>`;
+        let contextHtml='';
+        if(l.away&&l.home){
+          const matchup=`${l.away} @ ${l.home}`;
+          let timeStr='';
+          if(l.commence_time){
+            const d=new Date(l.commence_time);
+            if(!isNaN(d.getTime()))timeStr=d.toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+          }
+          contextHtml=`<div style="padding:0 12px 8px 12px;font-size:10px;color:var(--muted);">${timeStr?`${matchup} · ${timeStr}`:matchup}</div>`;
+        }
+        return `<div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;font-size:12px;"><span style="color:var(--text);">${desc}</span><span>${bookLabel}</span></div>${contextHtml}`;
       }).join('');
       parts.push(`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;">
         <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
