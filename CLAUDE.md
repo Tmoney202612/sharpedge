@@ -201,13 +201,17 @@ Tiers are bucketed on **combined parlay hit probability** (product of leg hit pr
 - **Balanced:** combined hit probability 0.20 – 0.34
 - **Longshot:** combined hit probability 0.10 – 0.19
 
-Payout floors (best-line combined decimal odds across allowed books):
+Per-book combo construction: combo generation, decimal computation, and payout-floor checks run inside a per-book loop. For each sportsbook in the allowed list, candidate legs are filtered to those quoted by that book (with valid odds), combos are generated and bucketed by combined hit probability, and combined decimals are recomputed using only that book's prices. A combo is dropped if any leg has no valid price at the book.
+
+Payout floors (per-book combined decimal odds, evaluated against the reconstructed combo at each book):
 
 - **Safe:** ≥ 2.0x
 - **Balanced:** ≥ 2.5x
 - **Longshot:** ≥ 5.0x
 
-Tier suppression: if the Best (highest combined hit probability) combo in a tier fails its payout floor, the entire tier is suppressed and the UI renders "no qualifying play today."
+Tier suppression: if the Best (highest combined hit probability) combo in a tier fails its payout floor at the selected book, that tier renders "no qualifying play today."
+
+Selected book: across all books, the one with the most non-empty cards after floors wins; ties broken by sum of combined decimals across non-empty cards. The UI renders only the selected book's parlays, and per-leg book labels in the rendered cards match the selected book. If every book produces zero non-empty cards, the UI renders "no qualifying parlays for this sport today."
 
 Data freshness window: 15 minutes from `slate.fetchedAt`. Stale slates render "updating" instead of parlays.
 

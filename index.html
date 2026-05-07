@@ -897,6 +897,7 @@ function pickGrades(rankedCombos){
 const PAYOUT_FLOORS={safe:2.0,balanced:2.5,longshot:5.0};
 const FRESHNESS_WINDOW_MS=15*60*1000;
 const MAX_LEG_HIT_PROB=0.65;
+const PROPS_BOOKS_LIST=['ballybet','betmgm','betonlineag','betparx','betrivers','bovada','draftkings','espnbet','fanatics','fanduel','fliff','hardrockbet_fl','williamhill_us'];
 
 function applyPayoutFloor(picks,floor){
   const dec=picks?.best?.combinedDecimal;
@@ -909,6 +910,25 @@ function applyAllPayoutFloors(allPicks){
     safe:applyPayoutFloor(allPicks?.safe,PAYOUT_FLOORS.safe),
     balanced:applyPayoutFloor(allPicks?.balanced,PAYOUT_FLOORS.balanced),
     longshot:applyPayoutFloor(allPicks?.longshot,PAYOUT_FLOORS.longshot)
+  };
+}
+
+function rebuildDecimalAtBook(combo,book){
+  if(!combo)return null;
+  let dec=1;
+  for(const leg of (combo.legs||[])){
+    const p=(leg.prices||[]).find(pp=>pp.book===book);
+    if(!p||!validOdds(p.price))return null;
+    dec*=atod(p.price);
+  }
+  return {...combo,combinedDecimal:dec};
+}
+function rebuildDecimalAtBookLevel(rawPicks,book){
+  if(!rawPicks)return {best:null,better:null,good:null};
+  return {
+    best:rebuildDecimalAtBook(rawPicks.best,book),
+    better:rebuildDecimalAtBook(rawPicks.better,book),
+    good:rebuildDecimalAtBook(rawPicks.good,book)
   };
 }
 
@@ -928,27 +948,39 @@ async function buildParlay(sport,btn){
   if(isStale(slate)){slip.innerHTML='<div class="info-box">⏳ Updating odds — try again in a moment.</div>';return;}
   const hasLegs=(slate.events||[]).some(e=>(e.legs||[]).length>0);
   if(!hasLegs){slip.innerHTML='<div class="info-box">No upcoming games for this sport in the next 24 hours.</div>';return;}
-  const scored=scoreLegs(slate);
-  const top30=capLegs(scored);
-  const allCombos=rankCombos(generateCombos(top30));
-  const buckets=bucketCombos(allCombos);
-  const rawPicks={safe:pickGrades(buckets.safe),balanced:pickGrades(buckets.balanced),longshot:pickGrades(buckets.longshot)};
-  const finalPicks=applyAllPayoutFloors(rawPicks);
-  renderParlayCards(slip,sport,finalPicks);
+  const globalScored=scoreLegs(slate);
+  const perBook=PROPS_BOOKS_LIST.map(book=>{
+    const candidates=globalScored.filter(leg=>(leg.prices||[]).some(p=>p.book===book&&validOdds(p.price)));
+    const top30=capLegs(candidates);
+    const allCombos=rankCombos(generateCombos(top30));
+    const buckets=bucketCombos(allCombos);
+    const rawPicks={safe:pickGrades(buckets.safe),balanced:pickGrades(buckets.balanced),longshot:pickGrades(buckets.longshot)};
+    const bookPicks={safe:rebuildDecimalAtBookLevel(rawPicks.safe,book),balanced:rebuildDecimalAtBookLevel(rawPicks.balanced,book),longshot:rebuildDecimalAtBookLevel(rawPicks.longshot,book)};
+    const finalPicks=applyAllPayoutFloors(bookPicks);
+    let count=0,sumDec=0;
+    for(const t of ['safe','balanced','longshot'])for(const g of ['best','better','good']){const c=finalPicks[t][g];if(c&&Number.isFinite(c.combinedDecimal)){count++;sumDec+=c.combinedDecimal;}}
+    return {book,finalPicks,count,sumDec};
+  });
+  perBook.sort((a,b)=>b.count!==a.count?b.count-a.count:b.sumDec-a.sumDec);
+  const selected=perBook[0];
+  if(!selected||selected.count===0){slip.innerHTML='<div class="info-box">No qualifying parlays for this sport today.</div>';return;}
+  renderParlayCards(slip,sport,selected.finalPicks,selected.book);
 }
 
-function renderParlayCards(slip,sport,finalPicks){
+function renderParlayCards(slip,sport,finalPicks,selectedBook){
   if(!slip)return;
   const sportName={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL'}[sport]||sport;
   const tiers=[{key:'safe',label:'Safe'},{key:'balanced',label:'Balanced'},{key:'longshot',label:'Longshot'}];
   const grades=[{key:'best',label:'Best'},{key:'better',label:'Better'},{key:'good',label:'Good'}];
   const decToAmerican=dec=>dec>=2?Math.round((dec-1)*100):Math.round(-100/(dec-1));
-  const bestPriceFor=leg=>{
-    let bp=null,bd=0;
-    (leg.prices||[]).forEach(p=>{if(!validOdds(p.price))return;const d=atod(p.price);if(d>bd){bd=d;bp=p;}});
-    return bp;
+  const priceAtBook=leg=>{
+    if(!selectedBook)return null;
+    const p=(leg.prices||[]).find(pp=>pp.book===selectedBook&&validOdds(pp.price));
+    return p||null;
   };
-  const parts=[`<div style="font-size:11px;color:var(--muted);margin-bottom:14px;">${sportName} · best-line combined odds across allowed books</div>`];
+  const headerColor=selectedBook?(BOOK_COLORS[selectedBook]||'var(--accent)'):'var(--muted)';
+  const headerBookHtml=selectedBook?`<span style="color:${headerColor};font-weight:700;">${selectedBook}</span>`:'<span style="color:var(--muted);">no book selected</span>';
+  const parts=[`<div style="font-size:11px;color:var(--muted);margin-bottom:14px;">${sportName} · all legs at ${headerBookHtml}</div>`];
   tiers.forEach(t=>{
     const picks=finalPicks?.[t.key];
     parts.push(`<div style="font-size:13px;font-weight:800;color:#fff;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase;">${t.label}</div>`);
@@ -958,7 +990,7 @@ function renderParlayCards(slip,sport,finalPicks){
       if(!combo)return;
       const american=decToAmerican(combo.combinedDecimal);
       const legHtml=(combo.legs||[]).map(l=>{
-        const bp=bestPriceFor(l);
+        const bp=priceAtBook(l);
         const bookColor=bp?(BOOK_COLORS[bp.book]||'var(--accent)'):'var(--muted)';
         const bookLabel=bp?`<span style="color:${bookColor};font-weight:700;">${bp.book}</span> ${fmt(bp.price)}`:'<span style="color:var(--muted);">no price</span>';
         const desc=`${l.player||''} ${l.side||''} ${l.point??''} ${l.market||''}`.replace(/\s+/g,' ').trim();
