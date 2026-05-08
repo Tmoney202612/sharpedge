@@ -1130,6 +1130,7 @@ function setEvView(el,view){
   document.querySelectorAll('#ev-view-filters .sport-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   evView=view;
+  updateEVChipCounts();
   renderEVRows();
 }
 function setLowHoldView(el,view){
@@ -1266,10 +1267,9 @@ async function loadAllEVSports(){
   SPORTS_LIST.push({key:'tennis_wta_madrid_open',label:'WTA',emoji:'🎾',color:'#ff6b7a'});
  const results = await Promise.all(SPORTS_LIST.map(s => fetchSportEV(s)));
 allEVResults = results.flat().sort((a,b)=>parseFloat(b.ev)-parseFloat(a.ev));
+  updateEVChipCounts();
   const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
   allEVResults.forEach(r=>{if(counts[r.sport]!==undefined)counts[r.sport]++;});
-  ARB_SPORTS.forEach(s=>{const el=document.getElementById('ev-chip-'+s.label);if(el)el.textContent=counts[s.label]||0;});
-  const allChip=document.getElementById('ev-chip-all');if(allChip)allChip.textContent=allEVResults.length;
   document.getElementById('ev-count').textContent=allEVResults.length;
   document.getElementById('ev-sports').textContent=ARB_SPORTS.filter(s=>counts[s.label]>0).length;
   document.getElementById('ev-refresh').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
@@ -1306,6 +1306,19 @@ async function fetchSportEV(sportConfig){
   }catch(e){return[];}
 }
 
+function updateEVChipCounts(){
+  let viewFiltered=[...allEVResults];
+  if(evView==='today'){
+    const _now=new Date();const start=new Date(_now.getFullYear(),_now.getMonth(),_now.getDate()).getTime();const end=start+86400000;
+    viewFiltered=viewFiltered.filter(o=>{if(!o.time)return false;const t=new Date(o.time).getTime();return t>=start&&t<end;});
+  }else if(evView==='week'){
+    viewFiltered=viewFiltered.filter(o=>{const dt=new Date(o.time||0);const diff=dt-new Date();return diff>=0&&diff<=604800000;});
+  }
+  const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
+  viewFiltered.forEach(r=>{if(counts[r.sport]!==undefined)counts[r.sport]++;});
+  ARB_SPORTS.forEach(s=>{const el=document.getElementById('ev-chip-'+s.label);if(el){el.textContent=counts[s.label]||0;el.parentElement.style.display=(counts[s.label]||0)>0?'':'none';}});
+  const allChip=document.getElementById('ev-chip-all');if(allChip)allChip.textContent=viewFiltered.length;
+}
 function filterEVSport(el,sport){document.querySelectorAll('#ev-sport-filters .sport-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');evFilter=sport;renderEVRows();}
 
 function renderEVRows(){
@@ -1340,7 +1353,7 @@ function buildPicksFromEV(){
   allPicksResults=topPicks;
   const counts={};ARB_SPORTS.forEach(s=>counts[s.label]=0);
   allPicksResults.forEach(p=>{if(counts[p.sport]!==undefined)counts[p.sport]++;});
-  ARB_SPORTS.forEach(s=>{const el=document.getElementById('picks-chip-'+s.label);if(el)el.textContent=counts[s.label]||0;});
+  ARB_SPORTS.forEach(s=>{const el=document.getElementById('picks-chip-'+s.label);if(el){el.textContent=counts[s.label]||0;el.parentElement.style.display=(counts[s.label]||0)>0?'':'none';}});
   const allChip=document.getElementById('picks-chip-all');if(allChip)allChip.textContent=allPicksResults.length;
   document.getElementById('picks-count').textContent=allPicksResults.length;
   document.getElementById('picks-sports').textContent=new Set(allPicksResults.map(p=>p.sport)).size;
@@ -1415,7 +1428,7 @@ async function loadAllLiveSports(){
   allLiveResults=results.flat().sort((a,b)=>new Date(a.commence_time)-new Date(b.commence_time));
   const counts={};SPORTS_LIST.forEach(s=>counts[s.label]=0);
   allLiveResults.forEach(g=>{if(counts[g.sportLabel]!==undefined)counts[g.sportLabel]++;});
-  SPORTS_LIST.forEach(s=>{const el=document.getElementById('live-chip-count-'+s.label);if(el)el.textContent=counts[s.label]||0;});
+  SPORTS_LIST.forEach(s=>{const el=document.getElementById('live-chip-count-'+s.label);if(el){el.textContent=counts[s.label]||0;el.parentElement.style.display=(counts[s.label]||0)>0?'':'none';}});
   const allChip=document.getElementById('live-chip-count-all');if(allChip)allChip.textContent=allLiveResults.length;
   document.getElementById('live-count').textContent=allLiveResults.filter(g=>{const t=new Date(g.commence_time).getTime();return t<=now+14400000;}).length;
   document.getElementById('live-soon').textContent=allLiveResults.filter(g=>new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+7200000).length;
