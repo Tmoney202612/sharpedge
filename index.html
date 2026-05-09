@@ -883,21 +883,6 @@ const MAX_LEG_COUNT=6;
 const TOP_N=18;
 const PROPS_BOOKS_LIST=['ballybet','betmgm','betonlineag','betparx','betrivers','bovada','draftkings','espnbet','fanatics','fanduel','fliff','hardrockbet_fl','williamhill_us'];
 const SUPPORTED_PARLAY_SPORTS=['basketball_nba','basketball_wnba','baseball_mlb','icehockey_nhl','americanfootball_nfl','americanfootball_ufl','soccer_epl'];
-const BOOK_URLS={
-  ballybet:'https://www.ballybet.com',
-  betmgm:'https://sports.betmgm.com',
-  betonlineag:'https://www.betonline.ag',
-  betparx:'https://www.betparx.com',
-  betrivers:'https://www.betrivers.com',
-  bovada:'https://www.bovada.lv',
-  draftkings:'https://sportsbook.draftkings.com',
-  espnbet:'https://espnbet.com',
-  fanatics:'https://sportsbook.fanaticssportsbook.com',
-  fanduel:'https://sportsbook.fanduel.com',
-  fliff:'https://www.fliff.com',
-  hardrockbet_fl:'https://app.hardrock.bet',
-  williamhill_us:'https://www.williamhill.com'
-};
 
 function rebuildDecimalAtBook(combo,book){
   if(!combo)return null;
@@ -966,7 +951,6 @@ function renderParlayCards(slip,tierResults){
     const headerBookHtml=hasCards?` · all legs at <span style="color:${headerColor};font-weight:700;">${tr.book}</span>`:'';
     parts.push(`<div style="font-size:13px;font-weight:800;color:#fff;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase;">${t.label}${headerBookHtml}</div>`);
     if(!hasCards){parts.push(`<div class="info-box">No qualifying ${t.label.toLowerCase()} play today.</div>`);return;}
-    const bookUrl=BOOK_URLS[tr.book]||'#';
     grades.forEach(g=>{
       const combo=tr.picks[g.key];
       if(!combo)return;
@@ -995,7 +979,7 @@ function renderParlayCards(slip,tierResults){
         </div>
         ${legHtml}
         <div style="padding:10px 14px;border-top:1px solid var(--border);text-align:right;">
-          <button onclick="window.open('${bookUrl}','_blank')" style="background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">Place at ${tr.book} →</button>
+          <button onclick="openBook('${tr.book}')" style="background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">Place at ${tr.book} →</button>
         </div>
       </div>`);
     });
