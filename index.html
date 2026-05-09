@@ -480,7 +480,7 @@
       <!-- PARLAY BUILDER -->
       <div id="panel-parlay" class="panel">
         <div class="section-title">🎲 Parlay Builder</div>
-        <div class="section-sub">Tiered parlay cards from de-vigged consensus lines across NBA, WNBA, MLB, NHL, NFL, UFL, and EPL. Click below to rebuild.</div>
+        <div class="section-sub" style="color:var(--text);">Tiered parlay cards from de-vigged consensus lines across NBA, WNBA, MLB, NHL, NFL, UFL, and EPL. Click below to rebuild.</div>
         <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
           <button onclick="buildParlay()" style="background:var(--accent);color:#000;border:none;padding:8px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">Build Today's Parlays</button>
         </div>
@@ -882,6 +882,7 @@ const MIN_LEG_COUNT=3;
 const MAX_LEG_COUNT=6;
 const TOP_N=18;
 const PROPS_BOOKS_LIST=['ballybet','betmgm','betonlineag','betparx','betrivers','bovada','draftkings','espnbet','fanatics','fanduel','fliff','hardrockbet_fl','williamhill_us'];
+const BOOK_DISPLAY_NAMES={ballybet:'Bally Bet',betmgm:'BetMGM',betonlineag:'BetOnline',betparx:'BetParx',betrivers:'BetRivers',bovada:'Bovada',draftkings:'DraftKings',espnbet:'ESPN BET',fanatics:'Fanatics',fanduel:'FanDuel',fliff:'Fliff',hardrockbet_fl:'Hard Rock Bet',williamhill_us:'William Hill'};
 const SUPPORTED_PARLAY_SPORTS=['basketball_nba','basketball_wnba','baseball_mlb','icehockey_nhl','americanfootball_nfl','americanfootball_ufl','soccer_epl'];
 
 function rebuildDecimalAtBook(combo,book){
@@ -949,7 +950,7 @@ function renderParlayCards(slip,tierResults){
     const tr=tierResults?.[t.key];
     const hasCards=tr&&tr.cardCount>0;
     const headerColor=hasCards?(BOOK_COLORS[tr.book]||'var(--accent)'):'var(--muted)';
-    const headerBookHtml=hasCards?` · all legs at <span style="color:${headerColor};font-weight:700;">${tr.book}</span>`:'';
+    const headerBookHtml=hasCards?` · all legs at <span style="color:${headerColor};font-weight:700;">${BOOK_DISPLAY_NAMES[tr.book]||tr.book}</span>`:'';
     parts.push(`<div style="font-size:13px;font-weight:800;color:#fff;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase;">${t.label}${headerBookHtml}</div>`);
     if(!hasCards){parts.push(`<div class="info-box">No qualifying ${t.label.toLowerCase()} play today.</div>`);return;}
     grades.forEach(g=>{
@@ -959,7 +960,7 @@ function renderParlayCards(slip,tierResults){
       const legHtml=(combo.legs||[]).map(l=>{
         const bp=(l.prices||[]).find(pp=>pp.book===tr.book&&validOdds(pp.price));
         const bookColor=bp?(BOOK_COLORS[bp.book]||'var(--accent)'):'var(--muted)';
-        const bookLabel=bp?`<span style="color:${bookColor};font-weight:700;">${bp.book}</span> ${fmt(bp.price)}`:'<span style="color:var(--muted);">no price</span>';
+        const bookLabel=bp?`<span style="color:${bookColor};font-weight:700;">${BOOK_DISPLAY_NAMES[bp.book]||bp.book}</span> ${fmt(bp.price)}`:'<span style="color:var(--muted);">no price</span>';
         const desc=`${l.entity||l.player||''} ${l.side||''} ${l.point??''} ${l.market||''}`.replace(/\s+/g,' ').trim();
         let contextHtml='';
         if(l.away&&l.home){
@@ -969,7 +970,7 @@ function renderParlayCards(slip,tierResults){
             const d=new Date(l.commence_time);
             if(!isNaN(d.getTime()))timeStr=d.toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
           }
-          contextHtml=`<div style="padding:0 12px 8px 12px;font-size:10px;color:var(--muted);">${timeStr?`${matchup} · ${timeStr}`:matchup}</div>`;
+          contextHtml=`<div style="padding:0 12px 8px 12px;font-size:10px;color:var(--text);">${timeStr?`${matchup} · ${timeStr}`:matchup}</div>`;
         }
         return `<div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;font-size:12px;"><span style="color:var(--text);">${desc}</span><span>${bookLabel}</span></div>${contextHtml}`;
       }).join('');
@@ -977,13 +978,13 @@ function renderParlayCards(slip,tierResults){
         <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
           <span style="${TIER_PILL[t.key]||TIER_PILL.safe}padding:3px 10px;border-radius:5px;font-size:11px;font-weight:800;letter-spacing:0.5px;">${t.label.toUpperCase()} · ${g.label.toUpperCase()}</span>
           <div style="text-align:right;">
-            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);line-height:1.1;">${fmt(american)}</div>
-            <div style="font-size:11px;color:var(--text);margin-top:2px;">${(combo.combinedHitProb*100).toFixed(1)}% hit · ${combo.combinedDecimal.toFixed(2)}x</div>
+            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);line-height:1.1;">${(combo.combinedHitProb*100).toFixed(1)}% HIT</div>
+            <div style="font-size:11px;color:var(--text);margin-top:2px;">${fmt(american)} · ${combo.combinedDecimal.toFixed(2)}x</div>
           </div>
         </div>
         ${legHtml}
         <div style="padding:10px 14px;border-top:1px solid var(--border);text-align:right;">
-          <button onclick="openBook('${tr.book}')" style="background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">Place at ${tr.book} →</button>
+          <button onclick="openBook('${tr.book}')" style="background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">Place at ${BOOK_DISPLAY_NAMES[tr.book]||tr.book} →</button>
         </div>
       </div>`);
     });
