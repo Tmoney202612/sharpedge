@@ -831,87 +831,70 @@ function scoreLegs(slate){
   return scored;
 }
 
-function capLegs(legs,limit=30){
-  return [...(legs||[])].sort((a,b)=>b.hitProb-a.hitProb).slice(0,limit);
+function capLegsByEdgeAtBook(legs,book,limit=TOP_N){
+  const enriched=(legs||[]).map(l=>{
+    const p=(l.prices||[]).find(pp=>pp.book===book&&validOdds(pp.price));
+    if(!p)return null;
+    const dec=atod(p.price);
+    return {...l,_bookEdge:l.hitProb*dec-1};
+  }).filter(x=>x!=null);
+  return enriched.sort((a,b)=>b._bookEdge-a._bookEdge).slice(0,limit);
 }
 
 function bucketCombos(combos){
   const safe=[],balanced=[],longshot=[];
   (combos||[]).forEach(c=>{
-    const p=c?.combinedHitProb;
-    if(p==null)return;
-    if(p>=0.35)safe.push(c);
-    else if(p>=0.20)balanced.push(c);
-    else if(p>=0.10)longshot.push(c);
+    if(c==null||!Number.isFinite(c.edge)||c.edge<=0)return;
+    const p=c.combinedHitProb;
+    if(p>=0.15&&p<0.25)safe.push(c);
+    else if(p>=0.05&&p<0.15)balanced.push(c);
+    else if(p>=0.01&&p<0.05)longshot.push(c);
   });
   return {safe,balanced,longshot};
-}
-
-function buildCombo(legs){
-  let prob=1,dec=1;
-  legs.forEach(l=>{
-    prob*=l.hitProb;
-    let best=0;
-    l.prices.forEach(p=>{if(validOdds(p.price))best=Math.max(best,atod(p.price));});
-    dec*=best||1;
-  });
-  return {legs,combinedHitProb:prob,combinedDecimal:dec};
 }
 
 function generateCombos(legs){
   const combos=[];
   const arr=legs||[];
   const n=arr.length;
-  if(n<2)return combos;
-  for(let i=0;i<n-1;i++){
-    for(let j=i+1;j<n;j++){
-      if(arr[i].event_id===arr[j].event_id)continue;
-      combos.push(buildCombo([arr[i],arr[j]]));
+  if(n<MIN_LEG_COUNT)return combos;
+  const usedEvents=new Set();
+  const stack=[];
+  function dfs(start){
+    if(stack.length>=MIN_LEG_COUNT){
+      let prob=1;
+      for(const l of stack)prob*=l.hitProb;
+      combos.push({legs:[...stack],combinedHitProb:prob});
+    }
+    if(stack.length===MAX_LEG_COUNT)return;
+    for(let i=start;i<n;i++){
+      const l=arr[i];
+      if(usedEvents.has(l.event_id))continue;
+      usedEvents.add(l.event_id);
+      stack.push(l);
+      dfs(i+1);
+      stack.pop();
+      usedEvents.delete(l.event_id);
     }
   }
-  if(n<3)return combos;
-  for(let i=0;i<n-2;i++){
-    for(let j=i+1;j<n-1;j++){
-      if(arr[i].event_id===arr[j].event_id)continue;
-      for(let k=j+1;k<n;k++){
-        if(arr[i].event_id===arr[k].event_id)continue;
-        if(arr[j].event_id===arr[k].event_id)continue;
-        combos.push(buildCombo([arr[i],arr[j],arr[k]]));
-      }
-    }
-  }
+  dfs(0);
   return combos;
 }
 
-function rankCombos(combos){
-  return [...(combos||[])].sort((a,b)=>b.combinedHitProb-a.combinedHitProb);
-}
-
-function pickGrades(rankedCombos){
-  const arr=rankedCombos||[];
+function pickGrades(combos){
+  const arr=[...(combos||[])].sort((a,b)=>b.edge-a.edge);
   const n=arr.length;
   if(n===0)return {best:null,better:null,good:null};
-  return {best:arr[0],better:arr[Math.floor(n/2)],good:arr[n-1]};
+  const good=arr[n-1];
+  return {best:arr[0],better:arr[Math.floor(n/2)],good:good.edge>=0.005?good:null};
 }
 
-const PAYOUT_FLOORS={safe:2.0,balanced:2.5,longshot:5.0};
 const FRESHNESS_WINDOW_MS=15*60*1000;
 const MAX_LEG_HIT_PROB=0.65;
+const MIN_LEG_COUNT=3;
+const MAX_LEG_COUNT=6;
+const TOP_N=18;
 const PROPS_BOOKS_LIST=['ballybet','betmgm','betonlineag','betparx','betrivers','bovada','draftkings','espnbet','fanatics','fanduel','fliff','hardrockbet_fl','williamhill_us'];
-
-function applyPayoutFloor(picks,floor){
-  const dec=picks?.best?.combinedDecimal;
-  if(!Number.isFinite(dec)||dec<floor)return {best:null,better:null,good:null};
-  return picks;
-}
-
-function applyAllPayoutFloors(allPicks){
-  return {
-    safe:applyPayoutFloor(allPicks?.safe,PAYOUT_FLOORS.safe),
-    balanced:applyPayoutFloor(allPicks?.balanced,PAYOUT_FLOORS.balanced),
-    longshot:applyPayoutFloor(allPicks?.longshot,PAYOUT_FLOORS.longshot)
-  };
-}
 
 function rebuildDecimalAtBook(combo,book){
   if(!combo)return null;
@@ -921,15 +904,7 @@ function rebuildDecimalAtBook(combo,book){
     if(!p||!validOdds(p.price))return null;
     dec*=atod(p.price);
   }
-  return {...combo,combinedDecimal:dec};
-}
-function rebuildDecimalAtBookLevel(rawPicks,book){
-  if(!rawPicks)return {best:null,better:null,good:null};
-  return {
-    best:rebuildDecimalAtBook(rawPicks.best,book),
-    better:rebuildDecimalAtBook(rawPicks.better,book),
-    good:rebuildDecimalAtBook(rawPicks.good,book)
-  };
+  return {...combo,combinedDecimal:dec,edge:combo.combinedHitProb*dec-1};
 }
 
 function isStale(slate,maxAgeMs=FRESHNESS_WINDOW_MS){
@@ -951,14 +926,16 @@ async function buildParlay(sport,btn){
   const globalScored=scoreLegs(slate);
   const perBook=PROPS_BOOKS_LIST.map(book=>{
     const candidates=globalScored.filter(leg=>(leg.prices||[]).some(p=>p.book===book&&validOdds(p.price)));
-    const top30=capLegs(candidates);
-    const allCombos=rankCombos(generateCombos(top30));
-    const buckets=bucketCombos(allCombos);
-    const rawPicks={safe:pickGrades(buckets.safe),balanced:pickGrades(buckets.balanced),longshot:pickGrades(buckets.longshot)};
-    const bookPicks={safe:rebuildDecimalAtBookLevel(rawPicks.safe,book),balanced:rebuildDecimalAtBookLevel(rawPicks.balanced,book),longshot:rebuildDecimalAtBookLevel(rawPicks.longshot,book)};
-    const finalPicks=applyAllPayoutFloors(bookPicks);
+    const top=capLegsByEdgeAtBook(candidates,book);
+    const allCombos=generateCombos(top);
+    const reBuilt=allCombos.map(c=>rebuildDecimalAtBook(c,book)).filter(c=>c!=null);
+    const buckets=bucketCombos(reBuilt);
+    const finalPicks={safe:pickGrades(buckets.safe),balanced:pickGrades(buckets.balanced),longshot:pickGrades(buckets.longshot)};
     let count=0,sumDec=0;
-    for(const t of ['safe','balanced','longshot'])for(const g of ['best','better','good']){const c=finalPicks[t][g];if(c&&Number.isFinite(c.combinedDecimal)){count++;sumDec+=c.combinedDecimal;}}
+    for(const t of ['safe','balanced','longshot'])for(const g of ['best','better','good']){
+      const c=finalPicks[t][g];
+      if(c&&Number.isFinite(c.combinedDecimal)){count++;sumDec+=c.combinedDecimal;}
+    }
     return {book,finalPicks,count,sumDec};
   });
   perBook.sort((a,b)=>b.count!==a.count?b.count-a.count:b.sumDec-a.sumDec);

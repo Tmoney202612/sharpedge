@@ -195,31 +195,29 @@ SharpEdge is a sports betting analytics dashboard (primeedgepicks.com) that surf
 
 ## Parlay Builder — Tier Definitions
 
-Tiers are bucketed on **combined parlay hit probability** (product of leg hit probabilities), not per-leg probabilities.
+Tiers are bucketed on **combined parlay hit probability** (product of leg hit probabilities). Within each tier, combos are ranked and picked by **edge** (`combinedHitProb × combinedDecimal − 1`), not by hit probability. Combos with `edge ≤ 0` are dropped before tier assignment.
 
-- **Safe:** combined hit probability ≥ 0.35
-- **Balanced:** combined hit probability 0.20 – 0.34
-- **Longshot:** combined hit probability 0.10 – 0.19
+- **Safe:** combined hit probability 0.15 – 0.249
+- **Balanced:** combined hit probability 0.05 – 0.149
+- **Longshot:** combined hit probability 0.01 – 0.049
 
-Per-book combo construction: combo generation, decimal computation, and payout-floor checks run inside a per-book loop. For each sportsbook in the allowed list, candidate legs are filtered to those quoted by that book (with valid odds), combos are generated and bucketed by combined hit probability, and combined decimals are recomputed using only that book's prices. A combo is dropped if any leg has no valid price at the book.
+Per-book combo construction: leg ranking, combo generation, decimal computation, edge calculation, and tier bucketing all run inside a per-book loop. For each sportsbook in the allowed list, candidate legs are filtered to those quoted by that book (with valid odds), then **ranked by per-book edge** (`leg.hitProb × bookDecimal − 1`) and capped at the top `TOP_N` (18). Combos are generated from this per-book pool, decimals and edge are computed using only that book's prices, and a combo is dropped if any leg has no valid price at the book or if combo edge is non-positive.
 
-Payout floors (per-book combined decimal odds, evaluated against the reconstructed combo at each book):
+Selection within tier: combos are sorted by edge descending. **Best** = highest edge, **Better** = middle index, **Good** = lowest edge ≥ 0.5%. If the lowest-edge combo in a tier falls below 0.5%, the tier renders only Best and Better — no fake third card. No hardcoded payout floors; the tier hit-probability windows plus `edge > 0` qualification do the gating.
 
-- **Safe:** ≥ 2.0x
-- **Balanced:** ≥ 2.5x
-- **Longshot:** ≥ 5.0x
+Tier suppression: a tier renders "no qualifying play today" when zero combos at the selected book fall in the tier window with positive edge.
 
-Tier suppression: if the Best (highest combined hit probability) combo in a tier fails its payout floor at the selected book, that tier renders "no qualifying play today."
-
-Selected book: across all books, the one with the most non-empty cards after floors wins; ties broken by sum of combined decimals across non-empty cards. The UI renders only the selected book's parlays, and per-leg book labels in the rendered cards match the selected book. If every book produces zero non-empty cards, the UI renders "no qualifying parlays for this sport today."
+Selected book: across all books, the one with the most non-empty cards wins; ties broken by sum of combined decimals across non-empty cards. The UI renders only the selected book's parlays, and per-leg book labels in the rendered cards match the selected book. If every book produces zero non-empty cards, the UI renders "no qualifying parlays for this sport today."
 
 Data freshness window: 15 minutes from `slate.fetchedAt`. Stale slates render "updating" instead of parlays.
 
-Pre-combo input cap: top 30 scored legs by per-leg hit probability feed combo generation.
+Pre-combo input cap: top 18 scored legs **by per-book edge** feed combo generation, evaluated separately for each sportsbook.
 
 Per-leg consensus floor: 3+ books quoting both Over and Under at the same line.
 
-Per-leg hit probability ceiling: legs with `hitProb > 0.65` are excluded from `scoreLegs` output. Filters near-lock legs (typically heavy Unders on Under-dominated slates like MLB/NHL) whose product math cannot clear the Safe tier 2.0x payout floor.
+Per-leg hit probability ceiling: legs with `hitProb > 0.65` are excluded from `scoreLegs` output. Filters near-lock legs (typically heavy Unders on Under-dominated slates like MLB/NHL).
+
+Combo leg-count bounds: `MIN_LEG_COUNT = 3` (no doubles), `MAX_LEG_COUNT = 6`. Generation is a DFS over the per-book leg pool emitting all combos of size 3..6 that pass same-game exclusion.
 
 Same-game exclusion: combos cannot contain more than one leg from the same `event_id`.
 
