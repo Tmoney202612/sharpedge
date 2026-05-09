@@ -943,6 +943,7 @@ function renderParlayCards(slip,tierResults){
   const tiers=[{key:'safe',label:'Safe'},{key:'balanced',label:'Balanced'},{key:'longshot',label:'Longshot'}];
   const grades=[{key:'best',label:'Best'},{key:'better',label:'Better'},{key:'good',label:'Good'}];
   const decToAmerican=dec=>dec>=2?Math.round((dec-1)*100):Math.round(-100/(dec-1));
+  const TIER_PILL={safe:'background:rgba(79,138,255,0.15);color:#4f8aff;',balanced:'background:rgba(255,200,0,0.1);color:#ffc800;',longshot:'background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);'};
   const parts=[];
   tiers.forEach(t=>{
     const tr=tierResults?.[t.key];
@@ -974,8 +975,11 @@ function renderParlayCards(slip,tierResults){
       }).join('');
       parts.push(`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;">
         <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-          <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:0.5px;text-transform:uppercase;">${t.label} · ${g.label}</div>
-          <div style="font-size:11px;color:var(--muted);">${(combo.combinedHitProb*100).toFixed(1)}% hit · ${combo.combinedDecimal.toFixed(2)}x · ${fmt(american)}</div>
+          <span style="${TIER_PILL[t.key]||TIER_PILL.safe}padding:3px 10px;border-radius:5px;font-size:11px;font-weight:800;letter-spacing:0.5px;">${t.label.toUpperCase()} · ${g.label.toUpperCase()}</span>
+          <div style="text-align:right;">
+            <div style="font-family:var(--fm);font-size:22px;font-weight:800;color:var(--accent);line-height:1.1;">${fmt(american)}</div>
+            <div style="font-size:11px;color:var(--text);margin-top:2px;">${(combo.combinedHitProb*100).toFixed(1)}% hit · ${combo.combinedDecimal.toFixed(2)}x</div>
+          </div>
         </div>
         ${legHtml}
         <div style="padding:10px 14px;border-top:1px solid var(--border);text-align:right;">
