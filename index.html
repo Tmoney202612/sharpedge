@@ -480,15 +480,11 @@
       <!-- PARLAY BUILDER -->
       <div id="panel-parlay" class="panel">
         <div class="section-title">🎲 Parlay Builder</div>
-        <div class="section-sub">Tiered parlay cards from de-vigged consensus lines. Click a sport to rebuild.</div>
+        <div class="section-sub">Tiered parlay cards from de-vigged consensus lines across NBA, WNBA, MLB, NHL, NFL, UFL, and EPL. Click below to rebuild.</div>
         <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-          <button onclick="buildParlay('basketball_nba',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NBA</button>
-          <button onclick="buildParlay('baseball_mlb',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">MLB</button>
-          <button onclick="buildParlay('icehockey_nhl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NHL</button>
-          <button onclick="buildParlay('americanfootball_nfl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">NFL</button>
-          <button onclick="buildParlay('soccer_epl',this)" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">EPL</button>
+          <button onclick="buildParlay()" style="background:var(--accent);color:#000;border:none;padding:8px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">Build Today's Parlays</button>
         </div>
-        <div id="parlay-slip"><div class="info-box">👆 Click a sport above to build today's tiered parlay cards.</div></div>
+        <div id="parlay-slip"><div class="info-box">👆 Click "Build Today's Parlays" to generate tiered cards from today's combined cross-sport slate.</div></div>
       </div>
 
       <!-- FIX 4: Added missing <div tag -->
@@ -748,17 +744,7 @@ function enterApp(){
   loadAllEVSports();
   loadAllLiveSports();
   setTimeout(loadSportCounts,3000);
-  setTimeout(()=>{
-    const sportOrder=['basketball_nba','icehockey_nhl','baseball_mlb','mma_mixed_martial_arts','soccer_usa_mls','soccer_epl'];
-    async function tryParlay(i){
-      if(i>=sportOrder.length){const slip=document.getElementById('parlay-slip');if(slip)slip.innerHTML='<div class="info-box">No qualifying parlay cards for today\'s games. Click a sport above to check manually.</div>';return;}
-      const data=await fetchSport(sportOrder[i],'h2h');
-      const now=Date.now();const todayGames=data.filter(g=>g.commence_time&&new Date(g.commence_time).getTime()>now&&new Date(g.commence_time).getTime()<=now+86400000);
-      if(todayGames.length>=2){buildParlay(sportOrder[i],document.querySelector('[onclick*="'+sportOrder[i]+'"]'));}
-      else{tryParlay(i+1);}
-    }
-    tryParlay(0);
-  },2000);
+  setTimeout(()=>{ buildParlay(); },2000);
 }
 
 async function fetchSport(key,market='h2h'){
@@ -774,15 +760,16 @@ async function fetchSport(key,market='h2h'){
 
 const _parlaySlateCache={};
 const PARLAY_SLATE_TTL_MS=120000;
-async function fetchParlaySlate(sport){
+async function fetchParlaySlate(sports){
+  const cacheKey=Array.isArray(sports)?sports.join(','):String(sports||'');
   const now=Date.now();
-  const cached=_parlaySlateCache[sport];
+  const cached=_parlaySlateCache[cacheKey];
   if(cached&&cached.expiresAt>now)return cached.slate;
   try{
-    const r=await fetch(`/api/parlay-slate?sport=${sport}`);
+    const r=await fetch(`/api/parlay-slate?sports=${cacheKey}`);
     if(!r.ok)return null;
     const slate=await r.json();
-    _parlaySlateCache[sport]={slate,expiresAt:now+PARLAY_SLATE_TTL_MS};
+    _parlaySlateCache[cacheKey]={slate,expiresAt:now+PARLAY_SLATE_TTL_MS};
     return slate;
   }catch(e){return null;}
 }
@@ -791,13 +778,20 @@ function buildLegPairs(events){
   const byKey=new Map();
   (events||[]).forEach(ev=>(ev.legs||[]).forEach(l=>byKey.set(l.leg_key,l)));
   const pairOf=new Map();
-  byKey.forEach((leg,key)=>{
-    const flip=leg.side==='Over'?'Under':leg.side==='Under'?'Over':null;
-    if(!flip){pairOf.set(key,null);return;}
-    const parts=key.split('|');
-    parts[3]=flip;
-    pairOf.set(key,byKey.get(parts.join('|'))||null);
-  });
+  (events||[]).forEach(ev=>(ev.legs||[]).forEach(leg=>{
+    let oppKey=null;
+    if(leg.market_type==='prop'||leg.market_type==='total'){
+      const flip=leg.side==='Over'?'Under':leg.side==='Under'?'Over':null;
+      if(flip){const parts=leg.leg_key.split('|');parts[3]=flip;oppKey=parts.join('|');}
+    }else if(leg.market_type==='h2h'){
+      const otherTeam=leg.entity===ev.home?ev.away:leg.entity===ev.away?ev.home:null;
+      if(otherTeam)oppKey=`${ev.event_id}|h2h|${otherTeam}|ML|`;
+    }else if(leg.market_type==='spread'){
+      const otherTeam=leg.entity===ev.home?ev.away:leg.entity===ev.away?ev.home:null;
+      if(otherTeam&&leg.point!=null)oppKey=`${ev.event_id}|spreads|${otherTeam}|SPREAD|${-leg.point}`;
+    }
+    pairOf.set(leg.leg_key,oppKey?(byKey.get(oppKey)||null):null);
+  }));
   return pairOf;
 }
 
@@ -825,32 +819,25 @@ function scoreLegs(slate){
   events.forEach(ev=>(ev.legs||[]).forEach(leg=>{
     const r=computeLegHitProb(leg,pairOf);
     if(r==null)return;
-    if(r.hitProb>MAX_LEG_HIT_PROB)return;
-    scored.push({...leg,event_id:ev.event_id,home:ev.home,away:ev.away,commence_time:ev.commence_time,hitProb:r.hitProb,consensusBookCount:r.consensusBookCount});
+    if(r.hitProb>MAX_SCORED_HIT_PROB)return;
+    scored.push({...leg,event_id:ev.event_id,sport_key:ev.sport_key,home:ev.home,away:ev.away,commence_time:ev.commence_time,hitProb:r.hitProb,consensusBookCount:r.consensusBookCount});
   }));
   return scored;
 }
 
-function capLegsByEdgeAtBook(legs,book,limit=TOP_N){
-  const enriched=(legs||[]).map(l=>{
-    const p=(l.prices||[]).find(pp=>pp.book===book&&validOdds(pp.price));
-    if(!p)return null;
-    const dec=atod(p.price);
-    return {...l,_bookEdge:l.hitProb*dec-1};
-  }).filter(x=>x!=null);
-  return enriched.sort((a,b)=>b._bookEdge-a._bookEdge).slice(0,limit);
+function capForTier(scored,book,tier,limit=TOP_N){
+  const ceiling=TIER_CEILING[tier];
+  const filtered=(scored||[]).filter(l=>l.hitProb<=ceiling&&(l.prices||[]).some(p=>p.book===book&&validOdds(p.price)));
+  return [...filtered].sort((a,b)=>b.hitProb-a.hitProb).slice(0,limit);
 }
 
-function bucketCombos(combos){
-  const safe=[],balanced=[],longshot=[];
-  (combos||[]).forEach(c=>{
-    if(c==null||!Number.isFinite(c.edge)||c.edge<=0)return;
-    const p=c.combinedHitProb;
-    if(p>=0.15&&p<0.25)safe.push(c);
-    else if(p>=0.05&&p<0.15)balanced.push(c);
-    else if(p>=0.01&&p<0.05)longshot.push(c);
-  });
-  return {safe,balanced,longshot};
+function qualifiesForTier(c,tier){
+  if(!c||!Number.isFinite(c.combinedDecimal)||!Number.isFinite(c.combinedHitProb))return false;
+  const p=c.combinedHitProb,n=c.legs.length,dec=c.combinedDecimal;
+  if(tier==='safe')return p>=0.15&&p<0.25&&n>=3&&n<=4&&dec>=4.0&&dec<=6.0;
+  if(tier==='balanced')return p>=0.05&&p<0.15&&n>=4&&n<=5&&dec>=6.0&&dec<=16.0;
+  if(tier==='longshot')return p>=0.01&&p<0.05&&n>=4&&n<=6&&dec>=16.0;
+  return false;
 }
 
 function generateCombos(legs){
@@ -885,16 +872,32 @@ function pickGrades(combos){
   const arr=[...(combos||[])].sort((a,b)=>b.edge-a.edge);
   const n=arr.length;
   if(n===0)return {best:null,better:null,good:null};
-  const good=arr[n-1];
-  return {best:arr[0],better:arr[Math.floor(n/2)],good:good.edge>=0.005?good:null};
+  return {best:arr[0],better:arr[Math.floor(n/2)],good:arr[n-1]};
 }
 
 const FRESHNESS_WINDOW_MS=15*60*1000;
-const MAX_LEG_HIT_PROB=0.65;
+const TIER_CEILING={safe:0.85,balanced:0.65,longshot:0.65};
+const MAX_SCORED_HIT_PROB=0.85;
 const MIN_LEG_COUNT=3;
 const MAX_LEG_COUNT=6;
 const TOP_N=18;
 const PROPS_BOOKS_LIST=['ballybet','betmgm','betonlineag','betparx','betrivers','bovada','draftkings','espnbet','fanatics','fanduel','fliff','hardrockbet_fl','williamhill_us'];
+const SUPPORTED_PARLAY_SPORTS=['basketball_nba','basketball_wnba','baseball_mlb','icehockey_nhl','americanfootball_nfl','americanfootball_ufl','soccer_epl'];
+const BOOK_URLS={
+  ballybet:'https://www.ballybet.com',
+  betmgm:'https://sports.betmgm.com',
+  betonlineag:'https://www.betonline.ag',
+  betparx:'https://www.betparx.com',
+  betrivers:'https://www.betrivers.com',
+  bovada:'https://www.bovada.lv',
+  draftkings:'https://sportsbook.draftkings.com',
+  espnbet:'https://espnbet.com',
+  fanatics:'https://sportsbook.fanaticssportsbook.com',
+  fanduel:'https://sportsbook.fanduel.com',
+  fliff:'https://www.fliff.com',
+  hardrockbet_fl:'https://app.hardrock.bet',
+  williamhill_us:'https://www.williamhill.com'
+};
 
 function rebuildDecimalAtBook(combo,book){
   if(!combo)return null;
@@ -912,65 +915,67 @@ function isStale(slate,maxAgeMs=FRESHNESS_WINDOW_MS){
   return (Date.now()-slate.fetchedAt)>maxAgeMs;
 }
 
-async function buildParlay(sport,btn){
-  document.querySelectorAll('[onclick*="buildParlay"]').forEach(b=>{b.style.background='var(--card)';b.style.color='var(--text)';b.style.border='1px solid var(--border)';});
-  if(btn){btn.style.background='var(--accent)';btn.style.color='#000';btn.style.border='none';}
+function runTier(scored,tier){
+  const perBook=PROPS_BOOKS_LIST.map(book=>{
+    const top=capForTier(scored,book,tier);
+    const allCombos=generateCombos(top);
+    const reBuilt=allCombos.map(c=>rebuildDecimalAtBook(c,book)).filter(c=>c!=null);
+    const qualifying=reBuilt.filter(c=>qualifiesForTier(c,tier));
+    const picks=pickGrades(qualifying);
+    let cardCount=0,sumDec=0;
+    for(const g of ['best','better','good']){
+      const c=picks[g];
+      if(c&&Number.isFinite(c.combinedDecimal)){cardCount++;sumDec+=c.combinedDecimal;}
+    }
+    return {book,picks,cardCount,sumDec};
+  });
+  perBook.sort((a,b)=>b.cardCount!==a.cardCount?b.cardCount-a.cardCount:b.sumDec-a.sumDec);
+  return perBook[0];
+}
+
+async function buildParlay(){
   const slip=document.getElementById('parlay-slip');
   if(!slip)return;
-  slip.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Building parlay cards...</div>';
-  const slate=await fetchParlaySlate(sport);
+  slip.innerHTML='<div class="loading-state"><div class="loading-spinner"></div>Building today\'s parlays...</div>';
+  const slate=await fetchParlaySlate(SUPPORTED_PARLAY_SPORTS);
   if(!slate){slip.innerHTML='<div class="info-box">Could not load slate. Try again.</div>';return;}
   if(isStale(slate)){slip.innerHTML='<div class="info-box">⏳ Updating odds — try again in a moment.</div>';return;}
   const hasLegs=(slate.events||[]).some(e=>(e.legs||[]).length>0);
-  if(!hasLegs){slip.innerHTML='<div class="info-box">No upcoming games for this sport in the next 24 hours.</div>';return;}
-  const globalScored=scoreLegs(slate);
-  const perBook=PROPS_BOOKS_LIST.map(book=>{
-    const candidates=globalScored.filter(leg=>(leg.prices||[]).some(p=>p.book===book&&validOdds(p.price)));
-    const top=capLegsByEdgeAtBook(candidates,book);
-    const allCombos=generateCombos(top);
-    const reBuilt=allCombos.map(c=>rebuildDecimalAtBook(c,book)).filter(c=>c!=null);
-    const buckets=bucketCombos(reBuilt);
-    const finalPicks={safe:pickGrades(buckets.safe),balanced:pickGrades(buckets.balanced),longshot:pickGrades(buckets.longshot)};
-    let count=0,sumDec=0;
-    for(const t of ['safe','balanced','longshot'])for(const g of ['best','better','good']){
-      const c=finalPicks[t][g];
-      if(c&&Number.isFinite(c.combinedDecimal)){count++;sumDec+=c.combinedDecimal;}
-    }
-    return {book,finalPicks,count,sumDec};
-  });
-  perBook.sort((a,b)=>b.count!==a.count?b.count-a.count:b.sumDec-a.sumDec);
-  const selected=perBook[0];
-  if(!selected||selected.count===0){slip.innerHTML='<div class="info-box">No qualifying parlays for this sport today.</div>';return;}
-  renderParlayCards(slip,sport,selected.finalPicks,selected.book);
+  if(!hasLegs){slip.innerHTML='<div class="info-box">No upcoming games in the next 24 hours.</div>';return;}
+  const scored=scoreLegs(slate);
+  const tierResults={
+    safe:runTier(scored,'safe'),
+    balanced:runTier(scored,'balanced'),
+    longshot:runTier(scored,'longshot')
+  };
+  const total=tierResults.safe.cardCount+tierResults.balanced.cardCount+tierResults.longshot.cardCount;
+  if(total===0){slip.innerHTML='<div class="info-box">No qualifying parlays today.</div>';return;}
+  renderParlayCards(slip,tierResults);
 }
 
-function renderParlayCards(slip,sport,finalPicks,selectedBook){
+function renderParlayCards(slip,tierResults){
   if(!slip)return;
-  const sportName={'basketball_nba':'NBA','baseball_mlb':'MLB','icehockey_nhl':'NHL','americanfootball_nfl':'NFL','soccer_epl':'EPL'}[sport]||sport;
   const tiers=[{key:'safe',label:'Safe'},{key:'balanced',label:'Balanced'},{key:'longshot',label:'Longshot'}];
   const grades=[{key:'best',label:'Best'},{key:'better',label:'Better'},{key:'good',label:'Good'}];
   const decToAmerican=dec=>dec>=2?Math.round((dec-1)*100):Math.round(-100/(dec-1));
-  const priceAtBook=leg=>{
-    if(!selectedBook)return null;
-    const p=(leg.prices||[]).find(pp=>pp.book===selectedBook&&validOdds(pp.price));
-    return p||null;
-  };
-  const headerColor=selectedBook?(BOOK_COLORS[selectedBook]||'var(--accent)'):'var(--muted)';
-  const headerBookHtml=selectedBook?`<span style="color:${headerColor};font-weight:700;">${selectedBook}</span>`:'<span style="color:var(--muted);">no book selected</span>';
-  const parts=[`<div style="font-size:11px;color:var(--muted);margin-bottom:14px;">${sportName} · all legs at ${headerBookHtml}</div>`];
+  const parts=[];
   tiers.forEach(t=>{
-    const picks=finalPicks?.[t.key];
-    parts.push(`<div style="font-size:13px;font-weight:800;color:#fff;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase;">${t.label}</div>`);
-    if(!picks?.best){parts.push(`<div class="info-box">No qualifying ${t.label.toLowerCase()} play today.</div>`);return;}
+    const tr=tierResults?.[t.key];
+    const hasCards=tr&&tr.cardCount>0;
+    const headerColor=hasCards?(BOOK_COLORS[tr.book]||'var(--accent)'):'var(--muted)';
+    const headerBookHtml=hasCards?` · all legs at <span style="color:${headerColor};font-weight:700;">${tr.book}</span>`:'';
+    parts.push(`<div style="font-size:13px;font-weight:800;color:#fff;margin:18px 0 8px;letter-spacing:0.5px;text-transform:uppercase;">${t.label}${headerBookHtml}</div>`);
+    if(!hasCards){parts.push(`<div class="info-box">No qualifying ${t.label.toLowerCase()} play today.</div>`);return;}
+    const bookUrl=BOOK_URLS[tr.book]||'#';
     grades.forEach(g=>{
-      const combo=picks[g.key];
+      const combo=tr.picks[g.key];
       if(!combo)return;
       const american=decToAmerican(combo.combinedDecimal);
       const legHtml=(combo.legs||[]).map(l=>{
-        const bp=priceAtBook(l);
+        const bp=(l.prices||[]).find(pp=>pp.book===tr.book&&validOdds(pp.price));
         const bookColor=bp?(BOOK_COLORS[bp.book]||'var(--accent)'):'var(--muted)';
         const bookLabel=bp?`<span style="color:${bookColor};font-weight:700;">${bp.book}</span> ${fmt(bp.price)}`:'<span style="color:var(--muted);">no price</span>';
-        const desc=`${l.player||''} ${l.side||''} ${l.point??''} ${l.market||''}`.replace(/\s+/g,' ').trim();
+        const desc=`${l.entity||l.player||''} ${l.side||''} ${l.point??''} ${l.market||''}`.replace(/\s+/g,' ').trim();
         let contextHtml='';
         if(l.away&&l.home){
           const matchup=`${l.away} @ ${l.home}`;
@@ -984,11 +989,14 @@ function renderParlayCards(slip,sport,finalPicks,selectedBook){
         return `<div style="padding:8px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;font-size:12px;"><span style="color:var(--text);">${desc}</span><span>${bookLabel}</span></div>${contextHtml}`;
       }).join('');
       parts.push(`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;">
-        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
           <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:0.5px;text-transform:uppercase;">${t.label} · ${g.label}</div>
           <div style="font-size:11px;color:var(--muted);">${(combo.combinedHitProb*100).toFixed(1)}% hit · ${combo.combinedDecimal.toFixed(2)}x · ${fmt(american)}</div>
         </div>
         ${legHtml}
+        <div style="padding:10px 14px;border-top:1px solid var(--border);text-align:right;">
+          <button onclick="window.open('${bookUrl}','_blank')" style="background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">Place at ${tr.book} →</button>
+        </div>
       </div>`);
     });
   });
