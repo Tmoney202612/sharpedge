@@ -195,31 +195,39 @@ SharpEdge is a sports betting analytics dashboard (primeedgepicks.com) that surf
 
 ## Parlay Builder — Tier Definitions
 
-Tiers are bucketed on **combined parlay hit probability** (product of leg hit probabilities). Within each tier, combos are ranked and picked by **edge** (`combinedHitProb × combinedDecimal − 1`), not by hit probability. Combos with `edge ≤ 0` are dropped before tier assignment.
+The parlay builder pulls a combined cross-sport slate (NBA, WNBA, MLB, NHL, NFL, UFL, EPL — soccer h2h excluded; 3-way de-vig is a separate slice) and produces three tiers of parlay cards. Markets included per sport: `h2h`, `spreads`, `totals`, plus player props. EPL omits `h2h` (3-way market). Tiers gate by **combo shape** (hit prob window + leg count + decimal range) — no edge gate. Edge is calculated internally for ranking and is **not** displayed to users in the parlay panel; that math is surfaced on the Sharp Money / +EV / Arbitrage tabs.
 
-- **Safe:** combined hit probability 0.15 – 0.249
-- **Balanced:** combined hit probability 0.05 – 0.149
-- **Longshot:** combined hit probability 0.01 – 0.049
+Per-tier qualification (a combo qualifies only if all three constraints pass):
 
-Per-book combo construction: leg ranking, combo generation, decimal computation, edge calculation, and tier bucketing all run inside a per-book loop. For each sportsbook in the allowed list, candidate legs are filtered to those quoted by that book (with valid odds), then **ranked by per-book edge** (`leg.hitProb × bookDecimal − 1`) and capped at the top `TOP_N` (18). Combos are generated from this per-book pool, decimals and edge are computed using only that book's prices, and a combo is dropped if any leg has no valid price at the book or if combo edge is non-positive.
+- **Safe:** combined hit probability 0.15 – 0.249, 3 to 4 legs, combined decimal 4.0x – 6.0x
+- **Balanced:** combined hit probability 0.05 – 0.149, 4 to 5 legs, combined decimal 6.0x – 16.0x
+- **Longshot:** combined hit probability 0.01 – 0.049, 4 to 6 legs, combined decimal ≥ 16.0x
 
-Selection within tier: combos are sorted by edge descending. **Best** = highest edge, **Better** = middle index, **Good** = lowest edge ≥ 0.5%. If the lowest-edge combo in a tier falls below 0.5%, the tier renders only Best and Better — no fake third card. No hardcoded payout floors; the tier hit-probability windows plus `edge > 0` qualification do the gating.
+Combos failing any check are dropped. No reassignment across tiers. No edge floor.
 
-Tier suppression: a tier renders "no qualifying play today" when zero combos at the selected book fall in the tier window with positive edge.
+Per-tier hit-probability ceiling on input legs: Safe tier admits legs with `hitProb ≤ 0.85` (allows chalky favorites for 3–4 leg shape combos). Balanced and Longshot use `hitProb ≤ 0.65` (filters near-locks whose product math overshoots the tier windows). `scoreLegs` retains the union ceiling (`MAX_SCORED_HIT_PROB = 0.85`) so a single scoring pass feeds all tiers; per-tier ceilings are applied at the per-book leg-cap step.
 
-Selected book: across all books, the one with the most non-empty cards wins; ties broken by sum of combined decimals across non-empty cards. The UI renders only the selected book's parlays, and per-leg book labels in the rendered cards match the selected book. If every book produces zero non-empty cards, the UI renders "no qualifying parlays for this sport today."
+Per-book combo construction: leg ranking, combo generation, decimal computation, edge calculation, and tier qualification all run inside a per-book loop, **independently per tier**. For each tier and each sportsbook in the allowed list, candidate legs are filtered to those quoted by that book and within the tier ceiling, then ranked by hit prob descending and capped at the top `TOP_N` (18). Combos are generated from this per-book per-tier pool, decimals and edge are computed using only that book's prices, and a combo is dropped if any leg has no valid price at the book.
 
-Data freshness window: 15 minutes from `slate.fetchedAt`. Stale slates render "updating" instead of parlays.
+Per-tier book selection: each tier picks its own book independently. Books are ranked by non-empty card count in that tier; ties broken by sum of combined decimals across non-empty cards. The UI may render Safe at one book, Balanced at another, Longshot at a third. Single-book invariant per **card** is preserved — every leg of a rendered card is bettable at that card's book.
 
-Pre-combo input cap: top 18 scored legs **by per-book edge** feed combo generation, evaluated separately for each sportsbook.
+Within-tier ranking: combos are sorted by edge descending. **Best** = highest edge, **Better** = middle index, **Good** = lowest edge. No `edge > 0` filter and no `Good` floor — Good can carry negative edge (the worst-edge qualifying combo). Edge is calculated for ranking but is **not** rendered on the card.
 
-Per-leg consensus floor: 3+ books quoting both Over and Under at the same line.
+Card display per pick: combined hit probability, combined decimal, combined American odds, per-leg matchup and start time, per-leg book/price label, and a `Place at <book> →` button that opens the book's homepage in a new tab (URL from `BOOK_URLS` map). No edge label, no edge color coding.
 
-Per-leg hit probability ceiling: legs with `hitProb > 0.65` are excluded from `scoreLegs` output. Filters near-lock legs (typically heavy Unders on Under-dominated slates like MLB/NHL).
+Tier suppression: a tier renders "No qualifying <tier> play today" when zero combos at any book pass that tier's qualification.
+
+Empty-build state: if all three tiers are empty, the UI renders "No qualifying parlays today."
+
+Data freshness window: 15 minutes from `slate.fetchedAt`. Stale slates render "Updating odds — try again in a moment" instead of parlays.
+
+Per-leg consensus floor: 3+ books quoting both sides at the same line, used for de-vig consensus probability calculation.
 
 Combo leg-count bounds: `MIN_LEG_COUNT = 3` (no doubles), `MAX_LEG_COUNT = 6`. Generation is a DFS over the per-book leg pool emitting all combos of size 3..6 that pass same-game exclusion.
 
-Same-game exclusion: combos cannot contain more than one leg from the same `event_id`.
+Same-game exclusion: combos cannot contain more than one leg from the same `event_id`. Doubleheaders (same teams playing twice in the 24h window) carry distinct `event_id`s and are treated as independent events.
+
+Market-type-aware leg pairing: props and totals pair via Over↔Under flip; h2h pairs by opposite team in the same event; spreads pair by opposite team with negated point. Required for de-vig consensus across all four market types.
 
 ---
 
