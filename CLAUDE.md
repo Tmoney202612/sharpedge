@@ -87,7 +87,7 @@ SharpEdge is a sports betting analytics dashboard (primeedgepicks.com) that surf
 
 - **Frontend:** Vanilla JavaScript + HTML — single `index.html` file. No frameworks, no bundlers.
 - **Backend:** Vercel serverless functions (Node.js) in `/api/` routes
-- **Data:** The Odds API — key: `e9e337f8f997b9942a63be8cd817bfb2`
+- **Data:** The Odds API — key: `ODDS_API_KEY (set in Vercel env, not stored in repo)`
 - **Auth:** Whop API — membership validation only. Owner backdoor has been permanently removed.
 - **Deployment:** Vercel (preview on branch, production on main)
 - **Repo:** GitHub — Tmoney202612/sharpedge
@@ -195,7 +195,7 @@ SharpEdge is a sports betting analytics dashboard (primeedgepicks.com) that surf
 
 ## Important Context
 
-- The Odds API key: `e9e337f8f997b9942a63be8cd817bfb2`
+- The Odds API key: `ODDS_API_KEY (set in Vercel env, not stored in repo)`
 - The Odds API has rate limits — always batch and cache requests at the function level
 - Socket.io was tried for real-time and caused memory leaks on Vercel — do not suggest it
 - The repo path on OneDrive causes recurring Git lock errors — this is a known issue, always click Yes on first Codex prompt
