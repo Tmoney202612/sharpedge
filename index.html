@@ -29,8 +29,8 @@
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> <script src="/config/api.js" defer></script>
-  <script src="/utils/validation.js" defer> defer></script>
-  <script src="/utils/accessibility.js" defer> defer></script>
+  <script src="/utils/validation.js" defer></script>
+  <script src="/utils/accessibility.js" defer></script>
     <link rel="canonical" href="https://www.primeedgepicks.com/">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
             <meta name="twitter:image" content="https://www.primeedgepicks.com/og-image.png">
@@ -3339,7 +3339,6 @@ function applyPlanRestrictions(plan){
     }
   });
 }
-function doLogin(){doSignIn();}
 function doLogout(){
   localStorage.removeItem('owner_access');
   localStorage.removeItem('pep_auth');
