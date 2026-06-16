@@ -8,9 +8,9 @@ export default async function handler(req, res) {
     res.status(400).json({ error: 'Missing sport, eventId, or markets' });
     return;
   }
-  const PROPS_BOOKS = ['draftkings','fanduel','betmgm','williamhill_us','betrivers','fanatics','espnbet','hardrockbet'].join(',');
+  const PROPS_BOOKS = ['draftkings','fanduel','betmgm','williamhill_us','betrivers','fanatics','espnbet','hardrockbet','novig','prophetx','pinnacle'].join(',');
   try {
-    const url = `https://api.the-odds-api.com/v4/sports/${sport}/events/${eventId}/odds?apiKey=${API_KEY}&regions=us,us2&markets=${markets}&oddsFormat=american&bookmakers=${PROPS_BOOKS}`;
+    const url = `https://api.the-odds-api.com/v4/sports/${sport}/events/${eventId}/odds?apiKey=${API_KEY}&regions=us,us2,eu&markets=${markets}&oddsFormat=american&bookmakers=${PROPS_BOOKS}`;
     const r = await fetch(url);
     const remaining = r.headers.get('x-requests-remaining') || '';
     res.setHeader('x-requests-remaining', remaining);
