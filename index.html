@@ -869,7 +869,7 @@ function generateCombos(legs){
 }
 
 function pickGrades(combos){
-  const arr=[...(combos||[])].sort((a,b)=>b.edge-a.edge);
+  const arr=[...(combos||[])].sort((a,b)=>b.combinedHitProb-a.combinedHitProb);
   const n=arr.length;
   if(n===0)return {best:null,better:null,good:null};
   return {best:arr[0],better:arr[Math.floor(n/2)],good:arr[n-1]};
