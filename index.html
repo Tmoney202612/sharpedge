@@ -1194,7 +1194,7 @@ async function fetchSportArbs(sport,market='h2h'){
           const bestD=oD.reduce((a,b)=>a.odds>b.odds?a:b);
           const d1=atod(best1.odds),d2=atod(best2.odds),dD=atod(bestD.odds);
           const margin=(1/d1+1/d2+1/dD-1)*100;
-          if(margin>3)return;
+          if(margin>=0)return;
           opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,marketType:'ML',
             leg1:{name:n1,book:best1.book,odds:best1.odds},leg2:{name:n2,book:best2.book,odds:best2.odds},
             leg3:{name:'Draw',book:bestD.book,odds:bestD.odds},
@@ -1206,7 +1206,7 @@ async function fetchSportArbs(sport,market='h2h'){
           const best2=o2.reduce((a,b)=>a.odds>b.odds?a:b);
           const d1=atod(best1.odds),d2=atod(best2.odds);
           const margin=(1/d1+1/d2-1)*100;
-          if(margin>3)return;
+          if(margin>=0)return;
           opps.push({game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,marketType:'ML',
             leg1:{name:n1,book:best1.book,odds:best1.odds},leg2:{name:n2,book:best2.book,odds:best2.odds},
             threeWay:false,margin,isArb:margin<0,profit:margin<0?(-margin/100):0});
@@ -1236,7 +1236,7 @@ async function fetchSportArbs(sport,market='h2h'){
             if(!validOdds(a.odds)||!validOdds(b.odds))return;
             const d1=atod(a.odds),d2=atod(b.odds);
             const margin=(1/d1+1/d2-1)*100;
-            if(margin>3)return;
+            if(margin>=0)return;
             // Avoid duplicates
             const key=g.home_team+a.point+b.point;
             if(opps.find(o=>o._key===key))return;
@@ -1267,7 +1267,7 @@ async function fetchSportArbs(sport,market='h2h'){
             if(!validOdds(ov.odds)||!validOdds(un.odds))return;
             const d1=atod(ov.odds),d2=atod(un.odds);
             const margin=(1/d1+1/d2-1)*100;
-            if(margin>3)return;
+            if(margin>=0)return;
             const key=g.home_team+'O/U'+ov.point+ov.book+un.book;
             if(opps.find(o=>o._key===key))return;
             opps.push({_key:key,game:g.home_team+' vs '+g.away_team,commenceTime:g.commence_time,sport,sportLabel:labels[sport]||sport,
@@ -1365,11 +1365,10 @@ function renderArbRows(){
   if(arbFilter==='all')filtered=countable;
   else if(arbFilter==='polymarket')filtered=countable.filter(o=>o.isPolymarket);
   else filtered=countable.filter(o=>o.sportLabel===arbFilter);
-  const preMarginCount=filtered.length;
-  // Only show true arbs with at least 5% guaranteed profit
+  // Only true arbs (margin < 0) reach here — gated upstream in fetchSportArbs
   const container=document.getElementById('arb-rows');
   if(!container)return;
-  if(!filtered.length){const rawCount=preMarginCount;if(rawCount===0){container.innerHTML='<div class="loading-state">No opportunities under 3% margin right now. Check back soon.</div>';}else{const sportLabel=arbFilter==='all'?'total':arbFilter;container.innerHTML='<div class="loading-state"><div>No arbitrage opportunities under 3% margin right now.</div><div style="margin-top:8px;color:var(--muted);font-size:12px;">There are '+rawCount+' wider-margin '+sportLabel+' opportunities available, but they are outside the current playable threshold.</div></div>';}return;}
+  if(!filtered.length){container.innerHTML='<div class="loading-state">No true arbs available right now. Check back soon.</div>';return;}
   const STAKE=200;
   container.innerHTML=filtered.map(o=>{
     const leg1=o.leg1,leg2=o.leg2,leg3=o.leg3;if(!leg1||!leg2)return'';
