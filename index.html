@@ -1497,14 +1497,22 @@ async function fetchSportEV(sportConfig){
       if(g.commence_time&&new Date(g.commence_time).getTime()<=Date.now())return;
       const books=g.bookmakers||[];if(books.length<2)return;
       const om={};
-      books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});})));
+      const byBook={};
+      books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({book:bm.title,odds:o.price});if(!byBook[bm.title])byBook[bm.title]={};byBook[bm.title][o.name]=o.price;})));
+      const evNames=Object.keys(om);
+      if(evNames.length>2)return; // 3-way (or more) market — calcFairLine is 2-way only; skip rather than pass vigged EV through
+      const evMedian=arr=>{const s=[...arr].sort((a,b)=>a-b);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
       Object.entries(om).forEach(([name,offers])=>{
         if(offers.length<2)return;
         const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);
         if(!validOdds(best.odds))return;
-        const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;
-        const fair=dtoa(1/avgIp);
-        const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);
+        const other=evNames[0]===name?evNames[1]:evNames[0];
+        const devigged=[];
+        Object.values(byBook).forEach(bk=>{if(validOdds(bk[name])&&validOdds(bk[other]))devigged.push(calcFairLine(bk[name],bk[other]));});
+        if(!devigged.length)return;
+        const fairProb=evMedian(devigged);
+        const fair=dtoa(1/fairProb);
+        const ev=fairProb*(atod(best.odds)-1)-(1-fairProb);
         if(!isFinite(ev)||isNaN(ev)||ev<=0.003)return;
         rows.push({sport:sportConfig.label,sportEmoji:sportConfig.emoji,sportColor:sportConfig.color,sportBg:sportConfig.bg,game:`${g.home_team} vs ${g.away_team}`,time:g.commence_time,name,bestBook:best.book,bestOdds:best.odds,fair,ev:(ev*100).toFixed(1)});
       });
@@ -1680,9 +1688,13 @@ function renderLiveRows(){
     const bestOdds={};
     books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!bestOdds[o.name]||o.price>bestOdds[o.name].odds)bestOdds[o.name]={odds:o.price,book:bm.title};})));
     const outcomes=Object.entries(bestOdds);
-    let gameEV=0;const om={};
-    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({odds:o.price});})));
-    Object.values(om).forEach(offers=>{if(offers.length<2)return;const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);const avgIp=offers.reduce((s,o)=>s+ip(o.odds),0)/offers.length;const ev=avgIp*(atod(best.odds)-1)-(1-avgIp);if(isFinite(ev)&&ev>gameEV)gameEV=ev;});
+    let gameEV=0;const om={};const byBookLive={};
+    books.forEach(bm=>(bm.markets||[]).forEach(mk=>mk.outcomes.forEach(o=>{if(!validOdds(o.price))return;if(!om[o.name])om[o.name]=[];om[o.name].push({odds:o.price});if(!byBookLive[bm.title])byBookLive[bm.title]={};byBookLive[bm.title][o.name]=o.price;})));
+    const liveNames=Object.keys(om);
+    if(liveNames.length<=2){ // 3-way+ markets skipped (calcFairLine is 2-way only); gameEV stays 0, no vigged fallback
+      const liveMedian=arr=>{const s=[...arr].sort((a,b)=>a-b);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+      Object.entries(om).forEach(([name,offers])=>{if(offers.length<2)return;const best=offers.reduce((a,b)=>a.odds>b.odds?a:b);const other=liveNames[0]===name?liveNames[1]:liveNames[0];const devigged=[];Object.values(byBookLive).forEach(bk=>{if(validOdds(bk[name])&&validOdds(bk[other]))devigged.push(calcFairLine(bk[name],bk[other]));});if(!devigged.length)return;const fairProb=liveMedian(devigged);const ev=fairProb*(atod(best.odds)-1)-(1-fairProb);if(isFinite(ev)&&ev>gameEV)gameEV=ev;});
+    }
     return`<div class="arb-card" data-game-id="${g.id||''}">
       <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;padding:16px 20px;align-items:center;">
         <div class="arb-sport-badge" style="background:${g.sportBg};color:${g.sportColor};border:1px solid ${g.sportColor}40">${g.sportEmoji} ${g.sportLabel}</div>
