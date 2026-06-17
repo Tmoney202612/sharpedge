@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     const data = await r.json();
     res.setHeader('x-requests-remaining', r.headers.get('x-requests-remaining') || '');
     res.setHeader('x-requests-used', r.headers.get('x-requests-used') || '');
-    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=15');
+    res.setHeader('Cache-Control', 'no-store');
     res.status(200).json(Array.isArray(data) ? data : []);
   } catch (e) {
     res.status(500).json({ error: e.message });
